@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/rajdocto/nestv2/dist/
+    - /bin/cp -R dist/* $DEPLOYPATH
