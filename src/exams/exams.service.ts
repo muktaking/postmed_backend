@@ -223,6 +223,29 @@ export class ExamsService {
     return exam;
   }
 
+  async findExamByCatId(id: string) {
+    const [err, exams] = await to(
+      this.examRepository.find({
+        select: ["id", "title", "description", "createdAt"],
+        where: [
+          {
+            categoryIds: Like("%," + id + ",%"),
+          },
+          {
+            categoryIds: Like(id + ",%"),
+          },
+          {
+            categoryIds: Like("%," + id),
+          },
+        ],
+        relations: ["categoryType"],
+        order: { id: "DESC" },
+      })
+    );
+    if (err) throw new InternalServerErrorException();
+    return exams;
+  }
+
   // // <--------------------->
   async findQuestionsByExamId(id: string) {
     const exam = await this.findExamById(id);

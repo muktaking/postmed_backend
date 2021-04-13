@@ -83,6 +83,11 @@ export class ExamsController {
     return await this.examService.findExamById(id);
   }
 
+  @Get("/category/:id")
+  async findExamByCatId(@Param("id") id) {
+    return await this.examService.findExamByCatId(id);
+  }
+
   @Get("questions/:id")
   @UseGuards(AuthGuard("jwt"))
   @Role(RolePermitted.student)

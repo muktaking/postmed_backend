@@ -2,7 +2,7 @@
 
 # dependencies
 /client/
-
+/rules
 #uploads
 /uploads/images/*.*
 

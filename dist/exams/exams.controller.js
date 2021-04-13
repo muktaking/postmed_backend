@@ -38,6 +38,9 @@ let ExamsController = class ExamsController {
     async findExamById(id) {
         return await this.examService.findExamById(id);
     }
+    async findExamByCatId(id) {
+        return await this.examService.findExamByCatId(id);
+    }
     async findQuestionsByExamId(id) {
         return await this.examService.findQuestionsByExamId(id);
     }
@@ -93,6 +96,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findExamById", null);
+__decorate([
+    common_1.Get("/category/:id"),
+    __param(0, common_1.Param("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ExamsController.prototype, "findExamByCatId", null);
 __decorate([
     common_1.Get("questions/:id"),
     common_1.UseGuards(passport_1.AuthGuard("jwt")),

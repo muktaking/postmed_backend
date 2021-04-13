@@ -3010,7 +3010,7 @@
         "signature": "3326c51c66b21e9ee309a06621a6d34a84970fa9eaf2630b295a28ba19d3d394"
       },
       "../src/categories/categories.controller.ts": {
-        "version": "d9153817a939819ad89ecf851dc31de3be47cb467804d260c09c4a62af420bc7",
+        "version": "7aa6aab179f7cbaf5dc2e23a575975eb30d6b1f477d311111f51508ab1403dab",
         "signature": "8ecc98fc19e215b7f957efa47640417312484c2bae44c6340c7a0c278649e6f5"
       },
       "../src/categories/categories.module.ts": {
@@ -3046,12 +3046,12 @@
         "signature": "69606fd9b34c81704420ae0f21dd9a7128452d9541e304ed6e1d8503d1d30628"
       },
       "../src/exams/exams.service.ts": {
-        "version": "a9d27f2d172a8260e16b6510240c6429a9fdad3329eef518c4aa9b5a57cb65f0",
-        "signature": "f45c43de89e4ccabb7032f5f867f62a47aa99fd3740227c6f097816de7dd19fe"
+        "version": "96027e68199c53f747b947d75d887c6ce322d4a80972bd7c042bc5392afbbaa2",
+        "signature": "9ce60b0baedbba439760e2d177b118e76a21d815b5d68eec9dafd91078b01793"
       },
       "../src/exams/exams.controller.ts": {
-        "version": "98631720a705a8053568f635d04ce2640e03e432091f81ad33348d24032eec53",
-        "signature": "f320ca575b0361c8d19308841807f28fb77739df86cd2c920c36e1d190573b7f"
+        "version": "a3bbfda625d29570093f1ac0de29e28da7cacc6da64ae2c5e47213f989d0e4aa",
+        "signature": "a18c0dad891102a4ffd015557b552d5e183b2126b3407a4568b91b1150d8254f"
       },
       "../src/exams/exams.module.ts": {
         "version": "3597a9dbf1bd83f6aade89bdbefb2c5904a314f17fa3d33a1910abb51797acb4",

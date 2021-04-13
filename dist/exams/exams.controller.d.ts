@@ -8,6 +8,7 @@ export declare class ExamsController {
     findLatestExam(): Promise<any>;
     findFeaturedExam(): Promise<any>;
     findExamById(id: any): Promise<any>;
+    findExamByCatId(id: any): Promise<any>;
     findQuestionsByExamId(id: any): Promise<{
         exam: {
             id: any;

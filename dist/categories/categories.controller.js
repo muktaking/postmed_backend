@@ -58,7 +58,6 @@ let CategoriesController = class CategoriesController {
 };
 __decorate([
     common_1.Get(),
-    roles_decorator_1.Role(user_entity_1.RolePermitted.mentor),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
@@ -73,6 +72,7 @@ __decorate([
 ], CategoriesController.prototype, "getCategory", null);
 __decorate([
     common_1.Post(),
+    common_1.UseGuards(passport_1.AuthGuard("jwt"), roles_guard_1.RolesGuard),
     roles_decorator_1.Role(user_entity_1.RolePermitted.moderator),
     common_1.UsePipes(common_1.ValidationPipe),
     common_1.UseInterceptors(platform_express_1.FileInterceptor("image", {
@@ -90,6 +90,7 @@ __decorate([
 ], CategoriesController.prototype, "createCategory", null);
 __decorate([
     common_1.Patch(),
+    common_1.UseGuards(passport_1.AuthGuard("jwt"), roles_guard_1.RolesGuard),
     roles_decorator_1.Role(user_entity_1.RolePermitted.moderator),
     common_1.UsePipes(common_1.ValidationPipe),
     common_1.UseInterceptors(platform_express_1.FileInterceptor("image", {
@@ -108,6 +109,7 @@ __decorate([
 ], CategoriesController.prototype, "updateCategory", null);
 __decorate([
     common_1.Delete(),
+    common_1.UseGuards(passport_1.AuthGuard("jwt"), roles_guard_1.RolesGuard),
     roles_decorator_1.Role(user_entity_1.RolePermitted.moderator),
     common_1.UsePipes(common_1.ValidationPipe),
     __param(0, common_1.Body("id")),
@@ -116,7 +118,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], CategoriesController.prototype, "deleteCategoryById", null);
 CategoriesController = __decorate([
-    common_1.UseGuards(passport_1.AuthGuard("jwt"), roles_guard_1.RolesGuard),
     common_1.Controller("categories"),
     __metadata("design:paramtypes", [categories_service_1.CategoriesService])
 ], CategoriesController);

@@ -26,13 +26,12 @@ import { createCategoryDto } from "./dto/category.dto";
 
 // const serverConfig = config.get('server');
 // const SERVER_URL = `${serverConfig.url}:${serverConfig.port}/`
-@UseGuards(AuthGuard("jwt"), RolesGuard)
 @Controller("categories")
 export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}
 
   @Get()
-  @Role(RolePermitted.mentor)
+  //@Role(RolePermitted.mentor)
   async getAllCategories() {
     return await this.categoriesService.findAllCategories();
   }
@@ -46,6 +45,7 @@ export class CategoriesController {
   }
 
   @Post()
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Role(RolePermitted.moderator)
   @UsePipes(ValidationPipe)
   @UseInterceptors(
@@ -82,6 +82,7 @@ export class CategoriesController {
   }
 
   @Patch()
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Role(RolePermitted.moderator)
   @UsePipes(ValidationPipe)
   @UseInterceptors(
@@ -106,6 +107,7 @@ export class CategoriesController {
   }
 
   @Delete()
+  @UseGuards(AuthGuard("jwt"), RolesGuard)
   @Role(RolePermitted.moderator)
   @UsePipes(ValidationPipe)
   async deleteCategoryById(@Body("id") id: string) {

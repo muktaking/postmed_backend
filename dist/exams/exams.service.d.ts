@@ -33,6 +33,7 @@ export declare class ExamsService {
     findLatestExam(): Promise<any>;
     getFeaturedExams(): Promise<any>;
     findExamById(id: string, constraintByCategoryType?: any): Promise<any>;
+    findExamByCatId(id: string): Promise<any>;
     findQuestionsByExamId(id: string): Promise<{
         exam: {
             id: any;

@@ -177,6 +177,27 @@ let ExamsService = class ExamsService {
             throw new common_1.InternalServerErrorException();
         return exam;
     }
+    async findExamByCatId(id) {
+        const [err, exams] = await utils_1.to(this.examRepository.find({
+            select: ["id", "title", "description", "createdAt"],
+            where: [
+                {
+                    categoryIds: typeorm_2.Like("%," + id + ",%"),
+                },
+                {
+                    categoryIds: typeorm_2.Like(id + ",%"),
+                },
+                {
+                    categoryIds: typeorm_2.Like("%," + id),
+                },
+            ],
+            relations: ["categoryType"],
+            order: { id: "DESC" },
+        }));
+        if (err)
+            throw new common_1.InternalServerErrorException();
+        return exams;
+    }
     async findQuestionsByExamId(id) {
         const exam = await this.findExamById(id);
         if (exam) {
