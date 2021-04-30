@@ -1,5 +1,5 @@
-import { BaseEntity, Timestamp } from "typeorm";
-import { Stem } from "./stem.entity";
+import { BaseEntity, Timestamp } from 'typeorm';
+import { Stem } from './stem.entity';
 export declare enum QType {
     singleBestAnswer = "sba",
     Matrix = "matrix"

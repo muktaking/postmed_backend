@@ -23,7 +23,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Question.prototype, "id", void 0);
 __decorate([
-    typeorm_1.Column({ type: "varchar", length: 200, nullable: false }),
+    typeorm_1.Column({ type: 'varchar', length: 200, nullable: false }),
     __metadata("design:type", String)
 ], Question.prototype, "title", void 0);
 __decorate([
@@ -31,20 +31,20 @@ __decorate([
     __metadata("design:type", Number)
 ], Question.prototype, "categoryId", void 0);
 __decorate([
-    typeorm_1.Column({ type: "enum", enum: QType, nullable: false }),
+    typeorm_1.Column({ type: 'enum', enum: QType, nullable: false }),
     __metadata("design:type", String)
 ], Question.prototype, "qType", void 0);
 __decorate([
-    typeorm_1.Column({ type: "text" }),
+    typeorm_1.Column({ type: 'text' }),
     __metadata("design:type", String)
 ], Question.prototype, "qText", void 0);
 __decorate([
     typeorm_1.OneToMany(() => stem_entity_1.Stem, (stem) => stem.question, { cascade: true, eager: true }),
-    typeorm_1.JoinColumn({ name: "stems" }),
+    typeorm_1.JoinColumn({ name: 'stems' }),
     __metadata("design:type", Array)
 ], Question.prototype, "stems", void 0);
 __decorate([
-    typeorm_1.Column({ type: "text", nullable: true }),
+    typeorm_1.Column({ type: 'text', nullable: true }),
     __metadata("design:type", String)
 ], Question.prototype, "generalFeedback", void 0);
 __decorate([
@@ -52,11 +52,11 @@ __decorate([
     __metadata("design:type", String)
 ], Question.prototype, "tags", void 0);
 __decorate([
-    typeorm_1.Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" }),
+    typeorm_1.Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", typeorm_1.Timestamp)
 ], Question.prototype, "createDate", void 0);
 __decorate([
-    typeorm_1.Column({ type: "timestamp" }),
+    typeorm_1.Column({ type: 'timestamp', nullable: true }),
     __metadata("design:type", Object)
 ], Question.prototype, "modifiedDate", void 0);
 __decorate([

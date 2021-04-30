@@ -5,6 +5,7 @@ export declare class PostexamsController {
     private readonly postexamsService;
     constructor(postexamsService: PostexamsService);
     postExamTasking(getAnswersDto: GetAnswersDto, answers: StudentAnswer[], req: any): Promise<{
+        examId: string;
         resultArray: import("./postexam.model").Particulars[];
         totalMark: number;
         totalScore: number;
@@ -13,6 +14,7 @@ export declare class PostexamsController {
         timeTakenToComplete: string;
     }>;
     postExamTaskingForFree(getAnswersDto: GetAnswersDto, answers: StudentAnswer[]): Promise<{
+        examId: string;
         resultArray: import("./postexam.model").Particulars[];
         totalMark: number;
         totalScore: number;

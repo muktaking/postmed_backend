@@ -1,5 +1,6 @@
-import { CreateExamDto } from "./dto/exam.dto";
-import { ExamsService } from "./exams.service";
+import { CreateExamDto } from './dto/exam.dto';
+import { CreateFeedbackDto } from './dto/flag.dto';
+import { ExamsService } from './exams.service';
 export declare class ExamsController {
     private readonly examService;
     constructor(examService: ExamsService);
@@ -28,6 +29,13 @@ export declare class ExamsController {
             timeLimit: any;
         };
         questions: any;
+    }>;
+    getFeedbackByExamId(examId: any): Promise<any>;
+    createFeedback(createFeedbackDto: CreateFeedbackDto): Promise<{
+        message: string;
+    }>;
+    ChangePendingStatus(ids: any): Promise<{
+        message: string;
     }>;
     updateExamById(examId: any, createExamDto: CreateExamDto): Promise<any>;
     deleteQuestionById(examId: any): Promise<import("typeorm").DeleteResult>;

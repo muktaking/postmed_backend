@@ -10,21 +10,22 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
-} from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
-import { Role } from "src/roles.decorator";
-import { RolesGuard } from "src/roles.guard";
-import { RolePermitted } from "src/users/user.entity";
-import { CreateExamDto } from "./dto/exam.dto";
-import { ExamsService } from "./exams.service";
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { Role } from 'src/roles.decorator';
+import { RolesGuard } from 'src/roles.guard';
+import { RolePermitted } from 'src/users/user.entity';
+import { CreateExamDto } from './dto/exam.dto';
+import { CreateFeedbackDto } from './dto/flag.dto';
+import { ExamsService } from './exams.service';
 
 //@UseGuards(AuthGuard("jwt"), RolesGuard)
-@Controller("exams")
+@Controller('exams')
 export class ExamsController {
   constructor(private readonly examService: ExamsService) {}
 
   @Post()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Role(RolePermitted.mentor)
   @UsePipes(ValidationPipe)
   async createExam(@Body() createExamDto: CreateExamDto, @Req() req) {
@@ -64,48 +65,72 @@ export class ExamsController {
   //   return await this.examService.findAllFreeExams();
   // }
 
-  @Get("/latest")
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Get('/latest')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Role(RolePermitted.student)
   async findLatestExam() {
     return await this.examService.findLatestExam();
   }
 
-  @Get("/featured")
+  @Get('/featured')
   async findFeaturedExam() {
     return await this.examService.getFeaturedExams();
   }
 
-  @Get(":id")
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Role(RolePermitted.student)
-  async findExamById(@Param("id") id) {
+  async findExamById(@Param('id') id) {
     return await this.examService.findExamById(id);
   }
 
-  @Get("/category/:id")
-  async findExamByCatId(@Param("id") id) {
+  @Get('/category/:id')
+  async findExamByCatId(@Param('id') id) {
     return await this.examService.findExamByCatId(id);
   }
 
-  @Get("questions/:id")
-  @UseGuards(AuthGuard("jwt"))
+  @Get('questions/:id')
+  @UseGuards(AuthGuard('jwt'))
   @Role(RolePermitted.student)
-  async findQuestionsByExamId(@Param("id") id) {
+  async findQuestionsByExamId(@Param('id') id) {
     return await this.examService.findQuestionsByExamId(id);
   }
 
-  @Get("free/questions/:id")
-  async findFreeQuestionsByExamId(@Param("id") id) {
+  @Get('free/questions/:id')
+  async findFreeQuestionsByExamId(@Param('id') id) {
     return await this.examService.findFreeQuestionsByExamId(id);
   }
 
-  @Patch(":id")
+  @Get('feedback/:id')
+  async getFeedbackByExamId(@Param() examId) {
+    return await this.examService.getFeedbackByExamId(examId.id);
+  }
+
+  // @Get('feedback')
+  // @Role(RolePermitted.mentor)
+  // async getPendingFeedbackByExamId() {
+  //   return await this.examService.getPendingFeedbackByExamId();
+  // }
+
+  @Post('feedback')
+  @UsePipes(ValidationPipe)
+  async createFeedback(@Body() createFeedbackDto: CreateFeedbackDto) {
+    return await this.examService.createFeedback(createFeedbackDto);
+  }
+
+  @Patch('feedback')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Role(RolePermitted.mentor)
+  async ChangePendingStatus(@Body() ids) {
+    return await this.examService.changePendingStatus(ids.ids);
+  }
+
+  @Patch(':id')
   async updateExamById(@Param() examId, @Body() createExamDto: CreateExamDto) {
     return await this.examService.updateExamById(examId.id, createExamDto);
   }
 
-  @Delete(":id")
+  @Delete(':id')
   @Role(RolePermitted.coordinator)
   async deleteQuestionById(@Param() examId) {
     return await this.examService.deleteExam(examId.id);

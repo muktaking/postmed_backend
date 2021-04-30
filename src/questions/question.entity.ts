@@ -6,12 +6,12 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Timestamp,
-} from "typeorm";
-import { Stem } from "./stem.entity";
+} from 'typeorm';
+import { Stem } from './stem.entity';
 
 export enum QType {
-  singleBestAnswer = "sba",
-  Matrix = "matrix",
+  singleBestAnswer = 'sba',
+  Matrix = 'matrix',
 }
 // export enum QTypeNumber {
 //   singleBestAnswer = 0,
@@ -29,16 +29,16 @@ export class Question extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "varchar", length: 200, nullable: false })
+  @Column({ type: 'varchar', length: 200, nullable: false })
   title: string;
 
   @Column()
   categoryId: number;
 
-  @Column({ type: "enum", enum: QType, nullable: false })
+  @Column({ type: 'enum', enum: QType, nullable: false })
   qType: QType;
 
-  @Column({ type: "text" })
+  @Column({ type: 'text' })
   qText: string;
 
   @OneToMany(
@@ -46,19 +46,19 @@ export class Question extends BaseEntity {
     (stem) => stem.question,
     { cascade: true, eager: true }
   )
-  @JoinColumn({ name: "stems" })
+  @JoinColumn({ name: 'stems' })
   stems: Stem[];
 
-  @Column({ type: "text", nullable: true })
+  @Column({ type: 'text', nullable: true })
   generalFeedback: string;
 
   @Column({ nullable: true })
   tags: string;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createDate: Timestamp;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: 'timestamp', nullable: true })
   modifiedDate: Timestamp | string;
 
   @Column()

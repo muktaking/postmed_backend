@@ -1,7 +1,7 @@
-import { CreateQuestionDto } from "./create-question.dto";
-import { Question } from "./question.entity";
-import { QuestionRepository } from "./question.repository";
-import { Stem } from "./stem.entity";
+import { CreateQuestionDto } from './create-question.dto';
+import { Question } from './question.entity';
+import { QuestionRepository } from './question.repository';
+import { Stem } from './stem.entity';
 export declare class QuestionsService {
     private questionRepository;
     constructor(questionRepository: QuestionRepository);

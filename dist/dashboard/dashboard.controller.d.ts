@@ -8,7 +8,8 @@ export declare class DashboardController {
         userExamStat: any;
     }>;
     getAdminDashInfo(req: any): Promise<{
-        users: any;
-        exams: any;
+        users: any[];
+        exams: any[];
+        feedbacks: any[];
     }>;
 }

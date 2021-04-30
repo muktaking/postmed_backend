@@ -62,7 +62,7 @@ let QuestionsService = class QuestionsService {
         question.qType = qType;
         question.qText = qText;
         question.generalFeedback = generalFeedback ? generalFeedback : null;
-        question.tags = tags ? tags.join(",") : null;
+        question.tags = tags ? tags.join(',') : null;
         question.creatorId = +creator;
         question.stems = stems;
         const [err, result] = await utils_1.to(question.save());
@@ -73,7 +73,7 @@ let QuestionsService = class QuestionsService {
         return { result, message: stem.error };
     }
     async createQuestionByUpload(creator, category, file) {
-        let excel = "";
+        let excel = '';
         let data = [];
         try {
             excel = file.path;
@@ -81,10 +81,11 @@ let QuestionsService = class QuestionsService {
             data = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {
                 header: 1,
                 raw: false,
-                defval: "",
+                defval: '',
             });
         }
         catch (error) {
+            console.log(error);
             throw new common_1.InternalServerErrorException();
         }
         fs.unlink(excel, (err) => {
@@ -96,14 +97,16 @@ let QuestionsService = class QuestionsService {
         const result = this.toCollection(data, category, creator);
         if (result.errorMessage.length > 0) {
             const msg = result.errorMessage
-                .map((msg, ind) => result.errorIndex[ind] + ". " + msg)
-                .join("; ");
+                .map((msg, ind) => result.errorIndex[ind] + '. ' + msg)
+                .join('; ');
             throw new common_1.HttpException(msg, common_1.HttpStatus.UNPROCESSABLE_ENTITY);
         }
         if (result.allData.length > 0) {
             const [err, isSaved] = await utils_1.to(this.questionRepository.save(result.allData));
-            if (err)
+            if (err) {
+                console.log(err);
                 throw new common_1.InternalServerErrorException();
+            }
             return isSaved;
         }
     }
@@ -121,7 +124,7 @@ let QuestionsService = class QuestionsService {
             .findOne(+id)
             .catch((e) => {
             console.log(e);
-            throw new common_1.HttpException("Could not able to fetch oldQuestion from database ", common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new common_1.HttpException('Could not able to fetch oldQuestion from database ', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         });
         const newQuestion = Object.assign({}, oldQuestion);
         newQuestion.title = title;
@@ -129,8 +132,8 @@ let QuestionsService = class QuestionsService {
         newQuestion.qType = qType;
         newQuestion.qText = qText;
         newQuestion.generalFeedback = generalFeedback ? generalFeedback : null;
-        newQuestion.tags = tags ? tags.join(",") : null;
-        newQuestion.modifiedDate = moment().format("YYYY-MM-DD HH=mm=sss");
+        newQuestion.tags = tags ? tags.join(',') : null;
+        newQuestion.modifiedDate = moment().format('YYYY-MM-DD HH=mm=sss');
         newQuestion.modifiedById = +modifiedBy;
         newQuestion.stems = stems;
         await this.questionRepository.delete(+id);
@@ -138,7 +141,7 @@ let QuestionsService = class QuestionsService {
     }
     async deleteQuestion(...args) {
         const res = await this.questionRepository.delete(args);
-        return { message: "Question deleted successfully" };
+        return { message: 'Question deleted successfully' };
     }
     toCollection(data, category, user) {
         const allData = [];
@@ -146,52 +149,52 @@ let QuestionsService = class QuestionsService {
         const errorMessage = [];
         data.forEach((element, index) => {
             const stems = [];
-            if (element[0] === "") {
+            if (element[0] === '') {
                 errorIndex.push(index + 1);
-                errorMessage.push("A question Title can not be Empty");
+                errorMessage.push('A question Title can not be Empty');
                 return;
             }
-            if (element[1] === "") {
+            if (element[1] === '') {
                 errorIndex.push(index + 1);
-                errorMessage.push("A question Type can not be Empty");
+                errorMessage.push('A question Type can not be Empty');
                 return;
             }
-            if (element[2] === "") {
+            if (element[2] === '') {
                 errorIndex.push(index + 1);
-                errorMessage.push("A question Text can not be Empty");
+                errorMessage.push('A question Text can not be Empty');
                 return;
             }
-            if (element[3] === "") {
+            if (element[3] === '') {
                 errorIndex.push(index + 1);
-                errorMessage.push("First stem can not be empty.");
+                errorMessage.push('First stem can not be empty.');
                 return;
             }
             for (let i = 3; i < 8; i++) {
-                if (element[i] === "" && element[i + 10] !== "") {
+                if (element[i] === '' && element[i + 10] !== '') {
                     errorIndex.push(index + 1);
-                    errorMessage.push("Feedback Can not be on empty stems.");
+                    errorMessage.push('Feedback Can not be on empty stems.');
                     return;
                 }
             }
-            if (element[1] === "matrix") {
+            if (element[1] === 'matrix') {
                 for (let i = 3; i < 8; i++) {
-                    if ((element[i] !== "" && element[i + 5] === "") ||
-                        (element[i + 5] !== "" && element[i] === "")) {
+                    if ((element[i] !== '' && element[i + 5] === '') ||
+                        (element[i + 5] !== '' && element[i] === '')) {
                         errorIndex.push(index + 1);
-                        errorMessage.push("Stem should have corresponding answer and vice versa.");
+                        errorMessage.push('Stem should have corresponding answer and vice versa.');
                         return;
                     }
                 }
             }
             for (let i = 3; i < 8; i++) {
                 let stem = {
-                    qStem: "",
-                    aStem: "",
-                    fbStem: "",
+                    qStem: '',
+                    aStem: '',
+                    fbStem: '',
                 };
-                stem.qStem = element[i] !== "" ? element[i] : null;
-                stem.aStem = element[i + 5] !== "" ? element[i + 5] : null;
-                stem.fbStem = element[i + 10] !== "" ? element[i + 10] : null;
+                stem.qStem = element[i] !== '' ? element[i] : null;
+                stem.aStem = element[i + 5] !== '' ? element[i + 5] : null;
+                stem.fbStem = element[i + 10] !== '' ? element[i + 10] : null;
                 if (stem.qStem)
                     stems.push(stem);
             }

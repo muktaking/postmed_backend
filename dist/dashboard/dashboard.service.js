@@ -17,6 +17,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const category_repository_1 = require("../categories/category.repository");
 const exam_repository_1 = require("../exams/exam.repository");
 const exams_service_1 = require("../exams/exams.service");
+const user_entity_1 = require("../users/user.entity");
 const users_service_1 = require("../users/users.service");
 const utils_1 = require("../utils/utils");
 const typeorm_2 = require("typeorm");
@@ -29,7 +30,7 @@ let DashboardService = class DashboardService {
         this.featuredCategoryId = this.getFeaturedCategoryId();
     }
     async getFeaturedCategoryId() {
-        const [err, category] = await utils_1.to(this.categoryRepository.findOne({ name: "Featured" }));
+        const [err, category] = await utils_1.to(this.categoryRepository.findOne({ name: 'Featured' }));
         if (err)
             throw new common_1.InternalServerErrorException();
         return category ? category.id : null;
@@ -45,25 +46,32 @@ let DashboardService = class DashboardService {
         return { userExamInfo, featuredExams, userExamStat };
     }
     async getAdminDashInfo(userRole) {
-        const [err, users] = await utils_1.to(this.usersService.findAllUsers(userRole));
-        const [err1, exams] = await utils_1.to(this.examService.findAllExams());
-        return { users, exams };
+        let users = [];
+        let exams = [];
+        let feedbacks = [];
+        let err = undefined;
+        [err, users] = await utils_1.to(this.usersService.findAllUsers(userRole));
+        [err, exams] = await utils_1.to(this.examService.findAllExams());
+        if (userRole >= user_entity_1.RolePermitted.mentor) {
+            [err, feedbacks] = await utils_1.to(this.examService.getPendingFeedback());
+        }
+        return { users, exams, feedbacks };
     }
     async getFeaturedExams() {
         const [err, exams] = await utils_1.to(this.examRepository.find({
             where: [
                 {
-                    categoryIds: typeorm_2.Like("%," + (await this.featuredCategoryId).toString() + ",%"),
+                    categoryIds: typeorm_2.Like('%,' + (await this.featuredCategoryId).toString() + ',%'),
                 },
                 {
-                    categoryIds: typeorm_2.Like((await this.featuredCategoryId).toString() + ",%"),
+                    categoryIds: typeorm_2.Like((await this.featuredCategoryId).toString() + ',%'),
                 },
                 {
-                    categoryIds: typeorm_2.Like("%," + (await this.featuredCategoryId).toString()),
+                    categoryIds: typeorm_2.Like('%,' + (await this.featuredCategoryId).toString()),
                 },
             ],
-            relations: ["categoryType"],
-            order: { id: "DESC" },
+            relations: ['categoryType'],
+            order: { id: 'DESC' },
             take: 5,
         }));
         if (err)

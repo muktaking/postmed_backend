@@ -25,7 +25,7 @@ const question_repository_1 = require("../questions/question.repository");
 const users_service_1 = require("../users/users.service");
 const utils_1 = require("../utils/utils");
 const typeorm_2 = require("typeorm");
-const moment = require("moment");
+const moment = require('moment');
 let PostexamsService = class PostexamsService {
     constructor(usersService, examProfileRepository, questionRepository, examService) {
         this.usersService = usersService;
@@ -41,7 +41,7 @@ let PostexamsService = class PostexamsService {
         let profile = await this.examService.findProfileByUserEmail(user.email);
         let examStat = {
             id: null,
-            title: "",
+            title: '',
             type: null,
             attemptNumbers: null,
             averageScore: 0,
@@ -62,8 +62,8 @@ let PostexamsService = class PostexamsService {
             examStat.examType = exam.type;
             examStat.attemptNumbers = 1;
             examStat.totalMark = this.totalMark;
-            examStat.firstAttemptTime = moment().format("YYYY-MM-DD HH:mm:ss");
-            examStat.lastAttemptTime = moment().format("YYYY-MM-DD HH:mm:ss");
+            examStat.firstAttemptTime = moment().format('YYYY-MM-DD HH:mm:ss');
+            examStat.lastAttemptTime = moment().format('YYYY-MM-DD HH:mm:ss');
             profile.user = user.email;
             profile.exams = [];
         }
@@ -76,15 +76,15 @@ let PostexamsService = class PostexamsService {
                     examType: exam.type,
                     attemptNumbers: 1,
                     totalMark: this.totalMark,
-                    firstAttemptTime: moment().format("YYYY-MM-DD HH:mm:ss"),
-                    lastAttemptTime: moment().format("YYYY-MM-DD HH:mm:ss"),
+                    firstAttemptTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    lastAttemptTime: moment().format('YYYY-MM-DD HH:mm:ss'),
                     averageScore: 0,
                 };
             }
             else {
                 examStat.totalMark = this.totalMark;
                 examStat.attemptNumbers++;
-                examStat.lastAttemptTime = moment().format("YYYY-MM-DD HH:mm:ss");
+                examStat.lastAttemptTime = moment().format('YYYY-MM-DD HH:mm:ss');
             }
         }
         answersByStudent = answersByStudent.filter((v) => v.stems.length > 0);
@@ -141,6 +141,7 @@ let PostexamsService = class PostexamsService {
             resultArray.push(particulars);
         });
         return {
+            examId,
             resultArray,
             totalMark: this.totalMark,
             totalScore: this.totalScore,
@@ -163,7 +164,7 @@ let PostexamsService = class PostexamsService {
         const questionIds = answersByStudent.map((v) => v.id);
         const [err, questions] = await utils_1.to(this.questionRepository.find({
             where: { id: typeorm_2.In(questionIds) },
-            order: { id: "ASC" },
+            order: { id: 'ASC' },
         }));
         if (err)
             throw new common_1.InternalServerErrorException();
@@ -186,6 +187,7 @@ let PostexamsService = class PostexamsService {
         });
         const totalScorePercentage = +(this.totalScore / this.totalMark).toFixed(2) * 100;
         return {
+            examId,
             resultArray,
             totalMark: this.totalMark,
             totalScore: this.totalScore,
@@ -221,7 +223,7 @@ let PostexamsService = class PostexamsService {
                 if (v === studentAns.stems[i])
                     return exam_entity_1.answerStatus.True;
                 else {
-                    if (typeof studentAns.stems[i] === "string")
+                    if (typeof studentAns.stems[i] === 'string')
                         return exam_entity_1.answerStatus.False;
                     return exam_entity_1.answerStatus.NotAnswered;
                 }

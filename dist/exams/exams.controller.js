@@ -18,6 +18,7 @@ const roles_decorator_1 = require("../roles.decorator");
 const roles_guard_1 = require("../roles.guard");
 const user_entity_1 = require("../users/user.entity");
 const exam_dto_1 = require("./dto/exam.dto");
+const flag_dto_1 = require("./dto/flag.dto");
 const exams_service_1 = require("./exams.service");
 let ExamsController = class ExamsController {
     constructor(examService) {
@@ -47,6 +48,15 @@ let ExamsController = class ExamsController {
     async findFreeQuestionsByExamId(id) {
         return await this.examService.findFreeQuestionsByExamId(id);
     }
+    async getFeedbackByExamId(examId) {
+        return await this.examService.getFeedbackByExamId(examId.id);
+    }
+    async createFeedback(createFeedbackDto) {
+        return await this.examService.createFeedback(createFeedbackDto);
+    }
+    async ChangePendingStatus(ids) {
+        return await this.examService.changePendingStatus(ids.ids);
+    }
     async updateExamById(examId, createExamDto) {
         return await this.examService.updateExamById(examId.id, createExamDto);
     }
@@ -59,7 +69,7 @@ let ExamsController = class ExamsController {
 };
 __decorate([
     common_1.Post(),
-    common_1.UseGuards(passport_1.AuthGuard("jwt"), roles_guard_1.RolesGuard),
+    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
     roles_decorator_1.Role(user_entity_1.RolePermitted.mentor),
     common_1.UsePipes(common_1.ValidationPipe),
     __param(0, common_1.Body()), __param(1, common_1.Req()),
@@ -74,60 +84,84 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findAllExams", null);
 __decorate([
-    common_1.Get("/latest"),
-    common_1.UseGuards(passport_1.AuthGuard("jwt"), roles_guard_1.RolesGuard),
+    common_1.Get('/latest'),
+    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
     roles_decorator_1.Role(user_entity_1.RolePermitted.student),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findLatestExam", null);
 __decorate([
-    common_1.Get("/featured"),
+    common_1.Get('/featured'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findFeaturedExam", null);
 __decorate([
-    common_1.Get(":id"),
-    common_1.UseGuards(passport_1.AuthGuard("jwt"), roles_guard_1.RolesGuard),
+    common_1.Get(':id'),
+    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
     roles_decorator_1.Role(user_entity_1.RolePermitted.student),
-    __param(0, common_1.Param("id")),
+    __param(0, common_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findExamById", null);
 __decorate([
-    common_1.Get("/category/:id"),
-    __param(0, common_1.Param("id")),
+    common_1.Get('/category/:id'),
+    __param(0, common_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findExamByCatId", null);
 __decorate([
-    common_1.Get("questions/:id"),
-    common_1.UseGuards(passport_1.AuthGuard("jwt")),
+    common_1.Get('questions/:id'),
+    common_1.UseGuards(passport_1.AuthGuard('jwt')),
     roles_decorator_1.Role(user_entity_1.RolePermitted.student),
-    __param(0, common_1.Param("id")),
+    __param(0, common_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findQuestionsByExamId", null);
 __decorate([
-    common_1.Get("free/questions/:id"),
-    __param(0, common_1.Param("id")),
+    common_1.Get('free/questions/:id'),
+    __param(0, common_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findFreeQuestionsByExamId", null);
 __decorate([
-    common_1.Patch(":id"),
+    common_1.Get('feedback/:id'),
+    __param(0, common_1.Param()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ExamsController.prototype, "getFeedbackByExamId", null);
+__decorate([
+    common_1.Post('feedback'),
+    common_1.UsePipes(common_1.ValidationPipe),
+    __param(0, common_1.Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [flag_dto_1.CreateFeedbackDto]),
+    __metadata("design:returntype", Promise)
+], ExamsController.prototype, "createFeedback", null);
+__decorate([
+    common_1.Patch('feedback'),
+    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.mentor),
+    __param(0, common_1.Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ExamsController.prototype, "ChangePendingStatus", null);
+__decorate([
+    common_1.Patch(':id'),
     __param(0, common_1.Param()), __param(1, common_1.Body()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, exam_dto_1.CreateExamDto]),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "updateExamById", null);
 __decorate([
-    common_1.Delete(":id"),
+    common_1.Delete(':id'),
     roles_decorator_1.Role(user_entity_1.RolePermitted.coordinator),
     __param(0, common_1.Param()),
     __metadata("design:type", Function),
@@ -143,7 +177,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "deleteQuestion", null);
 ExamsController = __decorate([
-    common_1.Controller("exams"),
+    common_1.Controller('exams'),
     __metadata("design:paramtypes", [exams_service_1.ExamsService])
 ], ExamsController);
 exports.ExamsController = ExamsController;

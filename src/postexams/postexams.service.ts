@@ -2,22 +2,22 @@ import {
   Injectable,
   InternalServerErrorException,
   Scope,
-} from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import * as _ from "lodash";
-import { answerStatus } from "src/exams/exam.entity";
-import { Exam } from "src/exams/exam.model";
-import { ExamsService } from "src/exams/exams.service";
-import { ExamProfileRepository } from "src/exams/profie.repository";
-import { ExamStat, Profile } from "src/exams/profile.entity";
-import { QType, Question } from "src/questions/question.model";
-import { QuestionRepository } from "src/questions/question.repository";
-import { UsersService } from "src/users/users.service";
-import { to } from "src/utils/utils";
-import { In } from "typeorm";
-import { GetAnswersDto } from "./dto/get-answers.dto";
-import { Particulars, Result, StudentAnswer } from "./postexam.model";
-const moment = require("moment");
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as _ from 'lodash';
+import { answerStatus } from 'src/exams/exam.entity';
+import { Exam } from 'src/exams/exam.model';
+import { ExamsService } from 'src/exams/exams.service';
+import { ExamProfileRepository } from 'src/exams/profie.repository';
+import { ExamStat, Profile } from 'src/exams/profile.entity';
+import { QType, Question } from 'src/questions/question.model';
+import { QuestionRepository } from 'src/questions/question.repository';
+import { UsersService } from 'src/users/users.service';
+import { to } from 'src/utils/utils';
+import { In } from 'typeorm';
+import { GetAnswersDto } from './dto/get-answers.dto';
+import { Particulars, Result, StudentAnswer } from './postexam.model';
+const moment = require('moment');
 
 @Injectable({ scope: Scope.REQUEST })
 export class PostexamsService {
@@ -60,7 +60,7 @@ export class PostexamsService {
     let examStat: ExamStat | any = {
       // creating a null exam stat
       id: null,
-      title: "",
+      title: '',
       type: null,
       attemptNumbers: null,
       averageScore: 0,
@@ -87,8 +87,8 @@ export class PostexamsService {
       examStat.examType = exam.type;
       examStat.attemptNumbers = 1;
       examStat.totalMark = this.totalMark;
-      examStat.firstAttemptTime = moment().format("YYYY-MM-DD HH:mm:ss");
-      examStat.lastAttemptTime = moment().format("YYYY-MM-DD HH:mm:ss");
+      examStat.firstAttemptTime = moment().format('YYYY-MM-DD HH:mm:ss');
+      examStat.lastAttemptTime = moment().format('YYYY-MM-DD HH:mm:ss');
       profile.user = user.email;
       profile.exams = [];
       // average score have to add later, so exams key of profile will be added later
@@ -101,14 +101,14 @@ export class PostexamsService {
           examType: exam.type,
           attemptNumbers: 1,
           totalMark: this.totalMark,
-          firstAttemptTime: moment().format("YYYY-MM-DD HH:mm:ss"),
-          lastAttemptTime: moment().format("YYYY-MM-DD HH:mm:ss"),
+          firstAttemptTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+          lastAttemptTime: moment().format('YYYY-MM-DD HH:mm:ss'),
           averageScore: 0,
         };
       } else {
         examStat.totalMark = this.totalMark;
         examStat.attemptNumbers++;
-        examStat.lastAttemptTime = moment().format("YYYY-MM-DD HH:mm:ss");
+        examStat.lastAttemptTime = moment().format('YYYY-MM-DD HH:mm:ss');
       }
     }
 
@@ -203,6 +203,7 @@ export class PostexamsService {
     });
 
     return {
+      examId,
       resultArray,
       totalMark: this.totalMark,
       totalScore: this.totalScore,
@@ -241,7 +242,7 @@ export class PostexamsService {
       //fetch the questions
       this.questionRepository.find({
         where: { id: In(questionIds) },
-        order: { id: "ASC" },
+        order: { id: 'ASC' },
       })
     );
     if (err) throw new InternalServerErrorException();
@@ -277,7 +278,9 @@ export class PostexamsService {
 
     const totalScorePercentage =
       +(this.totalScore / this.totalMark).toFixed(2) * 100;
+
     return {
+      examId,
       resultArray,
       totalMark: this.totalMark,
       totalScore: this.totalScore,
@@ -326,7 +329,7 @@ export class PostexamsService {
       if (studentAns)
         if (v === studentAns.stems[i]) return answerStatus.True;
         else {
-          if (typeof studentAns.stems[i] === "string")
+          if (typeof studentAns.stems[i] === 'string')
             return answerStatus.False;
           return answerStatus.NotAnswered;
         }

@@ -3,18 +3,18 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
-} from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import * as fs from "fs";
-import * as _ from "lodash";
-import { to } from "src/utils/utils";
-import * as XLSX from "xlsx";
-import { CreateQuestionDto } from "./create-question.dto";
-import { Question } from "./question.entity";
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as fs from 'fs';
+import * as _ from 'lodash';
+import { to } from 'src/utils/utils';
+import * as XLSX from 'xlsx';
+import { CreateQuestionDto } from './create-question.dto';
+import { Question } from './question.entity';
 //import { Stem } from "./question.model";
-import { QuestionRepository } from "./question.repository";
-import { Stem } from "./stem.entity";
-import moment = require("moment");
+import { QuestionRepository } from './question.repository';
+import { Stem } from './stem.entity';
+import moment = require('moment');
 
 @Injectable()
 export class QuestionsService {
@@ -76,7 +76,7 @@ export class QuestionsService {
     question.qType = qType;
     question.qText = qText;
     question.generalFeedback = generalFeedback ? generalFeedback : null;
-    question.tags = tags ? tags.join(",") : null;
+    question.tags = tags ? tags.join(',') : null;
     question.creatorId = +creator;
     question.stems = stems;
 
@@ -89,7 +89,7 @@ export class QuestionsService {
   }
 
   async createQuestionByUpload(creator, category, file) {
-    let excel = "";
+    let excel = '';
     let data = [];
     try {
       excel = file.path;
@@ -97,10 +97,11 @@ export class QuestionsService {
       data = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {
         header: 1,
         raw: false,
-        defval: "",
+        defval: '',
       });
       //console.log(data);
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException();
     }
 
@@ -115,8 +116,8 @@ export class QuestionsService {
 
     if (result.errorMessage.length > 0) {
       const msg = result.errorMessage
-        .map((msg, ind) => result.errorIndex[ind] + ". " + msg)
-        .join("; ");
+        .map((msg, ind) => result.errorIndex[ind] + '. ' + msg)
+        .join('; ');
       throw new HttpException(msg, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
@@ -124,7 +125,10 @@ export class QuestionsService {
       const [err, isSaved] = await to(
         this.questionRepository.save(result.allData)
       );
-      if (err) throw new InternalServerErrorException();
+      if (err) {
+        console.log(err);
+        throw new InternalServerErrorException();
+      }
       return isSaved;
     }
   }
@@ -159,7 +163,7 @@ export class QuestionsService {
       .catch((e) => {
         console.log(e);
         throw new HttpException(
-          "Could not able to fetch oldQuestion from database ",
+          'Could not able to fetch oldQuestion from database ',
           HttpStatus.INTERNAL_SERVER_ERROR
         );
       });
@@ -170,8 +174,8 @@ export class QuestionsService {
     newQuestion.qType = qType;
     newQuestion.qText = qText;
     newQuestion.generalFeedback = generalFeedback ? generalFeedback : null;
-    newQuestion.tags = tags ? tags.join(",") : null;
-    newQuestion.modifiedDate = moment().format("YYYY-MM-DD HH=mm=sss");
+    newQuestion.tags = tags ? tags.join(',') : null;
+    newQuestion.modifiedDate = moment().format('YYYY-MM-DD HH=mm=sss');
     newQuestion.modifiedById = +modifiedBy;
     newQuestion.stems = stems;
 
@@ -181,7 +185,7 @@ export class QuestionsService {
 
   async deleteQuestion(...args) {
     const res = await this.questionRepository.delete(args);
-    return { message: "Question deleted successfully" };
+    return { message: 'Question deleted successfully' };
   }
 
   // function to validate and convert uploaded excel data into a collection
@@ -197,42 +201,42 @@ export class QuestionsService {
 
       //validating inputs
       //title(0),qtype(1),text(2),stem(3-7),ans(8-12),feed(13-17),gf(18),tags(19)
-      if (element[0] === "") {
+      if (element[0] === '') {
         errorIndex.push(index + 1);
-        errorMessage.push("A question Title can not be Empty");
+        errorMessage.push('A question Title can not be Empty');
         return;
       }
-      if (element[1] === "") {
+      if (element[1] === '') {
         errorIndex.push(index + 1);
-        errorMessage.push("A question Type can not be Empty");
+        errorMessage.push('A question Type can not be Empty');
         return;
       }
-      if (element[2] === "") {
+      if (element[2] === '') {
         errorIndex.push(index + 1);
-        errorMessage.push("A question Text can not be Empty");
+        errorMessage.push('A question Text can not be Empty');
         return;
       }
-      if (element[3] === "") {
+      if (element[3] === '') {
         errorIndex.push(index + 1);
-        errorMessage.push("First stem can not be empty.");
+        errorMessage.push('First stem can not be empty.');
         return;
       }
       for (let i = 3; i < 8; i++) {
-        if (element[i] === "" && element[i + 10] !== "") {
+        if (element[i] === '' && element[i + 10] !== '') {
           errorIndex.push(index + 1);
-          errorMessage.push("Feedback Can not be on empty stems.");
+          errorMessage.push('Feedback Can not be on empty stems.');
           return;
         }
       }
-      if (element[1] === "matrix") {
+      if (element[1] === 'matrix') {
         for (let i = 3; i < 8; i++) {
           if (
-            (element[i] !== "" && element[i + 5] === "") ||
-            (element[i + 5] !== "" && element[i] === "")
+            (element[i] !== '' && element[i + 5] === '') ||
+            (element[i + 5] !== '' && element[i] === '')
           ) {
             errorIndex.push(index + 1);
             errorMessage.push(
-              "Stem should have corresponding answer and vice versa."
+              'Stem should have corresponding answer and vice versa.'
             );
             return;
           }
@@ -245,13 +249,13 @@ export class QuestionsService {
           aStem: string;
           fbStem: string;
         } = {
-          qStem: "",
-          aStem: "",
-          fbStem: "",
+          qStem: '',
+          aStem: '',
+          fbStem: '',
         };
-        stem.qStem = element[i] !== "" ? element[i] : null;
-        stem.aStem = element[i + 5] !== "" ? element[i + 5] : null;
-        stem.fbStem = element[i + 10] !== "" ? element[i + 10] : null;
+        stem.qStem = element[i] !== '' ? element[i] : null;
+        stem.aStem = element[i + 5] !== '' ? element[i + 5] : null;
+        stem.fbStem = element[i + 10] !== '' ? element[i + 10] : null;
         //console.log("----------------", stem);
         if (stem.qStem) stems.push(stem);
       }

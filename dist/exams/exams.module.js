@@ -15,6 +15,7 @@ const users_module_1 = require("../users/users.module");
 const exam_repository_1 = require("./exam.repository");
 const exams_controller_1 = require("./exams.controller");
 const exams_service_1 = require("./exams.service");
+const feedback_repository_1 = require("./feedback.repository");
 const profie_repository_1 = require("./profie.repository");
 let ExamsModule = class ExamsModule {
 };
@@ -26,6 +27,7 @@ ExamsModule = __decorate([
                 category_repository_1.CategoryRepository,
                 question_repository_1.QuestionRepository,
                 profie_repository_1.ExamProfileRepository,
+                feedback_repository_1.FeedbackRepository,
             ]),
             categories_module_1.CategoriesModule,
             users_module_1.UsersModule,

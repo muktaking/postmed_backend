@@ -1,9 +1,9 @@
-import { ExamsService } from "src/exams/exams.service";
-import { ExamProfileRepository } from "src/exams/profie.repository";
-import { QuestionRepository } from "src/questions/question.repository";
-import { UsersService } from "src/users/users.service";
-import { GetAnswersDto } from "./dto/get-answers.dto";
-import { Particulars, StudentAnswer } from "./postexam.model";
+import { ExamsService } from 'src/exams/exams.service';
+import { ExamProfileRepository } from 'src/exams/profie.repository';
+import { QuestionRepository } from 'src/questions/question.repository';
+import { UsersService } from 'src/users/users.service';
+import { GetAnswersDto } from './dto/get-answers.dto';
+import { Particulars, StudentAnswer } from './postexam.model';
 export declare class PostexamsService {
     private readonly usersService;
     private examProfileRepository;
@@ -19,6 +19,7 @@ export declare class PostexamsService {
     private totalScore;
     private totalPenaltyMark;
     postExamTasking(getAnswersDto: GetAnswersDto, answersByStudent: Array<StudentAnswer>, user: any): Promise<{
+        examId: string;
         resultArray: Particulars[];
         totalMark: number;
         totalScore: number;
@@ -27,6 +28,7 @@ export declare class PostexamsService {
         timeTakenToComplete: string;
     }>;
     postExamTaskingForFree(getAnswersDto: GetAnswersDto, answersByStudent: Array<StudentAnswer>): Promise<{
+        examId: string;
         resultArray: Particulars[];
         totalMark: number;
         totalScore: number;

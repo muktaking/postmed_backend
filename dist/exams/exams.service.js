@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const shuffle = require("knuth-shuffle").knuthShuffle;
+const shuffle = require('knuth-shuffle').knuthShuffle;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const _ = require("lodash");
@@ -23,26 +23,29 @@ const utils_1 = require("../utils/utils");
 const typeorm_2 = require("typeorm");
 const exam_entity_1 = require("./exam.entity");
 const exam_repository_1 = require("./exam.repository");
+const feedback_entity_1 = require("./feedback.entity");
+const feedback_repository_1 = require("./feedback.repository");
 const profie_repository_1 = require("./profie.repository");
 const moment = require("moment");
 let ExamsService = class ExamsService {
-    constructor(usersService, questionRepository, categoryRepository, examRepository, examProfileRepository) {
+    constructor(usersService, questionRepository, categoryRepository, examRepository, examProfileRepository, feedbackRepository) {
         this.usersService = usersService;
         this.questionRepository = questionRepository;
         this.categoryRepository = categoryRepository;
         this.examRepository = examRepository;
         this.examProfileRepository = examProfileRepository;
+        this.feedbackRepository = feedbackRepository;
         this.freeCategoryId = this.getFreeCategoryId();
         this.featuredCategoryId = this.getFeaturedCategoryId();
     }
     async getFreeCategoryId() {
-        const [err, category] = await utils_1.to(this.categoryRepository.findOne({ name: "Free" }));
+        const [err, category] = await utils_1.to(this.categoryRepository.findOne({ name: 'Free' }));
         if (err)
             throw new common_1.InternalServerErrorException();
         return category ? category.id : null;
     }
     async getFeaturedCategoryId() {
-        const [err, category] = await utils_1.to(this.categoryRepository.findOne({ name: "Featured" }));
+        const [err, category] = await utils_1.to(this.categoryRepository.findOne({ name: 'Featured' }));
         if (err)
             throw new common_1.InternalServerErrorException();
         return category ? category.id : null;
@@ -106,14 +109,14 @@ let ExamsService = class ExamsService {
     async findAllExams() {
         let [err, exams] = await utils_1.to(this.examRepository.find({
             select: [
-                "id",
-                "title",
-                "type",
-                "description",
-                "createdAt",
+                'id',
+                'title',
+                'type',
+                'description',
+                'createdAt',
             ],
-            relations: ["categoryType"],
-            order: { createdAt: "DESC" },
+            relations: ['categoryType'],
+            order: { createdAt: 'DESC' },
         }));
         if (err)
             throw new common_1.InternalServerErrorException();
@@ -130,8 +133,8 @@ let ExamsService = class ExamsService {
     }
     async findLatestExam() {
         const [err, [examLatest]] = await utils_1.to(this.examRepository.find({
-            select: ["id", "title", "type", "createdAt"],
-            order: { id: "DESC" },
+            select: ['id', 'title', 'type', 'createdAt'],
+            order: { id: 'DESC' },
             take: 1,
         }));
         if (err)
@@ -142,17 +145,17 @@ let ExamsService = class ExamsService {
         const [err, exams] = await utils_1.to(this.examRepository.find({
             where: [
                 {
-                    categoryIds: typeorm_2.Like("%," + (await this.featuredCategoryId).toString() + ",%"),
+                    categoryIds: typeorm_2.Like('%,' + (await this.featuredCategoryId).toString() + ',%'),
                 },
                 {
-                    categoryIds: typeorm_2.Like((await this.featuredCategoryId).toString() + ",%"),
+                    categoryIds: typeorm_2.Like((await this.featuredCategoryId).toString() + ',%'),
                 },
                 {
-                    categoryIds: typeorm_2.Like("%," + (await this.featuredCategoryId).toString()),
+                    categoryIds: typeorm_2.Like('%,' + (await this.featuredCategoryId).toString()),
                 },
             ],
-            relations: ["categoryType"],
-            order: { id: "DESC" },
+            relations: ['categoryType'],
+            order: { id: 'DESC' },
             take: 4,
         }));
         if (err)
@@ -165,10 +168,10 @@ let ExamsService = class ExamsService {
             if (err)
                 throw new common_1.InternalServerErrorException();
             if (!exam) {
-                throw new common_1.UnauthorizedException("Forbidden: Unauthorized Access");
+                throw new common_1.UnauthorizedException('Forbidden: Unauthorized Access');
             }
             else if (!exam.categoryIds.includes(constraintByCategoryType.toString())) {
-                throw new common_1.UnauthorizedException("Forbidden: Unauthorized Access");
+                throw new common_1.UnauthorizedException('Forbidden: Unauthorized Access');
             }
             return exam;
         }
@@ -179,20 +182,23 @@ let ExamsService = class ExamsService {
     }
     async findExamByCatId(id) {
         const [err, exams] = await utils_1.to(this.examRepository.find({
-            select: ["id", "title", "description", "createdAt"],
+            select: ['id', 'title', 'description', 'createdAt'],
             where: [
                 {
-                    categoryIds: typeorm_2.Like("%," + id + ",%"),
+                    categoryIds: typeorm_2.Like(id),
                 },
                 {
-                    categoryIds: typeorm_2.Like(id + ",%"),
+                    categoryIds: typeorm_2.Like('%,' + id + ',%'),
                 },
                 {
-                    categoryIds: typeorm_2.Like("%," + id),
+                    categoryIds: typeorm_2.Like(id + ',%'),
+                },
+                {
+                    categoryIds: typeorm_2.Like('%,' + id),
                 },
             ],
-            relations: ["categoryType"],
-            order: { id: "DESC" },
+            relations: ['categoryType'],
+            order: { id: 'DESC' },
         }));
         if (err)
             throw new common_1.InternalServerErrorException();
@@ -325,7 +331,7 @@ let ExamsService = class ExamsService {
         const { title, type, categoryType, description, questions, singleQuestionMark, questionStemLength, penaltyMark, timeLimit, } = createExamDto;
         const exam = await this.examRepository.findOne(+id).catch((e) => {
             console.log(e);
-            throw new common_1.HttpException("Could not able to fetch oldQuestion from database ", common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new common_1.HttpException('Could not able to fetch oldQuestion from database ', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         });
         exam.title = title;
         exam.type = type;
@@ -337,7 +343,7 @@ let ExamsService = class ExamsService {
         (exam.penaltyMark = penaltyMark), (exam.timeLimit = timeLimit);
         exam.categoryIds = categoryType;
         exam.categoryType = [];
-        exam.createdAt = moment().format("YYYY-MM-DD HH=mm=sss");
+        exam.createdAt = moment().format('YYYY-MM-DD HH=mm=sss');
         categoryType.forEach((e) => {
             exam.categoryType.push({ id: +e });
         });
@@ -351,6 +357,64 @@ let ExamsService = class ExamsService {
     async deleteExam(...args) {
         return await this.examRepository.delete(args);
     }
+    async createFeedback(createFeedbackDto) {
+        const { examId, name, email, feedbackStatus, message } = createFeedbackDto;
+        const feedback = new feedback_entity_1.Feedback();
+        feedback.examId = +examId;
+        feedback.name = name;
+        feedback.email = email;
+        feedback.feedbackStatus = +feedbackStatus;
+        feedback.message = message;
+        const [err, oldFeedback] = await utils_1.to(this.feedbackRepository.findOne({ email, examId }));
+        if (err) {
+            console.log(err);
+            throw new common_1.InternalServerErrorException();
+        }
+        if (oldFeedback)
+            return { message: 'You already submitted a feedback.' };
+        const [error, result] = await utils_1.to(feedback.save());
+        if (error) {
+            console.log(error);
+            throw new common_1.InternalServerErrorException();
+        }
+        return { message: 'Your feedback is submitted successfuly.' };
+    }
+    async getFeedbackByExamId(examId) {
+        const [err, feedbacks] = await utils_1.to(this.feedbackRepository.find({
+            select: ['name', 'feedbackStatus', 'message'],
+            where: { examId, status: feedback_entity_1.Status.Published },
+        }));
+        if (err) {
+            console.log(err);
+            throw new common_1.InternalServerErrorException();
+        }
+        return feedbacks;
+    }
+    async getPendingFeedback() {
+        const [err, feedbacks] = await utils_1.to(this.feedbackRepository.find({
+            select: ['id', 'name', 'feedbackStatus', 'message', 'examId'],
+            where: { status: feedback_entity_1.Status.Pending },
+        }));
+        if (err) {
+            console.log(err);
+            throw new common_1.InternalServerErrorException();
+        }
+        return feedbacks;
+    }
+    async changePendingStatus(ids) {
+        const [err, feedbacks] = await utils_1.to(this.feedbackRepository.find(ids));
+        if (err) {
+            console.log(err);
+            throw new common_1.InternalServerErrorException();
+        }
+        feedbacks.forEach((feedback) => {
+            if (ids.includes(feedback.id)) {
+                feedback.status = feedback_entity_1.Status.Published;
+            }
+        });
+        await this.feedbackRepository.save(feedbacks);
+        return { message: 'Change Status to published successfully.' };
+    }
 };
 ExamsService = __decorate([
     common_1.Injectable(),
@@ -358,11 +422,13 @@ ExamsService = __decorate([
     __param(2, typeorm_1.InjectRepository(category_repository_1.CategoryRepository)),
     __param(3, typeorm_1.InjectRepository(exam_repository_1.ExamRepository)),
     __param(4, typeorm_1.InjectRepository(profie_repository_1.ExamProfileRepository)),
+    __param(5, typeorm_1.InjectRepository(feedback_repository_1.FeedbackRepository)),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         question_repository_1.QuestionRepository,
         category_repository_1.CategoryRepository,
         exam_repository_1.ExamRepository,
-        profie_repository_1.ExamProfileRepository])
+        profie_repository_1.ExamProfileRepository,
+        feedback_repository_1.FeedbackRepository])
 ], ExamsService);
 exports.ExamsService = ExamsService;
 //# sourceMappingURL=exams.service.js.map

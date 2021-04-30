@@ -1,7 +1,7 @@
-import { CategoryRepository } from "src/categories/category.repository";
-import { ExamRepository } from "src/exams/exam.repository";
-import { ExamsService } from "src/exams/exams.service";
-import { UsersService } from "src/users/users.service";
+import { CategoryRepository } from 'src/categories/category.repository';
+import { ExamRepository } from 'src/exams/exam.repository';
+import { ExamsService } from 'src/exams/exams.service';
+import { UsersService } from 'src/users/users.service';
 export declare class DashboardService {
     private usersService;
     private categoryRepository;
@@ -16,8 +16,9 @@ export declare class DashboardService {
         userExamStat: any;
     }>;
     getAdminDashInfo(userRole: any): Promise<{
-        users: any;
-        exams: any;
+        users: any[];
+        exams: any[];
+        feedbacks: any[];
     }>;
     getFeaturedExams(): Promise<any>;
 }
