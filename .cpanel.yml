@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/rajdocto/fcps/dist/
+    - export DEPLOYPATH=/home/rajdocto/postmed_backend/dist/
     - /bin/cp -R dist/* $DEPLOYPATH

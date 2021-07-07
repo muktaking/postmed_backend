@@ -60,16 +60,23 @@ export class ExamsController {
     return await this.examService.findAllExams();
   }
 
+  @Get('/raw')
+  // @UseGuards(AuthGuard("jwt"), RolesGuard)
+  // @Role(RolePermitted.student)
+  async findAllRawExams() {
+    return await this.examService.findAllRawExams();
+  }
+
   // @Get("free")
   // async findAllFreeExams() {
   //   return await this.examService.findAllFreeExams();
   // }
 
-  @Get('/latest')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Role(RolePermitted.student)
+  @Get('/current')
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Role(RolePermitted.student)
   async findLatestExam() {
-    return await this.examService.findLatestExam();
+    return await this.examService.findCurrentExam();
   }
 
   @Get('/featured')
@@ -92,8 +99,8 @@ export class ExamsController {
   @Get('questions/:id')
   @UseGuards(AuthGuard('jwt'))
   @Role(RolePermitted.student)
-  async findQuestionsByExamId(@Param('id') id) {
-    return await this.examService.findQuestionsByExamId(id);
+  async findQuestionsByExamId(@Param('id') id, @Req() req) {
+    return await this.examService.findQuestionsByExamId(id, req.user.email);
   }
 
   @Get('free/questions/:id')

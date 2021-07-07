@@ -43,28 +43,28 @@ __decorate([
     __metadata("design:type", Number)
 ], Exam.prototype, "id", void 0);
 __decorate([
-    typeorm_1.Column({ type: "varchar", length: 200, nullable: false }),
+    typeorm_1.Column({ type: 'varchar', length: 200, nullable: false }),
     __metadata("design:type", String)
 ], Exam.prototype, "title", void 0);
 __decorate([
-    typeorm_1.Column({ type: "enum", enum: ExamType }),
+    typeorm_1.Column({ type: 'enum', enum: ExamType }),
     __metadata("design:type", Number)
 ], Exam.prototype, "type", void 0);
 __decorate([
-    typeorm_1.Column({ type: "simple-array" }),
+    typeorm_1.Column({ type: 'simple-array' }),
     __metadata("design:type", Array)
 ], Exam.prototype, "categoryIds", void 0);
 __decorate([
-    typeorm_1.ManyToMany(() => category_entity_1.Category, { onUpdate: "CASCADE", onDelete: "CASCADE" }),
+    typeorm_1.ManyToMany(() => category_entity_1.Category, { onUpdate: 'CASCADE', onDelete: 'CASCADE' }),
     typeorm_1.JoinTable(),
     __metadata("design:type", Object)
 ], Exam.prototype, "categoryType", void 0);
 __decorate([
-    typeorm_1.Column({ type: "varchar", length: 255, nullable: false }),
+    typeorm_1.Column({ type: 'varchar', length: 255, nullable: false }),
     __metadata("design:type", String)
 ], Exam.prototype, "description", void 0);
 __decorate([
-    typeorm_1.Column({ type: "simple-array" }),
+    typeorm_1.Column({ type: 'simple-array' }),
     __metadata("design:type", Array)
 ], Exam.prototype, "questions", void 0);
 __decorate([
@@ -76,11 +76,11 @@ __decorate([
     __metadata("design:type", Number)
 ], Exam.prototype, "questionStemLength", void 0);
 __decorate([
-    typeorm_1.Column({ type: "float" }),
+    typeorm_1.Column({ type: 'float' }),
     __metadata("design:type", Number)
 ], Exam.prototype, "singleStemMark", void 0);
 __decorate([
-    typeorm_1.Column({ type: "float", default: 0 }),
+    typeorm_1.Column({ type: 'float', default: 0 }),
     __metadata("design:type", Number)
 ], Exam.prototype, "penaltyMark", void 0);
 __decorate([
@@ -88,9 +88,17 @@ __decorate([
     __metadata("design:type", Number)
 ], Exam.prototype, "timeLimit", void 0);
 __decorate([
-    typeorm_1.Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" }),
+    typeorm_1.Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Object)
 ], Exam.prototype, "createdAt", void 0);
+__decorate([
+    typeorm_1.Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
+    __metadata("design:type", typeorm_1.Timestamp)
+], Exam.prototype, "startDate", void 0);
+__decorate([
+    typeorm_1.Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
+    __metadata("design:type", typeorm_1.Timestamp)
+], Exam.prototype, "endDate", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", Number)

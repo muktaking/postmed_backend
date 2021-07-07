@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const bcrypt = require("bcryptjs");
+const csv = require("csv-parser");
+const fs = require("fs");
 const utils_1 = require("../utils/utils");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./user.entity");
@@ -30,7 +32,7 @@ let UsersService = class UsersService {
         user.lastName = lastName;
         user.userName = userName;
         user.email = email;
-        user.avatar = "boy";
+        user.avatar = 'boy';
         user.gender = gender;
         try {
             const salt = await bcrypt.genSalt(10);
@@ -47,17 +49,77 @@ let UsersService = class UsersService {
                 throw new common_1.InternalServerErrorException();
         }
     }
+    async createUsersByUpload(res, file) {
+        const results = [];
+        fs.createReadStream(file.path)
+            .pipe(csv())
+            .on('data', (data) => results.push(data))
+            .on('end', () => {
+            fs.unlink(file.path, (err) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+            Promise.all(results.map(async (user) => {
+                await this.createUser(user);
+            }))
+                .then((response) => {
+                res.json({ message: 'Successfully Uploaded Users' });
+            })
+                .catch((error) => {
+                res.status(common_1.HttpStatus.CONFLICT).json({ message: error.message });
+            });
+        });
+    }
+    async editUser(editUser) {
+        let { id, firstName, lastName, userName, password, email, gender, role, } = editUser;
+        const [err, user] = await utils_1.to(this.userRepository.findOne(+id));
+        if (err) {
+            throw new common_1.InternalServerErrorException();
+        }
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.userName = userName;
+        user.email = email;
+        user.avatar = 'boy';
+        user.gender = gender;
+        user.role = +role;
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(password, salt);
+        }
+        try {
+            await user.save();
+            return { message: 'User edited successfully' };
+        }
+        catch (error) {
+            console.log(error);
+            if (error.code == 11000) {
+                throw new common_1.ConflictException(`Email: ['${email}'] is already exist.`);
+            }
+            else
+                throw new common_1.InternalServerErrorException();
+        }
+    }
+    async deleteUser(id) {
+        const [err, result] = await utils_1.to(this.userRepository.delete(+id));
+        if (err) {
+            throw new common_1.InternalServerErrorException();
+        }
+        return { message: `User deleted successfully` };
+    }
     async findAllUsers(userRole) {
         return await this.userRepository.find({
             select: [
-                "id",
-                "firstName",
-                "userName",
-                "lastName",
-                "role",
-                "email",
-                "avatar",
-                "createdAt",
+                'id',
+                'firstName',
+                'userName',
+                'lastName',
+                'role',
+                'email',
+                'avatar',
+                'createdAt',
+                'gender',
             ],
             where: {
                 role: typeorm_2.LessThan(userRole),
@@ -66,29 +128,29 @@ let UsersService = class UsersService {
     }
     async findOneUser(email, nameOnly = false, isForAuth = false) {
         if (nameOnly) {
-            const [err, user] = await utils_1.to(this.userRepository.findOne({ email }, { select: ["id", "firstName", "lastName"] }));
+            const [err, user] = await utils_1.to(this.userRepository.findOne({ email }, { select: ['id', 'firstName', 'lastName'] }));
             if (err)
                 throw new common_1.InternalServerErrorException();
             if (user == null)
                 return;
-            return { name: user.firstName + " " + user.lastName, id: user.id };
+            return { name: user.firstName + ' ' + user.lastName, id: user.id };
         }
         if (isForAuth) {
-            const [err, user] = await utils_1.to(this.userRepository.findOne({ email: email }, { select: ["id", "email", "password", "role"] }));
+            const [err, user] = await utils_1.to(this.userRepository.findOne({ email: email }, { select: ['id', 'email', 'password', 'role'] }));
             if (err)
                 throw new common_1.InternalServerErrorException();
             return user;
         }
         const [err, user] = await utils_1.to(this.userRepository.findOne({ email: email }, {
             select: [
-                "id",
-                "firstName",
-                "userName",
-                "lastName",
-                "role",
-                "email",
-                "avatar",
-                "createdAt",
+                'id',
+                'firstName',
+                'userName',
+                'lastName',
+                'role',
+                'email',
+                'avatar',
+                'createdAt',
             ],
         }));
         if (err)
@@ -97,8 +159,8 @@ let UsersService = class UsersService {
     }
     async findAllStudentNumber() {
         const [err, result] = await utils_1.to(this.userRepository
-            .createQueryBuilder("user")
-            .where("user.role = :role", { role: user_entity_1.RolePermitted.student.toString() })
+            .createQueryBuilder('user')
+            .where('user.role = :role', { role: user_entity_1.RolePermitted.student.toString() })
             .getCount());
         if (err)
             return 100;
@@ -108,7 +170,7 @@ let UsersService = class UsersService {
         const [err, result] = await utils_1.to(this.userRepository.update(id, { avatar: name }));
         if (err) {
             console.log(err);
-            throw new common_1.HttpException("Avatart can not be updated", common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new common_1.HttpException('Avatart can not be updated', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return result;
     }

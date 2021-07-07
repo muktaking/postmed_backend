@@ -1,4 +1,4 @@
-import { BaseEntity, Timestamp } from "typeorm";
+import { BaseEntity, Timestamp } from 'typeorm';
 export declare enum ExamType {
     Assignment = 0,
     Weekly = 1,
@@ -28,5 +28,7 @@ export declare class Exam extends BaseEntity {
     penaltyMark: number;
     timeLimit: number;
     createdAt: Timestamp | string;
+    startDate: Timestamp;
+    endDate: Timestamp;
     creatorId: number;
 }

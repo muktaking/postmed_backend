@@ -20,5 +20,4 @@ export declare class DashboardService {
         exams: any[];
         feedbacks: any[];
     }>;
-    getFeaturedExams(): Promise<any>;
 }

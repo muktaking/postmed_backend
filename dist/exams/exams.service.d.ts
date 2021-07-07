@@ -16,6 +16,7 @@ export declare class ExamsService {
     private feedbackRepository;
     constructor(usersService: UsersService, questionRepository: QuestionRepository, categoryRepository: CategoryRepository, examRepository: ExamRepository, examProfileRepository: ExamProfileRepository, feedbackRepository: FeedbackRepository);
     private freeCategoryId;
+    private oneTimeAttemptTypeBar;
     getFreeCategoryId(): Promise<any>;
     private featuredCategoryId;
     getFeaturedCategoryId(): Promise<any>;
@@ -32,11 +33,15 @@ export declare class ExamsService {
     findTotalExamTaken(email: string): Promise<any>;
     findExamTotalNumber(): Promise<any>;
     findAllExams(): Promise<any>;
+    findAllOldExams(): Promise<any>;
+    findAllRawExams(): Promise<any>;
     findLatestExam(): Promise<any>;
+    findCurrentExam(): Promise<any>;
     getFeaturedExams(): Promise<any>;
-    findExamById(id: string, constraintByCategoryType?: any): Promise<any>;
+    findExamById(id: string, constraintByCategoryType?: any, email?: any): Promise<any>;
     findExamByCatId(id: string): Promise<any>;
-    findQuestionsByExamId(id: string): Promise<{
+    findOldExamByCatId(id: string): Promise<any>;
+    findQuestionsByExamId(id: string, email: any): Promise<{
         exam: {
             id: any;
             singleQuestionMark: any;
@@ -60,7 +65,7 @@ export declare class ExamsService {
     findProfileByUserEmail(email: string): Promise<Profile>;
     getUserAvgResult(email: string): Promise<string[]>;
     getUserRank(email: string): Promise<number>;
-    createExam(createExamDto: CreateExamDto, creator: string): Promise<any>;
+    createExam(createExamDto: any, creator: string): Promise<any>;
     updateExamById(id: string, createExamDto: CreateExamDto): Promise<any>;
     deleteExam(...args: any[]): Promise<import("typeorm").DeleteResult>;
     createFeedback(createFeedbackDto: any): Promise<{

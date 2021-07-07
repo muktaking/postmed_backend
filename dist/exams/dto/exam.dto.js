@@ -47,6 +47,16 @@ __decorate([
     __metadata("design:type", Array)
 ], CreateExamDto.prototype, "questions", void 0);
 __decorate([
+    class_validator_1.IsNotEmpty(),
+    class_validator_1.IsDateString(),
+    __metadata("design:type", String)
+], CreateExamDto.prototype, "startDate", void 0);
+__decorate([
+    class_validator_1.IsNotEmpty(),
+    class_validator_1.IsDateString(),
+    __metadata("design:type", String)
+], CreateExamDto.prototype, "endDate", void 0);
+__decorate([
     class_validator_1.IsOptional(),
     class_validator_1.IsNotEmpty(),
     __metadata("design:type", Number)

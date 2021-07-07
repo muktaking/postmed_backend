@@ -6,7 +6,6 @@ import { ExamsService } from 'src/exams/exams.service';
 import { RolePermitted } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { to } from 'src/utils/utils';
-import { Like } from 'typeorm';
 
 @Injectable()
 export class DashboardService {
@@ -41,7 +40,7 @@ export class DashboardService {
     );
     if (err1) throw new InternalServerErrorException();
 
-    const featuredExams = await this.getFeaturedExams();
+    const featuredExams = await this.examService.getFeaturedExams();
 
     return { userExamInfo, featuredExams, userExamStat };
   }
@@ -53,7 +52,7 @@ export class DashboardService {
     let err = undefined;
     [err, users] = await to(this.usersService.findAllUsers(userRole));
 
-    [err, exams] = await to(this.examService.findAllExams());
+    [err, exams] = await to(this.examService.findAllRawExams());
 
     if (userRole >= RolePermitted.mentor) {
       [err, feedbacks] = await to(this.examService.getPendingFeedback());
@@ -62,33 +61,33 @@ export class DashboardService {
     return { users, exams, feedbacks };
   }
 
-  async getFeaturedExams() {
-    const [err, exams] = await to(
-      this.examRepository.find({
-        where: [
-          {
-            categoryIds: Like(
-              '%,' + (await this.featuredCategoryId).toString() + ',%'
-            ),
-          },
-          {
-            categoryIds: Like(
-              (await this.featuredCategoryId).toString() + ',%'
-            ),
-          },
-          {
-            categoryIds: Like(
-              '%,' + (await this.featuredCategoryId).toString()
-            ),
-          },
-        ],
-        relations: ['categoryType'],
-        order: { id: 'DESC' },
-        take: 5,
-      })
-    );
-    if (err) throw new InternalServerErrorException();
+  // async getFeaturedExams() {
+  //   const [err, exams] = await to(
+  //     this.examRepository.find({
+  //       where: [
+  //         {
+  //           categoryIds: Like(
+  //             '%,' + (await this.featuredCategoryId).toString() + ',%'
+  //           ),
+  //         },
+  //         {
+  //           categoryIds: Like(
+  //             (await this.featuredCategoryId).toString() + ',%'
+  //           ),
+  //         },
+  //         {
+  //           categoryIds: Like(
+  //             '%,' + (await this.featuredCategoryId).toString()
+  //           ),
+  //         },
+  //       ],
+  //       relations: ['categoryType'],
+  //       order: { id: 'DESC' },
+  //       take: 5,
+  //     })
+  //   );
+  //   if (err) throw new InternalServerErrorException();
 
-    return exams;
-  }
+  //   return exams;
+  //}
 }

@@ -10,6 +10,7 @@ import { PostexamsModule } from "./postexams/postexams.module";
 import { QuestionsModule } from "./questions/questions.module";
 import { typeOrmConfig } from "./typeormconfig/typeorm.config";
 import { UsersModule } from "./users/users.module";
+import { RoutineModule } from './routine/routine.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { UsersModule } from "./users/users.module";
     ExamsModule,
     PostexamsModule,
     DashboardModule,
+    RoutineModule,
   ],
   //controllers: [DashboardController]
 })

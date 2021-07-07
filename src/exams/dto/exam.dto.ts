@@ -1,12 +1,13 @@
 import {
   IsArray,
+  IsDateString,
   IsEnum,
   IsNotEmpty,
   IsNumberString,
   IsOptional,
   IsString,
-} from "class-validator";
-import { ExamType } from "../exam.model";
+} from 'class-validator';
+import { ExamType } from '../exam.model';
 
 export class CreateExamDto {
   @IsNotEmpty()
@@ -38,6 +39,14 @@ export class CreateExamDto {
   @IsArray()
   //@IsMongoId({ each: true })
   questions: Array<number>;
+
+  @IsNotEmpty()
+  @IsDateString()
+  startDate: string;
+
+  @IsNotEmpty()
+  @IsDateString()
+  endDate: string;
 
   @IsOptional()
   @IsNotEmpty()

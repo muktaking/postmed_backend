@@ -30,8 +30,11 @@ let ExamsController = class ExamsController {
     async findAllExams() {
         return await this.examService.findAllExams();
     }
+    async findAllRawExams() {
+        return await this.examService.findAllRawExams();
+    }
     async findLatestExam() {
-        return await this.examService.findLatestExam();
+        return await this.examService.findCurrentExam();
     }
     async findFeaturedExam() {
         return await this.examService.getFeaturedExams();
@@ -42,8 +45,8 @@ let ExamsController = class ExamsController {
     async findExamByCatId(id) {
         return await this.examService.findExamByCatId(id);
     }
-    async findQuestionsByExamId(id) {
-        return await this.examService.findQuestionsByExamId(id);
+    async findQuestionsByExamId(id, req) {
+        return await this.examService.findQuestionsByExamId(id, req.user.email);
     }
     async findFreeQuestionsByExamId(id) {
         return await this.examService.findFreeQuestionsByExamId(id);
@@ -84,9 +87,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findAllExams", null);
 __decorate([
-    common_1.Get('/latest'),
-    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
-    roles_decorator_1.Role(user_entity_1.RolePermitted.student),
+    common_1.Get('/raw'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ExamsController.prototype, "findAllRawExams", null);
+__decorate([
+    common_1.Get('/current'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
@@ -117,9 +124,9 @@ __decorate([
     common_1.Get('questions/:id'),
     common_1.UseGuards(passport_1.AuthGuard('jwt')),
     roles_decorator_1.Role(user_entity_1.RolePermitted.student),
-    __param(0, common_1.Param('id')),
+    __param(0, common_1.Param('id')), __param(1, common_1.Req()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findQuestionsByExamId", null);
 __decorate([

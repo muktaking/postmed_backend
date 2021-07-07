@@ -39,6 +39,7 @@
     "class-validator": "^0.11.1",
     "config": "^3.2.5",
     "core-util-is": "^1.0.2",
+    "csv-parser": "^3.0.0",
     "knuth-shuffle": "^1.0.8",
     "lodash": "^4.17.15",
     "moment": "^2.29.1",

@@ -37,6 +37,7 @@ let ExamsService = class ExamsService {
         this.feedbackRepository = feedbackRepository;
         this.freeCategoryId = this.getFreeCategoryId();
         this.featuredCategoryId = this.getFeaturedCategoryId();
+        this.oneTimeAttemptTypeBar = exam_entity_1.ExamType.Term;
     }
     async getFreeCategoryId() {
         const [err, category] = await utils_1.to(this.categoryRepository.findOne({ name: 'Free' }));
@@ -62,7 +63,7 @@ let ExamsService = class ExamsService {
             rank: [rank, totalStudent],
             upcomingExam: [
                 upcomingExam.title,
-                upcomingExam.createdAt,
+                upcomingExam.startDate,
                 upcomingExam.id,
             ],
             result: [...result],
@@ -113,6 +114,63 @@ let ExamsService = class ExamsService {
                 'title',
                 'type',
                 'description',
+                'startDate',
+                'endDate',
+            ],
+            relations: ['categoryType'],
+            order: { endDate: 'DESC' },
+        }));
+        if (err)
+            throw new common_1.InternalServerErrorException();
+        exams = {
+            assignment: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Assignment),
+            weekly: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Weekly),
+            monthly: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Monthly),
+            assesment: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Assesment),
+            term: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Term),
+            test: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Test),
+            final: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Final),
+        };
+        return exams;
+    }
+    async findAllOldExams() {
+        let [err, exams] = await utils_1.to(this.examRepository.find({
+            select: [
+                'id',
+                'title',
+                'type',
+                'description',
+                'startDate',
+                'endDate',
+            ],
+            where: {
+                endDate: typeorm_2.LessThan(new Date()),
+            },
+            relations: ['categoryType'],
+            order: { endDate: 'DESC' },
+        }));
+        if (err)
+            throw new common_1.InternalServerErrorException();
+        exams = {
+            assignment: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Assignment),
+            weekly: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Weekly),
+            monthly: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Monthly),
+            assesment: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Assesment),
+            term: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Term),
+            test: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Test),
+            final: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Final),
+        };
+        return exams;
+    }
+    async findAllRawExams() {
+        let [err, exams] = await utils_1.to(this.examRepository.find({
+            select: [
+                'id',
+                'title',
+                'type',
+                'description',
+                'startDate',
+                'endDate',
                 'createdAt',
             ],
             relations: ['categoryType'],
@@ -133,8 +191,24 @@ let ExamsService = class ExamsService {
     }
     async findLatestExam() {
         const [err, [examLatest]] = await utils_1.to(this.examRepository.find({
-            select: ['id', 'title', 'type', 'createdAt'],
-            order: { id: 'DESC' },
+            select: ['id', 'title', 'description', 'type', 'startDate', 'endDate'],
+            relations: ['categoryType'],
+            order: { startDate: 'DESC' },
+            take: 1,
+        }));
+        if (err)
+            throw new common_1.InternalServerErrorException();
+        return examLatest;
+    }
+    async findCurrentExam() {
+        const [err, [examLatest]] = await utils_1.to(this.examRepository.find({
+            select: ['id', 'title', 'description', 'type', 'startDate', 'endDate'],
+            where: {
+                startDate: typeorm_2.LessThanOrEqual(new Date()),
+                endDate: typeorm_2.MoreThanOrEqual(new Date()),
+            },
+            relations: ['categoryType'],
+            order: { startDate: 'DESC' },
             take: 1,
         }));
         if (err)
@@ -146,23 +220,26 @@ let ExamsService = class ExamsService {
             where: [
                 {
                     categoryIds: typeorm_2.Like('%,' + (await this.featuredCategoryId).toString() + ',%'),
+                    startDate: typeorm_2.LessThanOrEqual(new Date()),
                 },
                 {
                     categoryIds: typeorm_2.Like((await this.featuredCategoryId).toString() + ',%'),
+                    startDate: typeorm_2.LessThanOrEqual(new Date()),
                 },
                 {
                     categoryIds: typeorm_2.Like('%,' + (await this.featuredCategoryId).toString()),
+                    startDate: typeorm_2.LessThanOrEqual(new Date()),
                 },
             ],
             relations: ['categoryType'],
-            order: { id: 'DESC' },
+            order: { endDate: 'DESC' },
             take: 4,
         }));
         if (err)
             throw new common_1.InternalServerErrorException();
         return exams;
     }
-    async findExamById(id, constraintByCategoryType = null) {
+    async findExamById(id, constraintByCategoryType = null, email = null) {
         if (constraintByCategoryType) {
             const [err, exam] = await utils_1.to(this.examRepository.findOne(+id));
             if (err)
@@ -171,41 +248,88 @@ let ExamsService = class ExamsService {
                 throw new common_1.UnauthorizedException('Forbidden: Unauthorized Access');
             }
             else if (!exam.categoryIds.includes(constraintByCategoryType.toString())) {
-                throw new common_1.UnauthorizedException('Forbidden: Unauthorized Access');
+                throw new common_1.UnauthorizedException(`Forbidden: Unauthorized Access`);
             }
             return exam;
         }
         const [err, exam] = await utils_1.to(this.examRepository.findOne(id));
         if (err)
             throw new common_1.InternalServerErrorException();
+        if (email) {
+            if (exam.type >= this.oneTimeAttemptTypeBar) {
+                const [err1, profile] = await utils_1.to(this.examProfileRepository.findOne({
+                    user: email,
+                }));
+                if (err1)
+                    throw new common_1.InternalServerErrorException();
+                const [examProfile] = profile.exams.filter((exam) => exam.examId === +id);
+                if (examProfile) {
+                    if (examProfile.attemptNumbers >= 1) {
+                        throw new common_1.UnauthorizedException(`Forbidden: Unauthorized Access: This Exam Can not be Attempt More Than One Time`);
+                    }
+                }
+            }
+        }
         return exam;
     }
     async findExamByCatId(id) {
         const [err, exams] = await utils_1.to(this.examRepository.find({
-            select: ['id', 'title', 'description', 'createdAt'],
+            select: ['id', 'title', 'description', 'startDate', 'endDate'],
             where: [
                 {
                     categoryIds: typeorm_2.Like(id),
+                    startDate: typeorm_2.LessThanOrEqual(new Date()),
                 },
                 {
                     categoryIds: typeorm_2.Like('%,' + id + ',%'),
+                    startDate: typeorm_2.LessThanOrEqual(new Date()),
                 },
                 {
                     categoryIds: typeorm_2.Like(id + ',%'),
+                    startDate: typeorm_2.LessThanOrEqual(new Date()),
                 },
                 {
                     categoryIds: typeorm_2.Like('%,' + id),
+                    startDate: typeorm_2.LessThanOrEqual(new Date()),
                 },
             ],
             relations: ['categoryType'],
-            order: { id: 'DESC' },
+            order: { endDate: 'DESC' },
         }));
         if (err)
             throw new common_1.InternalServerErrorException();
         return exams;
     }
-    async findQuestionsByExamId(id) {
-        const exam = await this.findExamById(id);
+    async findOldExamByCatId(id) {
+        const [err, exams] = await utils_1.to(this.examRepository.find({
+            select: ['id', 'title', 'description', 'startDate', 'endDate'],
+            where: [
+                {
+                    categoryIds: typeorm_2.Like(id),
+                    endDate: typeorm_2.LessThan(new Date()),
+                },
+                {
+                    categoryIds: typeorm_2.Like('%,' + id + ',%'),
+                    endDate: typeorm_2.LessThan(new Date()),
+                },
+                {
+                    categoryIds: typeorm_2.Like(id + ',%'),
+                    endDate: typeorm_2.LessThan(new Date()),
+                },
+                {
+                    categoryIds: typeorm_2.Like('%,' + id),
+                    endDate: typeorm_2.LessThan(new Date()),
+                },
+            ],
+            relations: ['categoryType'],
+            order: { endDate: 'DESC' },
+        }));
+        if (err)
+            throw new common_1.InternalServerErrorException();
+        return exams;
+    }
+    async findQuestionsByExamId(id, email) {
+        const exam = await this.findExamById(id, null, email);
         if (exam) {
             let [err, questions] = await utils_1.to(this.questionRepository.find({
                 where: { id: typeorm_2.In(exam.questions.map((e) => +e)) },
@@ -231,7 +355,7 @@ let ExamsService = class ExamsService {
         }
     }
     async findFreeQuestionsByExamId(id) {
-        const exam = await this.findExamById(id, [await this.freeCategoryId]);
+        const exam = await this.findExamById(id, await this.freeCategoryId);
         if (exam) {
             let [err, questions] = await utils_1.to(this.questionRepository
                 .find({
@@ -304,13 +428,15 @@ let ExamsService = class ExamsService {
         return rank;
     }
     async createExam(createExamDto, creator) {
-        const { title, type, categoryType, description, questions, singleQuestionMark, questionStemLength, penaltyMark, timeLimit, } = createExamDto;
+        const { title, type, categoryType, description, questions, startDate, endDate, singleQuestionMark, questionStemLength, penaltyMark, timeLimit, } = createExamDto;
         const exam = new exam_entity_1.Exam();
         exam.title = title;
         exam.type = type;
         exam.categoryIds = categoryType;
         exam.description = description;
         exam.questions = questions;
+        exam.startDate = startDate;
+        exam.endDate = endDate;
         exam.singleQuestionMark = singleQuestionMark;
         exam.questionStemLength = questionStemLength;
         exam.penaltyMark = penaltyMark;

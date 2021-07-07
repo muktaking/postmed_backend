@@ -1,4 +1,4 @@
-import { Category } from "src/categories/category.entity";
+import { Category } from 'src/categories/category.entity';
 import {
   BaseEntity,
   BeforeInsert,
@@ -8,7 +8,7 @@ import {
   ManyToMany,
   PrimaryGeneratedColumn,
   Timestamp,
-} from "typeorm";
+} from 'typeorm';
 
 export enum ExamType {
   Assignment = 0,
@@ -38,23 +38,23 @@ export class Exam extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "varchar", length: 200, nullable: false })
+  @Column({ type: 'varchar', length: 200, nullable: false })
   title: string;
 
-  @Column({ type: "enum", enum: ExamType })
+  @Column({ type: 'enum', enum: ExamType })
   type: ExamType;
 
-  @Column({ type: "simple-array" })
+  @Column({ type: 'simple-array' })
   categoryIds: string[];
 
-  @ManyToMany(() => Category, { onUpdate: "CASCADE", onDelete: "CASCADE" })
+  @ManyToMany(() => Category, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   @JoinTable()
   categoryType: any;
 
-  @Column({ type: "varchar", length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255, nullable: false })
   description: string;
 
-  @Column({ type: "simple-array" })
+  @Column({ type: 'simple-array' })
   questions: number[];
 
   @Column({ default: 1 })
@@ -63,17 +63,23 @@ export class Exam extends BaseEntity {
   @Column({ default: 5 })
   questionStemLength: number;
 
-  @Column({ type: "float" })
+  @Column({ type: 'float' })
   singleStemMark: number;
 
-  @Column({ type: "float", default: 0 })
+  @Column({ type: 'float', default: 0 })
   penaltyMark: number;
 
   @Column({ default: 40 })
   timeLimit: number;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Timestamp | string;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  startDate: Timestamp;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  endDate: Timestamp;
 
   @Column()
   creatorId: number;

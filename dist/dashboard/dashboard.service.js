@@ -20,7 +20,6 @@ const exams_service_1 = require("../exams/exams.service");
 const user_entity_1 = require("../users/user.entity");
 const users_service_1 = require("../users/users.service");
 const utils_1 = require("../utils/utils");
-const typeorm_2 = require("typeorm");
 let DashboardService = class DashboardService {
     constructor(usersService, categoryRepository, examRepository, examService) {
         this.usersService = usersService;
@@ -42,7 +41,7 @@ let DashboardService = class DashboardService {
         const [err1, userExamStat] = await utils_1.to(this.examService.findUserExamStat(email));
         if (err1)
             throw new common_1.InternalServerErrorException();
-        const featuredExams = await this.getFeaturedExams();
+        const featuredExams = await this.examService.getFeaturedExams();
         return { userExamInfo, featuredExams, userExamStat };
     }
     async getAdminDashInfo(userRole) {
@@ -51,32 +50,11 @@ let DashboardService = class DashboardService {
         let feedbacks = [];
         let err = undefined;
         [err, users] = await utils_1.to(this.usersService.findAllUsers(userRole));
-        [err, exams] = await utils_1.to(this.examService.findAllExams());
+        [err, exams] = await utils_1.to(this.examService.findAllRawExams());
         if (userRole >= user_entity_1.RolePermitted.mentor) {
             [err, feedbacks] = await utils_1.to(this.examService.getPendingFeedback());
         }
         return { users, exams, feedbacks };
-    }
-    async getFeaturedExams() {
-        const [err, exams] = await utils_1.to(this.examRepository.find({
-            where: [
-                {
-                    categoryIds: typeorm_2.Like('%,' + (await this.featuredCategoryId).toString() + ',%'),
-                },
-                {
-                    categoryIds: typeorm_2.Like((await this.featuredCategoryId).toString() + ',%'),
-                },
-                {
-                    categoryIds: typeorm_2.Like('%,' + (await this.featuredCategoryId).toString()),
-                },
-            ],
-            relations: ['categoryType'],
-            order: { id: 'DESC' },
-            take: 5,
-        }));
-        if (err)
-            throw new common_1.InternalServerErrorException();
-        return exams;
     }
 };
 DashboardService = __decorate([

@@ -18,6 +18,7 @@ const postexams_module_1 = require("./postexams/postexams.module");
 const questions_module_1 = require("./questions/questions.module");
 const typeorm_config_1 = require("./typeormconfig/typeorm.config");
 const users_module_1 = require("./users/users.module");
+const routine_module_1 = require("./routine/routine.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -35,6 +36,7 @@ AppModule = __decorate([
             exams_module_1.ExamsModule,
             postexams_module_1.PostexamsModule,
             dashboard_module_1.DashboardModule,
+            routine_module_1.RoutineModule,
         ],
     })
 ], AppModule);
