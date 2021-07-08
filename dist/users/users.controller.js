@@ -33,8 +33,8 @@ let UsersController = class UsersController {
     async createUsersByUpload(res, file) {
         return await this.userService.createUsersByUpload(res, file);
     }
-    async editUser(editUser) {
-        return await this.userService.editUser(editUser);
+    async editUser(editUser, req) {
+        return await this.userService.editUser(editUser, req.user);
     }
     async deleteUser(id) {
         return await this.userService.deleteUser(id);
@@ -75,10 +75,10 @@ __decorate([
 __decorate([
     common_1.Put('/:id'),
     common_1.UseGuards(passport_1.AuthGuard('jwt')),
-    roles_decorator_1.Role(user_entity_1.RolePermitted.admin),
-    __param(0, common_1.Body()),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.student),
+    __param(0, common_1.Body()), __param(1, common_1.Req()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "editUser", null);
 __decorate([

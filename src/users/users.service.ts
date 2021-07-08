@@ -81,7 +81,7 @@ export class UsersService {
       });
   }
 
-  async editUser(editUser) {
+  async editUser(editUser, userStat) {
     let {
       id,
       firstName,
@@ -91,24 +91,47 @@ export class UsersService {
       email,
       gender,
       role,
+      mobile,
+      institution,
+      faculty,
+      address,
     } = editUser;
 
     const [err, user] = await to(this.userRepository.findOne(+id));
+
     if (err) {
+      console.log(err);
       throw new InternalServerErrorException();
     }
-    user.firstName = firstName;
-    user.lastName = lastName;
-    user.userName = userName;
-    user.email = email;
-    user.avatar = 'boy';
-    user.gender = gender;
-    user.role = +role;
 
-    //hashing password
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
+    if (userStat.role >= RolePermitted.admin) {
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.userName = userName;
+      user.email = email;
+      user.gender = gender;
+      user.mobile = mobile;
+      user.institution = institution;
+      user.faculty = +faculty;
+      user.avatar = 'boy';
+      user.role = +role;
+      //hashing password
+      if (password) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
+      }
+    }
+
+    if (+id === userStat.id && user.role < RolePermitted.admin) {
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.userName = userName;
+      user.email = email;
+      user.gender = gender;
+      user.mobile = mobile;
+      user.institution = institution;
+      user.faculty = faculty;
+      user.address = address;
     }
 
     try {
@@ -142,6 +165,9 @@ export class UsersService {
         'avatar',
         'createdAt',
         'gender',
+        'mobile',
+        'faculty',
+        'institution',
       ],
       where: {
         role: LessThan(userRole),
@@ -188,6 +214,11 @@ export class UsersService {
             'email',
             'avatar',
             'createdAt',
+            'mobile',
+            'faculty',
+            'institution',
+            'address',
+            'gender',
           ],
         }
       )

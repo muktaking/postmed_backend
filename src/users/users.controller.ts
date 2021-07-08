@@ -54,9 +54,9 @@ export class UsersController {
 
   @Put('/:id')
   @UseGuards(AuthGuard('jwt'))
-  @Role(RolePermitted.admin)
-  async editUser(@Body() editUser): Promise<any> {
-    return await this.userService.editUser(editUser);
+  @Role(RolePermitted.student)
+  async editUser(@Body() editUser, @Req() req): Promise<any> {
+    return await this.userService.editUser(editUser, req.user);
   }
 
   @Delete('/:id')

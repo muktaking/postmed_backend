@@ -1,4 +1,5 @@
-import { Gender, RolePermitted } from "../user.model";
+import { Faculty } from '../user.entity';
+import { Gender, RolePermitted } from '../user.model';
 export declare class createUserDto {
     firstName: string;
     lastName: string;
@@ -7,4 +8,8 @@ export declare class createUserDto {
     email: string;
     gender: Gender;
     role: RolePermitted;
+    mobile: string;
+    institution: string;
+    faculty: Faculty;
+    address: string;
 }

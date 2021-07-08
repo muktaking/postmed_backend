@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const class_validator_1 = require("class-validator");
+const user_entity_1 = require("../user.entity");
 const user_model_1 = require("../user.model");
 class createUserDto {
 }
@@ -35,7 +36,7 @@ __decorate([
     class_validator_1.IsString(),
     class_validator_1.IsNotEmpty(),
     class_validator_1.Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/, {
-        message: "Your Password is too weak",
+        message: 'Your Password is too weak',
     }),
     __metadata("design:type", String)
 ], createUserDto.prototype, "password", void 0);
@@ -45,12 +46,28 @@ __decorate([
 ], createUserDto.prototype, "email", void 0);
 __decorate([
     class_validator_1.IsNotEmpty(),
-    class_validator_1.IsEnum(["male", "female"]),
+    class_validator_1.IsEnum(['male', 'female']),
     __metadata("design:type", String)
 ], createUserDto.prototype, "gender", void 0);
 __decorate([
     class_validator_1.IsOptional(),
     __metadata("design:type", Number)
 ], createUserDto.prototype, "role", void 0);
+__decorate([
+    class_validator_1.IsOptional(),
+    __metadata("design:type", String)
+], createUserDto.prototype, "mobile", void 0);
+__decorate([
+    class_validator_1.IsOptional(),
+    __metadata("design:type", String)
+], createUserDto.prototype, "institution", void 0);
+__decorate([
+    class_validator_1.IsOptional(),
+    __metadata("design:type", Number)
+], createUserDto.prototype, "faculty", void 0);
+__decorate([
+    class_validator_1.IsOptional(),
+    __metadata("design:type", String)
+], createUserDto.prototype, "address", void 0);
 exports.createUserDto = createUserDto;
 //# sourceMappingURL=create-user.dto.js.map

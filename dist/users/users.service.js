@@ -71,22 +71,39 @@ let UsersService = class UsersService {
             });
         });
     }
-    async editUser(editUser) {
-        let { id, firstName, lastName, userName, password, email, gender, role, } = editUser;
+    async editUser(editUser, userStat) {
+        let { id, firstName, lastName, userName, password, email, gender, role, mobile, institution, faculty, address, } = editUser;
         const [err, user] = await utils_1.to(this.userRepository.findOne(+id));
         if (err) {
+            console.log(err);
             throw new common_1.InternalServerErrorException();
         }
-        user.firstName = firstName;
-        user.lastName = lastName;
-        user.userName = userName;
-        user.email = email;
-        user.avatar = 'boy';
-        user.gender = gender;
-        user.role = +role;
-        if (password) {
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(password, salt);
+        if (userStat.role >= user_entity_1.RolePermitted.admin) {
+            user.firstName = firstName;
+            user.lastName = lastName;
+            user.userName = userName;
+            user.email = email;
+            user.gender = gender;
+            user.mobile = mobile;
+            user.institution = institution;
+            user.faculty = +faculty;
+            user.avatar = 'boy';
+            user.role = +role;
+            if (password) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(password, salt);
+            }
+        }
+        if (+id === userStat.id && user.role < user_entity_1.RolePermitted.admin) {
+            user.firstName = firstName;
+            user.lastName = lastName;
+            user.userName = userName;
+            user.email = email;
+            user.gender = gender;
+            user.mobile = mobile;
+            user.institution = institution;
+            user.faculty = faculty;
+            user.address = address;
         }
         try {
             await user.save();
@@ -120,6 +137,9 @@ let UsersService = class UsersService {
                 'avatar',
                 'createdAt',
                 'gender',
+                'mobile',
+                'faculty',
+                'institution',
             ],
             where: {
                 role: typeorm_2.LessThan(userRole),
@@ -151,6 +171,11 @@ let UsersService = class UsersService {
                 'email',
                 'avatar',
                 'createdAt',
+                'mobile',
+                'faculty',
+                'institution',
+                'address',
+                'gender',
             ],
         }));
         if (err)

@@ -7,7 +7,7 @@ export declare class UsersService {
     constructor(userRepository: UserRepository);
     createUser(createUserDto: createUserDto): Promise<User>;
     createUsersByUpload(res: any, file: any): Promise<void>;
-    editUser(editUser: any): Promise<{
+    editUser(editUser: any, userStat: any): Promise<{
         message: string;
     }>;
     deleteUser(id: any): Promise<{

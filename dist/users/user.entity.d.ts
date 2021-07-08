@@ -1,4 +1,4 @@
-import { BaseEntity, Timestamp } from "typeorm";
+import { BaseEntity, Timestamp } from 'typeorm';
 export declare enum RolePermitted {
     guest = 0,
     student = 1,
@@ -6,6 +6,13 @@ export declare enum RolePermitted {
     moderator = 3,
     coordinator = 4,
     admin = 5
+}
+export declare enum Faculty {
+    basic = 0,
+    medicine = 1,
+    surgery = 2,
+    gynecology = 3,
+    paediatrics = 4
 }
 export declare enum Gender {
     male = "male",
@@ -21,6 +28,10 @@ export declare class User extends BaseEntity {
     email: string;
     gender: Gender;
     role: RolePermitted;
+    mobile: string;
+    institution: string;
+    faculty: Faculty;
+    address: string;
     createdAt: Timestamp;
     resetToken: string;
     resetTokenExpiration: Timestamp;

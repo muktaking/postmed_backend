@@ -6,8 +6,9 @@ import {
   IsString,
   Matches,
   MaxLength,
-} from "class-validator";
-import { Gender, RolePermitted } from "../user.model";
+} from 'class-validator';
+import { Faculty } from '../user.entity';
+import { Gender, RolePermitted } from '../user.model';
 
 export class createUserDto {
   @IsString()
@@ -28,7 +29,7 @@ export class createUserDto {
   @IsString()
   @IsNotEmpty()
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/, {
-    message: "Your Password is too weak",
+    message: 'Your Password is too weak',
   })
   password: string;
 
@@ -36,9 +37,21 @@ export class createUserDto {
   email: string;
 
   @IsNotEmpty()
-  @IsEnum(["male", "female"])
+  @IsEnum(['male', 'female'])
   gender: Gender;
 
   @IsOptional()
   role: RolePermitted;
+
+  @IsOptional()
+  mobile: string;
+
+  @IsOptional()
+  institution: string;
+
+  @IsOptional()
+  faculty: Faculty;
+
+  @IsOptional()
+  address: string;
 }

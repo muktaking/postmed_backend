@@ -2614,8 +2614,8 @@
         "signature": "a2b176f66f0b708241265fb3b417597c9c9d21912bbb7f5cc00d99af551c2078"
       },
       "../src/users/user.entity.ts": {
-        "version": "b6a3e00d3c62bc7b41133458c122ac0b644c233ed92027ced6e6865ff9906ad3",
-        "signature": "fdd3a0599d14643bd9c7b4cc9909908c34b8324f5eb06aa34df7ead6f120453f"
+        "version": "7f3307d2bdf65a26b038edd33513e7c7832bce1d269d8f68678d87162eeb30ab",
+        "signature": "68eee1d32f048b8ecde4c294f305dcd8dabc027a0b2ef67cf0e17b43ff435fe9"
       },
       "../src/users/user.repository.ts": {
         "version": "9fccd709df8243d4d560b134100fad40451a4ced97588c7b8bfd572aacfb5fa7",
@@ -2726,16 +2726,16 @@
         "signature": "70aecfd981af29d74ba7ab6667b9cc2a53459d8eb099c139fd2aa54c3059c71d"
       },
       "../src/users/dto/create-user.dto.ts": {
-        "version": "5da462f2fedef26e668a0dd88fcb16e36b255db3cf528190ca3e8d31e56391e0",
-        "signature": "7de15f829c833248f32d5d131d9c6d092a69884960700694a2e87d01fbeb8c32"
+        "version": "5d25bb35a983e0488085d8837a422e5d1fe2ddcdf79ec6f8d76cab2bc01e5e6e",
+        "signature": "fa079c5325c920036a513b077b2378e6bd8f74a14de7769060827968d3303588"
       },
       "../src/users/users.service.ts": {
-        "version": "3cfd6f4adc44605871ddbd3c6abb107d293b4e43131c94c2a3eef32a3606391e",
-        "signature": "a2ddc9ffc9b3a5a937bb4e52584a0e853d10f3f1fb910413cd36041852a9e10c"
+        "version": "57b5cbfa10d400bb94629b5041725a9dcafa96058ff8d67d59f09888b11e7f03",
+        "signature": "ec1cda1b9fc08ff3df209eb510f9a7e30c3687c318f0bf3e358e64d55a27da0a"
       },
       "../src/users/users.controller.ts": {
-        "version": "2fd74260b32c7110acf97fb84da37914f7b9f23617bfd4b5b7b7b109cbb5dd21",
-        "signature": "f46b5b616cdfaa2c8bc8d75e6ba932e80990abbda60d6f251b26ec527f9f8bf5"
+        "version": "e08364fa6583be95a7746616d4a68c7eb90a4c2d5ab142f0e9442328f419dffd",
+        "signature": "18994f9f0007f735647612abd72d6308f75d3941cd07cb5befd10bb7205bb45d"
       },
       "../src/users/users.module.ts": {
         "version": "989da71e322a37414dee21cc36a0c6858b04d643a0f861578ce7a383ecbc3fba",
@@ -8920,6 +8920,7 @@
       ],
       "../src/users/dto/create-user.dto.ts": [
         "../node_modules/class-validator/index.d.ts",
+        "../src/users/user.entity.ts",
         "../src/users/user.model.ts",
         "../node_modules/@types/node/fs.d.ts",
         "../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -12622,6 +12623,7 @@
         "../src/users/user.model.ts"
       ],
       "../src/users/dto/create-user.dto.ts": [
+        "../src/users/user.entity.ts",
         "../src/users/user.model.ts"
       ],
       "../node_modules/@types/mongodb/index.d.ts": [

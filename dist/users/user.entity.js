@@ -19,6 +19,14 @@ var RolePermitted;
     RolePermitted[RolePermitted["coordinator"] = 4] = "coordinator";
     RolePermitted[RolePermitted["admin"] = 5] = "admin";
 })(RolePermitted = exports.RolePermitted || (exports.RolePermitted = {}));
+var Faculty;
+(function (Faculty) {
+    Faculty[Faculty["basic"] = 0] = "basic";
+    Faculty[Faculty["medicine"] = 1] = "medicine";
+    Faculty[Faculty["surgery"] = 2] = "surgery";
+    Faculty[Faculty["gynecology"] = 3] = "gynecology";
+    Faculty[Faculty["paediatrics"] = 4] = "paediatrics";
+})(Faculty = exports.Faculty || (exports.Faculty = {}));
 var Gender;
 (function (Gender) {
     Gender["male"] = "male";
@@ -31,39 +39,55 @@ __decorate([
     __metadata("design:type", Number)
 ], User.prototype, "id", void 0);
 __decorate([
-    typeorm_1.Column({ type: "varchar", length: 15, nullable: false }),
+    typeorm_1.Column({ type: 'varchar', length: 15, nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "firstName", void 0);
 __decorate([
-    typeorm_1.Column({ type: "varchar", length: 15, nullable: false }),
+    typeorm_1.Column({ type: 'varchar', length: 15, nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "lastName", void 0);
 __decorate([
-    typeorm_1.Column({ type: "varchar", length: 15, nullable: false }),
+    typeorm_1.Column({ type: 'varchar', length: 15, nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "userName", void 0);
 __decorate([
-    typeorm_1.Column({ type: "varchar", length: 100, nullable: false }),
+    typeorm_1.Column({ type: 'varchar', length: 100, nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "avatar", void 0);
 __decorate([
-    typeorm_1.Column({ type: "varchar", nullable: false }),
+    typeorm_1.Column({ type: 'varchar', nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
-    typeorm_1.Column({ type: "varchar", unique: true, nullable: false }),
+    typeorm_1.Column({ type: 'varchar', unique: true, nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    typeorm_1.Column({ type: "enum", enum: Gender }),
+    typeorm_1.Column({ type: 'enum', enum: Gender }),
     __metadata("design:type", String)
 ], User.prototype, "gender", void 0);
 __decorate([
-    typeorm_1.Column({ type: "enum", enum: RolePermitted, default: RolePermitted.student }),
+    typeorm_1.Column({ type: 'enum', enum: RolePermitted, default: RolePermitted.student }),
     __metadata("design:type", Number)
 ], User.prototype, "role", void 0);
 __decorate([
-    typeorm_1.Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" }),
+    typeorm_1.Column({ type: 'varchar', nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "mobile", void 0);
+__decorate([
+    typeorm_1.Column({ type: 'varchar', nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "institution", void 0);
+__decorate([
+    typeorm_1.Column({ type: 'enum', enum: Faculty, nullable: true }),
+    __metadata("design:type", Number)
+], User.prototype, "faculty", void 0);
+__decorate([
+    typeorm_1.Column({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "address", void 0);
+__decorate([
+    typeorm_1.Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", typeorm_1.Timestamp)
 ], User.prototype, "createdAt", void 0);
 __decorate([
@@ -71,7 +95,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "resetToken", void 0);
 __decorate([
-    typeorm_1.Column({ type: "timestamp", nullable: true }),
+    typeorm_1.Column({ type: 'timestamp', nullable: true }),
     __metadata("design:type", typeorm_1.Timestamp)
 ], User.prototype, "resetTokenExpiration", void 0);
 User = __decorate([
