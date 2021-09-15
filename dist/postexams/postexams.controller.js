@@ -33,33 +33,33 @@ let PostexamsController = class PostexamsController {
 };
 __decorate([
     common_1.Post(),
-    common_1.UseGuards(passport_1.AuthGuard("jwt")),
+    common_1.UseGuards(passport_1.AuthGuard('jwt')),
     common_1.UsePipes(common_1.ValidationPipe),
     __param(0, common_1.Body()),
-    __param(1, common_1.Body("answers", answer_validation_pipe_1.AnswerValidationPipe)),
+    __param(1, common_1.Body('answers', answer_validation_pipe_1.AnswerValidationPipe)),
     __param(2, common_1.Req()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [get_answers_dto_1.GetAnswersDto, Array, Object]),
     __metadata("design:returntype", Promise)
 ], PostexamsController.prototype, "postExamTasking", null);
 __decorate([
-    common_1.Post("free"),
+    common_1.Post('free'),
     common_1.UsePipes(common_1.ValidationPipe),
     __param(0, common_1.Body()),
-    __param(1, common_1.Body("answers", answer_validation_pipe_1.AnswerValidationPipe)),
+    __param(1, common_1.Body('answers', answer_validation_pipe_1.AnswerValidationPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [get_answers_dto_1.GetAnswersDto, Array]),
     __metadata("design:returntype", Promise)
 ], PostexamsController.prototype, "postExamTaskingForFree", null);
 __decorate([
-    common_1.Get("rank/:id"),
-    __param(0, common_1.Param("id")),
+    common_1.Get('rank/:id'),
+    __param(0, common_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], PostexamsController.prototype, "examRankByIdForGuest", null);
 PostexamsController = __decorate([
-    common_1.Controller("postexams"),
+    common_1.Controller('postexams'),
     __metadata("design:paramtypes", [postexams_service_1.PostexamsService])
 ], PostexamsController);
 exports.PostexamsController = PostexamsController;

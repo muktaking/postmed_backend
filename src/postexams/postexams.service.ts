@@ -115,7 +115,7 @@ export class PostexamsService {
     //answer manipulation is started here
     // console.log(answersByStudent);
     answersByStudent = answersByStudent.filter((v) => v.stems.length > 0); //the empty stems answer object are rejected
-    answersByStudent = _.sortBy(answersByStudent, (o) => o.id); // sort answer by ids,
+    answersByStudent = _.sortBy(answersByStudent, (o) => +o.id); // sort answer by ids,
     // answersByStudent is sorted by id. Because we will match these answers with database saved answer that is also
     //sorted by id
     const questionIds = answersByStudent.map((v) => v.id); // get the questions ids that is also answer id
@@ -141,6 +141,16 @@ export class PostexamsService {
     //const answersByServer = this.answersExtractor(questions);
 
     let resultArray: Array<Particulars> = []; //result array will hold the total result
+
+    // console.log(
+    //   'answerByStudents',
+    //   answersByStudent.map((q) => q.id)
+    // );
+
+    // console.log(
+    //   'answerByServers',
+    //   answeredQuestions.map((q) => q.id)
+    // );
 
     //main algorithm starts
 
@@ -325,6 +335,7 @@ export class PostexamsService {
     serverAns: Array<string>,
     studentAns: StudentAnswer
   ): Result {
+    console.log(serverAns, studentAns);
     const stemValidatedArray = serverAns.map((v, i) => {
       if (studentAns)
         if (v === studentAns.stems[i]) return answerStatus.True;
@@ -357,7 +368,7 @@ export class PostexamsService {
     serverAns: Array<string>,
     studentAns: StudentAnswer
   ): Result {
-    console.log(studentAns);
+    //console.log(studentAns);
     const mark =
       studentAns.stems[0] === serverAns[0]
         ? this.singleQuestionMark

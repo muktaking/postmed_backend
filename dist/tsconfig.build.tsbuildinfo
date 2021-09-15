@@ -3098,12 +3098,12 @@
         "signature": "a908103c2809287586624b71d6114b10dd31d4cfe68b246ad3e69980bc319ead"
       },
       "../src/postexams/postexams.service.ts": {
-        "version": "44a1262b5390ea04315fabd02849ed74fd83dfe9d939159b7caa7b886fb376ad",
+        "version": "b7a8c8f1f1c83fb4e6eac31cb0044d3079d6ab2e56c2610dcf844505d56b3a35",
         "signature": "0a3d8f1b9aa6143943f7b59b456a11d5dc546ddfcce8b047e45ba9148d8ff821"
       },
       "../src/postexams/postexams.controller.ts": {
-        "version": "1d98e976297595931ec912bc7393ae5d507b2f11a46684064dcca957e985ad16",
-        "signature": "299df709949604310e0432c0460d94c51661222b9ab23d26c69d3586d6a12652"
+        "version": "74b62469316100ce1c519c3401daa21173b260f690dcaa9e3a530ed3171f2550",
+        "signature": "556d00cdaa069c8dc2b6479862e7e343b97d0cf91e090f6ad3156528ae5954c6"
       },
       "../src/postexams/postexams.module.ts": {
         "version": "ecb7c0ae3e05379e343332fe87f09fccdb07cb6dcbffe02810e78c12c8f40ccf",

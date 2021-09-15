@@ -88,7 +88,7 @@ let PostexamsService = class PostexamsService {
             }
         }
         answersByStudent = answersByStudent.filter((v) => v.stems.length > 0);
-        answersByStudent = _.sortBy(answersByStudent, (o) => o.id);
+        answersByStudent = _.sortBy(answersByStudent, (o) => +o.id);
         const questionIds = answersByStudent.map((v) => v.id);
         const [err, questions] = await utils_1.to(this.questionRepository.find({
             where: { id: typeorm_2.In(questionIdsByOrder) },
@@ -218,6 +218,7 @@ let PostexamsService = class PostexamsService {
         return { exam, rank: profileCurtailedByExamId.reverse() };
     }
     matrixManipulator(serverAns, studentAns) {
+        console.log(serverAns, studentAns);
         const stemValidatedArray = serverAns.map((v, i) => {
             if (studentAns)
                 if (v === studentAns.stems[i])
@@ -239,7 +240,6 @@ let PostexamsService = class PostexamsService {
         return { stemResult: [question_model_1.QType.Matrix, ...stemValidatedArray], mark };
     }
     sbaManipulator(serverAns, studentAns) {
-        console.log(studentAns);
         const mark = studentAns.stems[0] === serverAns[0]
             ? this.singleQuestionMark
             : this.penaltyMark === 0

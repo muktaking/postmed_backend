@@ -1,6 +1,6 @@
-import { GetAnswersDto } from "./dto/get-answers.dto";
-import { StudentAnswer } from "./postexam.model";
-import { PostexamsService } from "./postexams.service";
+import { GetAnswersDto } from './dto/get-answers.dto';
+import { StudentAnswer } from './postexam.model';
+import { PostexamsService } from './postexams.service';
 export declare class PostexamsController {
     private readonly postexamsService;
     constructor(postexamsService: PostexamsService);
