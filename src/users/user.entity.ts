@@ -23,6 +23,17 @@ export enum Faculty {
   paediatrics = 4,
 }
 
+export enum LoginProvider {
+  local = 0,
+  facebook = 1,
+}
+
+export enum IdentityStatus {
+  unchecked = 0,
+  checked = 1,
+  unrequired = 2,
+}
+
 export enum Gender {
   male = 'male',
   female = 'female',
@@ -33,6 +44,9 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'bigint', nullable: true })
+  fbId: string;
+
   @Column({ type: 'varchar', length: 15, nullable: false })
   firstName: string;
 
@@ -42,7 +56,7 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 15, nullable: false })
   userName: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: false })
+  @Column({ type: 'varchar', length: 255, nullable: false })
   avatar: string;
 
   @Column({ type: 'varchar', nullable: false })
@@ -56,6 +70,16 @@ export class User extends BaseEntity {
 
   @Column({ type: 'enum', enum: RolePermitted, default: RolePermitted.student })
   role: RolePermitted;
+
+  @Column({ type: 'enum', enum: LoginProvider, default: LoginProvider.local })
+  loginProvider: LoginProvider;
+
+  @Column({
+    type: 'enum',
+    enum: IdentityStatus,
+    default: IdentityStatus.unrequired,
+  })
+  identityStatus: IdentityStatus;
 
   @Column({ type: 'varchar', nullable: true })
   mobile: string;

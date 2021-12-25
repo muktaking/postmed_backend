@@ -12,43 +12,43 @@ import {
   UseInterceptors,
   UsePipes,
   ValidationPipe,
-} from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { diskStorage } from "multer";
-import { Role } from "src/roles.decorator";
-import { RolesGuard } from "src/roles.guard";
-import { RolePermitted } from "src/users/user.model";
-import { editFileName, excelFileFilter } from "../utils/file-uploading.utils";
-import { CreateQuestionDto } from "./create-question.dto";
-import { StemValidationPipe } from "./pipe/stem-validation.pipe";
-import { QuestionsService } from "./questions.service";
-import { Stem } from "./stem.entity";
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { Role } from 'src/roles.decorator';
+import { RolesGuard } from 'src/roles.guard';
+import { RolePermitted } from 'src/users/user.model';
+import { editFileName, excelFileFilter } from '../utils/file-uploading.utils';
+import { CreateQuestionDto } from './create-question.dto';
+import { StemValidationPipe } from './pipe/stem-validation.pipe';
+import { QuestionsService } from './questions.service';
+import { Stem } from './stem.entity';
 
-@UseGuards(AuthGuard("jwt"), RolesGuard)
-@Controller("questions")
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Controller('questions')
 export class QuestionsController {
   constructor(private readonly questionService: QuestionsService) {}
 
   @Get()
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(AuthGuard('jwt'))
   @Role(RolePermitted.mentor)
   async getAllQuestions() {
     return await this.questionService.findAllQuestions();
   }
 
-  @Get(":id")
-  @UseGuards(AuthGuard("jwt"))
+  @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
   @Role(RolePermitted.mentor)
   async getQuestionById(@Param() id) {
     return await this.questionService.findQuestionById(id.id);
   }
 
   @Role(RolePermitted.moderator)
-  @Get("/category/:id")
+  @Get('/category/:id')
   async getQuestionsByCategory(@Param() categoryId) {
     return await this.questionService.findQuestionByFilter(
-      "categoryId",
+      'categoryId',
       categoryId.id
     );
   }
@@ -57,9 +57,10 @@ export class QuestionsController {
   @UsePipes(ValidationPipe)
   async createQuestion(
     @Body() createQuestionDto: CreateQuestionDto,
-    @Body("stem", StemValidationPipe) stem: { stem: Stem[]; error: string },
+    @Body('stem', StemValidationPipe) stem: { stem: Stem[]; error: string },
     @Req() req
   ) {
+    console.log(stem);
     return await this.questionService.createQuestion(
       createQuestionDto,
       stem,
@@ -67,13 +68,13 @@ export class QuestionsController {
     );
   }
 
-  @Post("/files")
+  @Post('/files')
   @Role(RolePermitted.mentor)
   @UsePipes(ValidationPipe)
   @UseInterceptors(
-    FileInterceptor("file", {
+    FileInterceptor('file', {
       storage: diskStorage({
-        destination: "./uploads/files",
+        destination: './uploads/files',
         filename: editFileName,
       }),
       fileFilter: excelFileFilter,
@@ -81,7 +82,7 @@ export class QuestionsController {
   )
   async createQuestionByUpload(
     @Req() req,
-    @Body("category") category: string,
+    @Body('category') category: string,
     @UploadedFile() file: string
   ) {
     return await this.questionService.createQuestionByUpload(
@@ -91,12 +92,12 @@ export class QuestionsController {
     );
   }
 
-  @Patch("/:id")
+  @Patch('/:id')
   @Role(RolePermitted.mentor)
   async updateQuestionById(
     @Param() questionId,
     @Body() createQuestionDto: CreateQuestionDto,
-    @Body("stem", StemValidationPipe) stem: { stem: Stem[]; error: string },
+    @Body('stem', StemValidationPipe) stem: { stem: Stem[]; error: string },
     @Req() req
   ) {
     //console.log(questionId.id, createQuestionDto, stem, req.user.id);
@@ -108,7 +109,7 @@ export class QuestionsController {
     );
   }
 
-  @Delete("/:id")
+  @Delete('/:id')
   @Role(RolePermitted.moderator)
   async deleteQuestionById(@Param() questionId) {
     return await this.questionService.deleteQuestion(questionId.id);

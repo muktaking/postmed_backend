@@ -15,9 +15,10 @@ const user_repository_1 = require("../users/user.repository");
 const users_module_1 = require("../users/users.module");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
+const facebook_strategy_1 = require("./facebook.strategy");
 const jwt_strategy_1 = require("./jwt.strategy");
 const local_strategy_1 = require("./local.strategy");
-const jwtConfig = config.get("jwt");
+const jwtConfig = config.get('jwt');
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
@@ -34,7 +35,7 @@ AuthModule = __decorate([
             users_module_1.UsersModule,
         ],
         controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy, local_strategy_1.LocalStrategy],
+        providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy, local_strategy_1.LocalStrategy, facebook_strategy_1.FacebookStrategy],
         exports: [auth_service_1.AuthService],
     })
 ], AuthModule);

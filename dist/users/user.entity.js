@@ -27,6 +27,17 @@ var Faculty;
     Faculty[Faculty["gynecology"] = 3] = "gynecology";
     Faculty[Faculty["paediatrics"] = 4] = "paediatrics";
 })(Faculty = exports.Faculty || (exports.Faculty = {}));
+var LoginProvider;
+(function (LoginProvider) {
+    LoginProvider[LoginProvider["local"] = 0] = "local";
+    LoginProvider[LoginProvider["facebook"] = 1] = "facebook";
+})(LoginProvider = exports.LoginProvider || (exports.LoginProvider = {}));
+var IdentityStatus;
+(function (IdentityStatus) {
+    IdentityStatus[IdentityStatus["unchecked"] = 0] = "unchecked";
+    IdentityStatus[IdentityStatus["checked"] = 1] = "checked";
+    IdentityStatus[IdentityStatus["unrequired"] = 2] = "unrequired";
+})(IdentityStatus = exports.IdentityStatus || (exports.IdentityStatus = {}));
 var Gender;
 (function (Gender) {
     Gender["male"] = "male";
@@ -38,6 +49,10 @@ __decorate([
     typeorm_1.PrimaryGeneratedColumn(),
     __metadata("design:type", Number)
 ], User.prototype, "id", void 0);
+__decorate([
+    typeorm_1.Column({ type: 'bigint', nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "fbId", void 0);
 __decorate([
     typeorm_1.Column({ type: 'varchar', length: 15, nullable: false }),
     __metadata("design:type", String)
@@ -51,7 +66,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "userName", void 0);
 __decorate([
-    typeorm_1.Column({ type: 'varchar', length: 100, nullable: false }),
+    typeorm_1.Column({ type: 'varchar', length: 255, nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "avatar", void 0);
 __decorate([
@@ -70,6 +85,18 @@ __decorate([
     typeorm_1.Column({ type: 'enum', enum: RolePermitted, default: RolePermitted.student }),
     __metadata("design:type", Number)
 ], User.prototype, "role", void 0);
+__decorate([
+    typeorm_1.Column({ type: 'enum', enum: LoginProvider, default: LoginProvider.local }),
+    __metadata("design:type", Number)
+], User.prototype, "loginProvider", void 0);
+__decorate([
+    typeorm_1.Column({
+        type: 'enum',
+        enum: IdentityStatus,
+        default: IdentityStatus.unrequired,
+    }),
+    __metadata("design:type", Number)
+], User.prototype, "identityStatus", void 0);
 __decorate([
     typeorm_1.Column({ type: 'varchar', nullable: true }),
     __metadata("design:type", String)

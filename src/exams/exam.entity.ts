@@ -1,4 +1,5 @@
 import { Category } from 'src/categories/category.entity';
+import { Course } from 'src/courses/course.entity';
 import {
   BaseEntity,
   BeforeInsert,
@@ -50,6 +51,13 @@ export class Exam extends BaseEntity {
   @ManyToMany(() => Category, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
   @JoinTable()
   categoryType: any;
+
+  @Column({ type: 'simple-array' })
+  courseIds: string[];
+
+  @ManyToMany(() => Course, { onUpdate: 'CASCADE', onDelete: 'CASCADE' })
+  @JoinTable()
+  courseType: any;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   description: string;

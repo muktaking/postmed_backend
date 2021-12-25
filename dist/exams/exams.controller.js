@@ -30,6 +30,9 @@ let ExamsController = class ExamsController {
     async findAllExams() {
         return await this.examService.findAllExams();
     }
+    async findAllPlainExamsByCourseId(id, req) {
+        return await this.examService.findAllPlainExamsByCourseIds(id.id, req.user.id);
+    }
     async findAllRawExams() {
         return await this.examService.findAllRawExams();
     }
@@ -46,7 +49,7 @@ let ExamsController = class ExamsController {
         return await this.examService.findExamByCatId(id);
     }
     async findQuestionsByExamId(id, req) {
-        return await this.examService.findQuestionsByExamId(id, req.user.email);
+        return await this.examService.findQuestionsByExamId(id, req.user);
     }
     async findFreeQuestionsByExamId(id) {
         return await this.examService.findFreeQuestionsByExamId(id);
@@ -57,8 +60,8 @@ let ExamsController = class ExamsController {
     async createFeedback(createFeedbackDto) {
         return await this.examService.createFeedback(createFeedbackDto);
     }
-    async ChangePendingStatus(ids) {
-        return await this.examService.changePendingStatus(ids.ids);
+    async ChangePendingStatus(status) {
+        return await this.examService.changePendingStatus(status.ids, Boolean(status.deny));
     }
     async updateExamById(examId, createExamDto) {
         return await this.examService.updateExamById(examId.id, createExamDto);
@@ -86,6 +89,15 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findAllExams", null);
+__decorate([
+    common_1.Get('/course/:id'),
+    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.student),
+    __param(0, common_1.Param()), __param(1, common_1.Req()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ExamsController.prototype, "findAllPlainExamsByCourseId", null);
 __decorate([
     common_1.Get('/raw'),
     __metadata("design:type", Function),

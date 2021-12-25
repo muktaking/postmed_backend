@@ -3,24 +3,27 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
-} from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { InjectRepository } from "@nestjs/typeorm";
-import * as bcrypt from "bcryptjs";
-import * as config from "config";
-import * as crypto from "crypto";
-import * as _ from "lodash";
-import * as nodemailer from "nodemailer";
-import { UserRepository } from "src/users/user.repository";
-import { to } from "src/utils/utils";
-import { MoreThan } from "typeorm";
-import { UsersService } from "../users/users.service";
-import { jwtPayload } from "./jwt.interface";
-const moment = require("moment");
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcryptjs';
+import * as config from 'config';
+import * as crypto from 'crypto';
+import * as generator from 'generate-password';
+import * as _ from 'lodash';
+import * as nodemailer from 'nodemailer';
+import { IdentityStatus, LoginProvider, User } from 'src/users/user.entity';
+import { UserRepository } from 'src/users/user.repository';
+import { to } from 'src/utils/utils';
+import { MoreThan } from 'typeorm';
+import { UsersService } from '../users/users.service';
+import { jwtPayload } from './jwt.interface';
+const moment = require('moment');
 
-const jwtConfig = config.get("jwt");
-const emailConfig = config.get("email");
-const baseSiteConfig = config.get("base_site");
+const jwtConfig = config.get('jwt');
+const emailConfig = config.get('email');
+const baseSiteConfig = config.get('base_site');
 
 @Injectable()
 export class AuthService {
@@ -36,7 +39,7 @@ export class AuthService {
 
     if (user) {
       const isValid = await bcrypt.compare(password, user.password);
-      user = isValid ? _.pick(user, ["email", "role", "id"]) : null;
+      user = isValid ? _.pick(user, ['email', 'role', 'id']) : null;
       return user;
     }
 
@@ -65,20 +68,20 @@ export class AuthService {
         throw new InternalServerErrorException();
       }
 
-      const token = buffer.toString("hex");
+      const token = buffer.toString('hex');
       this.userRepository
         .findOne({ email })
         .then((user) => {
           if (!user) {
             throw new HttpException(
-              "User is not available",
+              'User is not available',
               HttpStatus.NOT_FOUND
             ); // DO SOME RENDER PAGE
           }
           user.resetToken = token;
           user.resetTokenExpiration = moment()
-            .add(3 * 60 * 60 * 1000, "milliseconds")
-            .format("YYYY-MM-DD HH:mm:ss");
+            .add(3 * 60 * 60 * 1000, 'milliseconds')
+            .format('YYYY-MM-DD HH:mm:ss');
           user
             .save()
             .then((saved) => {
@@ -101,7 +104,7 @@ export class AuthService {
                 from: `"No-reply" <${process.env.EMAIL_USER ||
                   emailConfig.user}>`, // sender address
                 to: email, // list of receivers
-                subject: "Reset Your Password, ", // Subject line
+                subject: 'Reset Your Password, ', // Subject line
                 html: `<h3>Reset Your Password</h3>
                           <p>If you request for password reset, click this <a href="${process
                             .env.BASE_SITE_URL ||
@@ -115,7 +118,7 @@ export class AuthService {
                 }
                 console.log(info);
               });
-              return { message: "Reset password successfull" };
+              return { message: 'Reset password successfull' };
             })
             .catch((err) => {
               console.log(err);
@@ -136,7 +139,7 @@ export class AuthService {
         where: {
           resetToken: passwordToken,
           resetTokenExpiration: MoreThan(
-            moment().format("YYYY-MM-DD HH:mm:ss")
+            moment().format('YYYY-MM-DD HH:mm:ss')
           ),
         },
       })
@@ -152,12 +155,57 @@ export class AuthService {
       user.resetToken = null;
       user.resetTokenExpiration = undefined;
       await user.save();
-      return { message: "Password reset Successfully" };
+      return { message: 'Password reset Successfully' };
     } else {
       throw new HttpException(
-        "Password Can not be resetted. Reset token may ne expired",
+        'Password Can not be resetted. Reset token may ne expired',
         HttpStatus.GONE
       );
+    }
+  }
+
+  async facebookLogin({ userID, name, email, accessToken, picture }) {
+    let payload;
+    const [err, user] = await to(this.userRepository.findOne({ fbId: userID }));
+    if (err) throw new InternalServerErrorException();
+    if (user) {
+      if (user.identityStatus == IdentityStatus.checked) {
+        payload = {
+          email: user.email,
+          id: user.id,
+          role: user.role,
+        };
+        accessToken = await this.jwtService.sign(payload);
+        return {
+          accessToken,
+          id: user.id,
+          expireIn: process.env.JWT_EXPIRESIN || jwtConfig.expiresIn,
+        };
+      } else {
+        throw new UnauthorizedException(
+          'Admin has not approved your account. Please contact with admin.'
+        );
+      }
+    } else {
+      const newUser = new User();
+      newUser.fbId = userID;
+      newUser.firstName = name.split(' ')[0];
+      newUser.lastName = name.split(' ').reverse()[0];
+      newUser.email = email;
+      newUser.userName = name.split(' ')[0];
+      newUser.password = generator
+        .generateMultiple(3, {
+          length: 10,
+          uppercase: false,
+        })
+        .toString();
+      newUser.loginProvider = LoginProvider.facebook;
+      newUser.identityStatus = IdentityStatus.unchecked;
+      newUser.avatar = picture.data.url;
+      const [err, result] = await to(newUser.save());
+      console.log(err);
+      if (err) throw new InternalServerErrorException();
+      return { message: 'Wait until Admin approve your account.' };
     }
   }
 }

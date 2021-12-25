@@ -72,7 +72,7 @@ let UsersService = class UsersService {
         });
     }
     async editUser(editUser, userStat) {
-        let { id, firstName, lastName, userName, password, email, gender, role, mobile, institution, faculty, address, } = editUser;
+        let { id, firstName, lastName, userName, password, email, gender, role, identityStatus, mobile, institution, faculty, address, } = editUser;
         const [err, user] = await utils_1.to(this.userRepository.findOne(+id));
         if (err) {
             console.log(err);
@@ -85,10 +85,8 @@ let UsersService = class UsersService {
             user.email = email;
             user.gender = gender;
             user.mobile = mobile;
-            user.institution = institution;
-            user.faculty = +faculty;
-            user.avatar = 'boy';
             user.role = +role;
+            user.identityStatus = +identityStatus;
             if (password) {
                 const salt = await bcrypt.genSalt(10);
                 user.password = await bcrypt.hash(password, salt);
@@ -137,6 +135,8 @@ let UsersService = class UsersService {
                 'avatar',
                 'createdAt',
                 'gender',
+                'loginProvider',
+                'identityStatus',
                 'mobile',
                 'faculty',
                 'institution',

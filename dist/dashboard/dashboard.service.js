@@ -15,17 +15,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const category_repository_1 = require("../categories/category.repository");
+const courses_service_1 = require("../courses/courses.service");
 const exam_repository_1 = require("../exams/exam.repository");
 const exams_service_1 = require("../exams/exams.service");
 const user_entity_1 = require("../users/user.entity");
 const users_service_1 = require("../users/users.service");
 const utils_1 = require("../utils/utils");
 let DashboardService = class DashboardService {
-    constructor(usersService, categoryRepository, examRepository, examService) {
+    constructor(usersService, categoryRepository, examRepository, examService, courseService) {
         this.usersService = usersService;
         this.categoryRepository = categoryRepository;
         this.examRepository = examRepository;
         this.examService = examService;
+        this.courseService = courseService;
         this.featuredCategoryId = this.getFeaturedCategoryId();
     }
     async getFeaturedCategoryId() {
@@ -48,13 +50,15 @@ let DashboardService = class DashboardService {
         let users = [];
         let exams = [];
         let feedbacks = [];
+        let expectedEnrolled = [];
         let err = undefined;
         [err, users] = await utils_1.to(this.usersService.findAllUsers(userRole));
         [err, exams] = await utils_1.to(this.examService.findAllRawExams());
         if (userRole >= user_entity_1.RolePermitted.mentor) {
             [err, feedbacks] = await utils_1.to(this.examService.getPendingFeedback());
         }
-        return { users, exams, feedbacks };
+        [err, expectedEnrolled] = await utils_1.to(this.courseService.expectedEnrolledStuInfo());
+        return { users, exams, feedbacks, expectedEnrolled };
     }
 };
 DashboardService = __decorate([
@@ -64,7 +68,8 @@ DashboardService = __decorate([
     __metadata("design:paramtypes", [users_service_1.UsersService,
         category_repository_1.CategoryRepository,
         exam_repository_1.ExamRepository,
-        exams_service_1.ExamsService])
+        exams_service_1.ExamsService,
+        courses_service_1.CoursesService])
 ], DashboardService);
 exports.DashboardService = DashboardService;
 //# sourceMappingURL=dashboard.service.js.map

@@ -38,6 +38,11 @@ __decorate([
 ], CreateExamDto.prototype, "categoryType", void 0);
 __decorate([
     class_validator_1.IsNotEmpty(),
+    class_validator_1.IsNumberString({ each: true }),
+    __metadata("design:type", Array)
+], CreateExamDto.prototype, "courseType", void 0);
+__decorate([
+    class_validator_1.IsNotEmpty(),
     class_validator_1.IsString(),
     __metadata("design:type", String)
 ], CreateExamDto.prototype, "description", void 0);

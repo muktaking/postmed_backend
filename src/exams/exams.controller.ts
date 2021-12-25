@@ -60,6 +60,16 @@ export class ExamsController {
     return await this.examService.findAllExams();
   }
 
+  @Get('/course/:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Role(RolePermitted.student)
+  async findAllPlainExamsByCourseId(@Param() id, @Req() req) {
+    return await this.examService.findAllPlainExamsByCourseIds(
+      id.id,
+      req.user.id
+    );
+  }
+
   @Get('/raw')
   // @UseGuards(AuthGuard("jwt"), RolesGuard)
   // @Role(RolePermitted.student)
@@ -100,7 +110,7 @@ export class ExamsController {
   @UseGuards(AuthGuard('jwt'))
   @Role(RolePermitted.student)
   async findQuestionsByExamId(@Param('id') id, @Req() req) {
-    return await this.examService.findQuestionsByExamId(id, req.user.email);
+    return await this.examService.findQuestionsByExamId(id, req.user);
   }
 
   @Get('free/questions/:id')
@@ -128,8 +138,11 @@ export class ExamsController {
   @Patch('feedback')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Role(RolePermitted.mentor)
-  async ChangePendingStatus(@Body() ids) {
-    return await this.examService.changePendingStatus(ids.ids);
+  async ChangePendingStatus(@Body() status) {
+    return await this.examService.changePendingStatus(
+      status.ids,
+      Boolean(status.deny)
+    );
   }
 
   @Patch(':id')

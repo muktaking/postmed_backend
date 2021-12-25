@@ -10,6 +10,8 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const categories_module_1 = require("../categories/categories.module");
 const category_repository_1 = require("../categories/category.repository");
+const course_repository_1 = require("../courses/course.repository");
+const courses_module_1 = require("../courses/courses.module");
 const question_repository_1 = require("../questions/question.repository");
 const users_module_1 = require("../users/users.module");
 const exam_repository_1 = require("./exam.repository");
@@ -24,11 +26,13 @@ ExamsModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([
                 exam_repository_1.ExamRepository,
+                course_repository_1.CourseRepository,
                 category_repository_1.CategoryRepository,
                 question_repository_1.QuestionRepository,
                 profie_repository_1.ExamProfileRepository,
                 feedback_repository_1.FeedbackRepository,
             ]),
+            courses_module_1.CoursesModule,
             categories_module_1.CategoriesModule,
             users_module_1.UsersModule,
         ],

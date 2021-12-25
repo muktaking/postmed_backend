@@ -3,6 +3,7 @@ export declare class CreateExamDto {
     title: string;
     type: ExamType;
     categoryType: Array<string>;
+    courseType: Array<string>;
     description: string;
     questions: Array<number>;
     startDate: string;

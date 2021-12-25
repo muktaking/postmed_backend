@@ -1,16 +1,17 @@
-import { Module } from "@nestjs/common";
-import { JwtModule } from "@nestjs/jwt";
-import { PassportModule } from "@nestjs/passport";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import * as config from "config";
-import { UserRepository } from "src/users/user.repository";
-import { UsersModule } from "../users/users.module";
-import { AuthController } from "./auth.controller";
-import { AuthService } from "./auth.service";
-import { JwtStrategy } from "./jwt.strategy";
-import { LocalStrategy } from "./local.strategy";
+import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import * as config from 'config';
+import { UserRepository } from 'src/users/user.repository';
+import { UsersModule } from '../users/users.module';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { FacebookStrategy } from './facebook.strategy';
+import { JwtStrategy } from './jwt.strategy';
+import { LocalStrategy } from './local.strategy';
 
-const jwtConfig = config.get("jwt");
+const jwtConfig = config.get('jwt');
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ const jwtConfig = config.get("jwt");
     UsersModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy],
+  providers: [AuthService, JwtStrategy, LocalStrategy, FacebookStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

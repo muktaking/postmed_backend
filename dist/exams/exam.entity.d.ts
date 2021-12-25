@@ -20,6 +20,8 @@ export declare class Exam extends BaseEntity {
     type: ExamType;
     categoryIds: string[];
     categoryType: any;
+    courseIds: string[];
+    courseType: any;
     description: string;
     questions: number[];
     singleQuestionMark: number;

@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const _ = require("lodash");
 const category_repository_1 = require("../categories/category.repository");
+const course_repository_1 = require("../courses/course.repository");
 const question_repository_1 = require("../questions/question.repository");
 const users_service_1 = require("../users/users.service");
 const utils_1 = require("../utils/utils");
@@ -28,9 +29,10 @@ const feedback_repository_1 = require("./feedback.repository");
 const profie_repository_1 = require("./profie.repository");
 const moment = require("moment");
 let ExamsService = class ExamsService {
-    constructor(usersService, questionRepository, categoryRepository, examRepository, examProfileRepository, feedbackRepository) {
+    constructor(usersService, questionRepository, courseRepository, categoryRepository, examRepository, examProfileRepository, feedbackRepository) {
         this.usersService = usersService;
         this.questionRepository = questionRepository;
+        this.courseRepository = courseRepository;
         this.categoryRepository = categoryRepository;
         this.examRepository = examRepository;
         this.examProfileRepository = examProfileRepository;
@@ -132,6 +134,112 @@ let ExamsService = class ExamsService {
             final: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Final),
         };
         return exams;
+    }
+    async findAllExamsByCourseIds(courseId, stuIds) {
+        const [error, course] = utils_1.to(await this.courseRepository.findOne(+courseId));
+        if (error)
+            throw new common_1.InternalServerErrorException();
+        if (course.length > 0) {
+            if (course.enrolledStuIds && course.enrolledStuIds.includes(stuIds)) {
+                let [err, exams] = await utils_1.to(this.examRepository.find({
+                    select: [
+                        'id',
+                        'title',
+                        'type',
+                        'description',
+                        'startDate',
+                        'endDate',
+                    ],
+                    where: {
+                        where: [
+                            {
+                                courseIds: typeorm_2.Like(courseId),
+                                startDate: typeorm_2.LessThanOrEqual(new Date()),
+                            },
+                            {
+                                courseIds: typeorm_2.Like('%,' + courseId + ',%'),
+                                startDate: typeorm_2.LessThanOrEqual(new Date()),
+                            },
+                            {
+                                courseIds: typeorm_2.Like(courseId + ',%'),
+                                startDate: typeorm_2.LessThanOrEqual(new Date()),
+                            },
+                            {
+                                courseIds: typeorm_2.Like('%,' + courseId),
+                                startDate: typeorm_2.LessThanOrEqual(new Date()),
+                            },
+                        ],
+                    },
+                    relations: ['categoryType'],
+                    order: { endDate: 'DESC' },
+                }));
+                if (err)
+                    throw new common_1.InternalServerErrorException();
+                exams = {
+                    assignment: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Assignment),
+                    weekly: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Weekly),
+                    monthly: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Monthly),
+                    assesment: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Assesment),
+                    term: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Term),
+                    test: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Test),
+                    final: _.filter(exams, (e) => e.type === exam_entity_1.ExamType.Final),
+                };
+                return exams;
+            }
+        }
+        else {
+            throw new common_1.UnauthorizedException(`Forbidden: Unauthorized Access: Please enroll for the required course.`);
+        }
+    }
+    async findAllPlainExamsByCourseIds(courseId, stuIds) {
+        const [error, course] = await utils_1.to(this.courseRepository.findOne(+courseId));
+        if (error)
+            throw new common_1.InternalServerErrorException();
+        if (course) {
+            if (course.enrolledStuIds &&
+                course.enrolledStuIds.includes(stuIds.toString())) {
+                let [err, exams] = await utils_1.to(this.examRepository.find({
+                    select: [
+                        'id',
+                        'title',
+                        'type',
+                        'description',
+                        'startDate',
+                        'endDate',
+                    ],
+                    where: [
+                        {
+                            courseIds: typeorm_2.Like(courseId),
+                            startDate: typeorm_2.LessThanOrEqual(new Date()),
+                        },
+                        {
+                            courseIds: typeorm_2.Like('%,' + courseId + ',%'),
+                            startDate: typeorm_2.LessThanOrEqual(new Date()),
+                        },
+                        {
+                            courseIds: typeorm_2.Like(courseId + ',%'),
+                            startDate: typeorm_2.LessThanOrEqual(new Date()),
+                        },
+                        {
+                            courseIds: typeorm_2.Like('%,' + courseId),
+                            startDate: typeorm_2.LessThanOrEqual(new Date()),
+                        },
+                    ],
+                    relations: ['categoryType'],
+                    order: { endDate: 'DESC' },
+                }));
+                console.log(err);
+                if (err)
+                    throw new common_1.InternalServerErrorException();
+                return exams;
+            }
+            else {
+                throw new common_1.UnauthorizedException(`Forbidden: Unauthorized Access: Please enroll for the required course.`);
+            }
+        }
+        else {
+            throw new common_1.NotFoundException();
+        }
     }
     async findAllOldExams() {
         let [err, exams] = await utils_1.to(this.examRepository.find({
@@ -239,22 +347,35 @@ let ExamsService = class ExamsService {
             throw new common_1.InternalServerErrorException();
         return exams;
     }
-    async findExamById(id, constraintByCategoryType = null, email = null) {
+    async findExamById(id, constraintByCategoryType = null, email = null, stuId = null) {
         if (constraintByCategoryType) {
             const [err, exam] = await utils_1.to(this.examRepository.findOne(+id));
             if (err)
                 throw new common_1.InternalServerErrorException();
             if (!exam) {
-                throw new common_1.UnauthorizedException('Forbidden: Unauthorized Access');
+                throw new common_1.UnauthorizedException('Forbidden: Unauthorized Access.');
             }
             else if (!exam.categoryIds.includes(constraintByCategoryType.toString())) {
-                throw new common_1.UnauthorizedException(`Forbidden: Unauthorized Access`);
+                throw new common_1.UnauthorizedException(`Forbidden: Unauthorized Access.`);
             }
             return exam;
         }
         const [err, exam] = await utils_1.to(this.examRepository.findOne(id));
         if (err)
             throw new common_1.InternalServerErrorException();
+        console.log(stuId);
+        if (stuId) {
+            if (exam.courseIds.length > 0) {
+                const [err, course] = await utils_1.to(this.courseRepository.find({
+                    where: { id: typeorm_2.In(exam.courseIds), enrolledStuIds: +stuId },
+                }));
+                if (err)
+                    throw new common_1.InternalServerErrorException();
+                if (course.length < 1) {
+                    throw new common_1.UnauthorizedException(`Forbidden: Unauthorized Access: Please enroll for the required course.`);
+                }
+            }
+        }
         if (email) {
             if (exam.type >= this.oneTimeAttemptTypeBar) {
                 const [err1, profile] = await utils_1.to(this.examProfileRepository.findOne({
@@ -265,7 +386,7 @@ let ExamsService = class ExamsService {
                 const [examProfile] = profile.exams.filter((exam) => exam.examId === +id);
                 if (examProfile) {
                     if (examProfile.attemptNumbers >= 1) {
-                        throw new common_1.UnauthorizedException(`Forbidden: Unauthorized Access: This Exam Can not be Attempt More Than One Time`);
+                        throw new common_1.UnauthorizedException(`Forbidden: Unauthorized Access: This Exam Can not be Attempt More Than One Time.`);
                     }
                 }
             }
@@ -328,8 +449,8 @@ let ExamsService = class ExamsService {
             throw new common_1.InternalServerErrorException();
         return exams;
     }
-    async findQuestionsByExamId(id, email) {
-        const exam = await this.findExamById(id, null, email);
+    async findQuestionsByExamId(id, user) {
+        const exam = await this.findExamById(id, null, user.email, user.id);
         if (exam) {
             let [err, questions] = await utils_1.to(this.questionRepository.find({
                 where: { id: typeorm_2.In(exam.questions.map((e) => +e)) },
@@ -428,11 +549,14 @@ let ExamsService = class ExamsService {
         return rank;
     }
     async createExam(createExamDto, creator) {
-        const { title, type, categoryType, description, questions, startDate, endDate, singleQuestionMark, questionStemLength, penaltyMark, timeLimit, } = createExamDto;
+        const { title, type, categoryType, courseType, description, questions, startDate, endDate, singleQuestionMark, questionStemLength, penaltyMark, timeLimit, } = createExamDto;
         const exam = new exam_entity_1.Exam();
         exam.title = title;
         exam.type = type;
         exam.categoryIds = categoryType;
+        exam.categoryType = [];
+        exam.courseIds = courseType;
+        exam.courseType = [];
         exam.description = description;
         exam.questions = questions;
         exam.startDate = startDate;
@@ -442,10 +566,11 @@ let ExamsService = class ExamsService {
         exam.penaltyMark = penaltyMark;
         exam.timeLimit = timeLimit;
         exam.creatorId = +creator;
-        exam.categoryIds = categoryType;
-        exam.categoryType = [];
         categoryType.forEach((e) => {
             exam.categoryType.push({ id: +e });
+        });
+        courseType.forEach((e) => {
+            exam.courseType.push({ id: +e });
         });
         const [err, result] = await utils_1.to(exam.save());
         if (err) {
@@ -454,7 +579,7 @@ let ExamsService = class ExamsService {
         return result;
     }
     async updateExamById(id, createExamDto) {
-        const { title, type, categoryType, description, questions, singleQuestionMark, questionStemLength, penaltyMark, timeLimit, } = createExamDto;
+        const { title, type, categoryType, courseType, description, questions, singleQuestionMark, questionStemLength, penaltyMark, timeLimit, } = createExamDto;
         const exam = await this.examRepository.findOne(+id).catch((e) => {
             console.log(e);
             throw new common_1.HttpException('Could not able to fetch oldQuestion from database ', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
@@ -462,16 +587,20 @@ let ExamsService = class ExamsService {
         exam.title = title;
         exam.type = type;
         exam.categoryIds = categoryType;
+        exam.categoryType = [];
+        exam.courseIds = courseType;
+        exam.courseType = [];
         exam.description = description;
         exam.questions = questions;
         exam.singleQuestionMark = singleQuestionMark;
         exam.questionStemLength = questionStemLength;
         (exam.penaltyMark = penaltyMark), (exam.timeLimit = timeLimit);
-        exam.categoryIds = categoryType;
-        exam.categoryType = [];
         exam.createdAt = moment().format('YYYY-MM-DD HH=mm=sss');
         categoryType.forEach((e) => {
             exam.categoryType.push({ id: +e });
+        });
+        courseType.forEach((e) => {
+            exam.courseType.push({ id: +e });
         });
         const [err, result] = await utils_1.to(exam.save());
         if (err) {
@@ -527,10 +656,16 @@ let ExamsService = class ExamsService {
         }
         return feedbacks;
     }
-    async changePendingStatus(ids) {
+    async changePendingStatus(ids, deny = false) {
+        if (deny) {
+            const [err, results] = await utils_1.to(this.feedbackRepository.delete({ id: typeorm_2.In(ids) }));
+            if (err) {
+                throw new common_1.InternalServerErrorException();
+            }
+            return { message: 'Change Status to published successfully.' };
+        }
         const [err, feedbacks] = await utils_1.to(this.feedbackRepository.find(ids));
         if (err) {
-            console.log(err);
             throw new common_1.InternalServerErrorException();
         }
         feedbacks.forEach((feedback) => {
@@ -545,12 +680,14 @@ let ExamsService = class ExamsService {
 ExamsService = __decorate([
     common_1.Injectable(),
     __param(1, typeorm_1.InjectRepository(question_repository_1.QuestionRepository)),
-    __param(2, typeorm_1.InjectRepository(category_repository_1.CategoryRepository)),
-    __param(3, typeorm_1.InjectRepository(exam_repository_1.ExamRepository)),
-    __param(4, typeorm_1.InjectRepository(profie_repository_1.ExamProfileRepository)),
-    __param(5, typeorm_1.InjectRepository(feedback_repository_1.FeedbackRepository)),
+    __param(2, typeorm_1.InjectRepository(course_repository_1.CourseRepository)),
+    __param(3, typeorm_1.InjectRepository(category_repository_1.CategoryRepository)),
+    __param(4, typeorm_1.InjectRepository(exam_repository_1.ExamRepository)),
+    __param(5, typeorm_1.InjectRepository(profie_repository_1.ExamProfileRepository)),
+    __param(6, typeorm_1.InjectRepository(feedback_repository_1.FeedbackRepository)),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         question_repository_1.QuestionRepository,
+        category_repository_1.CategoryRepository,
         category_repository_1.CategoryRepository,
         exam_repository_1.ExamRepository,
         profie_repository_1.ExamProfileRepository,

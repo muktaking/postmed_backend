@@ -14,12 +14,22 @@ export declare enum Faculty {
     gynecology = 3,
     paediatrics = 4
 }
+export declare enum LoginProvider {
+    local = 0,
+    facebook = 1
+}
+export declare enum IdentityStatus {
+    unchecked = 0,
+    checked = 1,
+    unrequired = 2
+}
 export declare enum Gender {
     male = "male",
     female = "female"
 }
 export declare class User extends BaseEntity {
     id: number;
+    fbId: string;
     firstName: string;
     lastName: string;
     userName: string;
@@ -28,6 +38,8 @@ export declare class User extends BaseEntity {
     email: string;
     gender: Gender;
     role: RolePermitted;
+    loginProvider: LoginProvider;
+    identityStatus: IdentityStatus;
     mobile: string;
     institution: string;
     faculty: Faculty;

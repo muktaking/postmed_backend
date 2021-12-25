@@ -1,4 +1,5 @@
 import { CategoryRepository } from 'src/categories/category.repository';
+import { CoursesService } from 'src/courses/courses.service';
 import { ExamRepository } from 'src/exams/exam.repository';
 import { ExamsService } from 'src/exams/exams.service';
 import { UsersService } from 'src/users/users.service';
@@ -7,7 +8,8 @@ export declare class DashboardService {
     private categoryRepository;
     private examRepository;
     private readonly examService;
-    constructor(usersService: UsersService, categoryRepository: CategoryRepository, examRepository: ExamRepository, examService: ExamsService);
+    private readonly courseService;
+    constructor(usersService: UsersService, categoryRepository: CategoryRepository, examRepository: ExamRepository, examService: ExamsService, courseService: CoursesService);
     private featuredCategoryId;
     getFeaturedCategoryId(): Promise<any>;
     getStudentDashInfo(email: string): Promise<{
@@ -19,5 +21,6 @@ export declare class DashboardService {
         users: any[];
         exams: any[];
         feedbacks: any[];
+        expectedEnrolled: any[];
     }>;
 }

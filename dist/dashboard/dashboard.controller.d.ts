@@ -11,5 +11,6 @@ export declare class DashboardController {
         users: any[];
         exams: any[];
         feedbacks: any[];
+        expectedEnrolled: any[];
     }>;
 }

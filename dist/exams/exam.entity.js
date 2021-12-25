@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const category_entity_1 = require("../categories/category.entity");
+const course_entity_1 = require("../courses/course.entity");
 const typeorm_1 = require("typeorm");
 var ExamType;
 (function (ExamType) {
@@ -59,6 +60,15 @@ __decorate([
     typeorm_1.JoinTable(),
     __metadata("design:type", Object)
 ], Exam.prototype, "categoryType", void 0);
+__decorate([
+    typeorm_1.Column({ type: 'simple-array' }),
+    __metadata("design:type", Array)
+], Exam.prototype, "courseIds", void 0);
+__decorate([
+    typeorm_1.ManyToMany(() => course_entity_1.Course, { onUpdate: 'CASCADE', onDelete: 'CASCADE' }),
+    typeorm_1.JoinTable(),
+    __metadata("design:type", Object)
+], Exam.prototype, "courseType", void 0);
 __decorate([
     typeorm_1.Column({ type: 'varchar', length: 255, nullable: false }),
     __metadata("design:type", String)

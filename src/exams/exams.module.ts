@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesModule } from 'src/categories/categories.module';
 import { CategoryRepository } from 'src/categories/category.repository';
+import { CourseRepository } from 'src/courses/course.repository';
+import { CoursesModule } from 'src/courses/courses.module';
 import { QuestionRepository } from 'src/questions/question.repository';
 import { UsersModule } from 'src/users/users.module';
 import { ExamRepository } from './exam.repository';
@@ -14,11 +16,13 @@ import { ExamProfileRepository } from './profie.repository';
   imports: [
     TypeOrmModule.forFeature([
       ExamRepository,
+      CourseRepository,
       CategoryRepository,
       QuestionRepository,
       ExamProfileRepository,
       FeedbackRepository,
     ]),
+    CoursesModule,
     CategoriesModule,
     UsersModule,
   ],

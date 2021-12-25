@@ -32,6 +32,11 @@ export class CreateExamDto {
   categoryType: Array<string>;
 
   @IsNotEmpty()
+  @IsNumberString({ each: true })
+  //@IsMongoId({ each: true })
+  courseType: Array<string>;
+
+  @IsNotEmpty()
   @IsString()
   description: string;
 

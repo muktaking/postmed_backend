@@ -11,6 +11,8 @@ import { QuestionsModule } from "./questions/questions.module";
 import { typeOrmConfig } from "./typeormconfig/typeorm.config";
 import { UsersModule } from "./users/users.module";
 import { RoutineModule } from './routine/routine.module';
+import { CoursesController } from './courses/courses.controller';
+import { CoursesModule } from './courses/courses.module';
 
 @Module({
   imports: [
@@ -28,7 +30,9 @@ import { RoutineModule } from './routine/routine.module';
     PostexamsModule,
     DashboardModule,
     RoutineModule,
+    CoursesModule,
   ],
+  controllers: [CoursesController],
   //controllers: [DashboardController]
 })
 export class AppModule {}

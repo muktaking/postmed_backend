@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const category_repository_1 = require("../categories/category.repository");
+const courses_module_1 = require("../courses/courses.module");
 const exam_repository_1 = require("../exams/exam.repository");
 const exams_module_1 = require("../exams/exams.module");
 const users_module_1 = require("../users/users.module");
@@ -24,6 +25,7 @@ DashboardModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([exam_repository_1.ExamRepository, category_repository_1.CategoryRepository]),
             exams_module_1.ExamsModule,
             users_module_1.UsersModule,
+            courses_module_1.CoursesModule,
         ],
     })
 ], DashboardModule);

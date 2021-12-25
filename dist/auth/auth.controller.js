@@ -28,6 +28,15 @@ let AuthController = class AuthController {
     async logIn(req) {
         return await this.authService.login(req.user);
     }
+    async facebookLogin(data) {
+        return await this.authService.facebookLogin(data.fbApi);
+    }
+    async facebookLoginRedirect(req) {
+        return {
+            statusCode: common_1.HttpStatus.OK,
+            data: req.user,
+        };
+    }
     async reset(email) {
         return await this.authService.reset(email);
     }
@@ -36,36 +45,51 @@ let AuthController = class AuthController {
     }
 };
 __decorate([
-    common_1.Post("/registration"),
+    common_1.Post('/registration'),
     __param(0, common_1.Body(common_1.ValidationPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.createUserDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signUp", null);
 __decorate([
-    common_1.UseGuards(passport_1.AuthGuard("local")),
-    common_1.Post("/login"),
+    common_1.UseGuards(passport_1.AuthGuard('local')),
+    common_1.Post('/login'),
     __param(0, common_1.Req()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "logIn", null);
 __decorate([
-    common_1.Post("/reset"),
-    __param(0, common_1.Body("email")),
+    common_1.Post('/facebook'),
+    __param(0, common_1.Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "facebookLogin", null);
+__decorate([
+    common_1.Get('/facebook/redirect'),
+    common_1.UseGuards(passport_1.AuthGuard('facebook')),
+    __param(0, common_1.Req()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "facebookLoginRedirect", null);
+__decorate([
+    common_1.Post('/reset'),
+    __param(0, common_1.Body('email')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "reset", null);
 __decorate([
-    common_1.Post("/reset/:id"),
+    common_1.Post('/reset/:id'),
     __param(0, common_1.Body()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "resetPassword", null);
 AuthController = __decorate([
-    common_1.Controller("auth"),
+    common_1.Controller('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
         users_service_1.UsersService])
 ], AuthController);

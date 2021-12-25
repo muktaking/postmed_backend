@@ -91,6 +91,7 @@ export class UsersService {
       email,
       gender,
       role,
+      identityStatus,
       mobile,
       institution,
       faculty,
@@ -111,10 +112,11 @@ export class UsersService {
       user.email = email;
       user.gender = gender;
       user.mobile = mobile;
-      user.institution = institution;
-      user.faculty = +faculty;
-      user.avatar = 'boy';
+      // user.institution = institution;
+      // user.faculty = +faculty;
+      // user.avatar = 'boy';
       user.role = +role;
+      user.identityStatus = +identityStatus;
       //hashing password
       if (password) {
         const salt = await bcrypt.genSalt(10);
@@ -165,6 +167,8 @@ export class UsersService {
         'avatar',
         'createdAt',
         'gender',
+        'loginProvider',
+        'identityStatus',
         'mobile',
         'faculty',
         'institution',

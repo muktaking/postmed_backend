@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryRepository } from 'src/categories/category.repository';
+import { CoursesService } from 'src/courses/courses.service';
 import { ExamRepository } from 'src/exams/exam.repository';
 import { ExamsService } from 'src/exams/exams.service';
 import { RolePermitted } from 'src/users/user.entity';
@@ -15,7 +16,8 @@ export class DashboardService {
     private categoryRepository: CategoryRepository,
     @InjectRepository(ExamRepository)
     private examRepository: ExamRepository,
-    private readonly examService: ExamsService
+    private readonly examService: ExamsService,
+    private readonly courseService: CoursesService
   ) {
     this.featuredCategoryId = this.getFeaturedCategoryId();
   }
@@ -49,6 +51,7 @@ export class DashboardService {
     let users = [];
     let exams = [];
     let feedbacks = [];
+    let expectedEnrolled = [];
     let err = undefined;
     [err, users] = await to(this.usersService.findAllUsers(userRole));
 
@@ -58,7 +61,11 @@ export class DashboardService {
       [err, feedbacks] = await to(this.examService.getPendingFeedback());
     }
 
-    return { users, exams, feedbacks };
+    [err, expectedEnrolled] = await to(
+      this.courseService.expectedEnrolledStuInfo()
+    );
+
+    return { users, exams, feedbacks, expectedEnrolled };
   }
 
   // async getFeaturedExams() {

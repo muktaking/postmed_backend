@@ -1,6 +1,6 @@
-import { createUserDto } from "../users/dto/create-user.dto";
-import { UsersService } from "../users/users.service";
-import { AuthService } from "./auth.service";
+import { createUserDto } from '../users/dto/create-user.dto';
+import { UsersService } from '../users/users.service';
+import { AuthService } from './auth.service';
 export declare class AuthController {
     private authService;
     private usersService;
@@ -11,6 +11,8 @@ export declare class AuthController {
         id: any;
         expireIn: any;
     }>;
+    facebookLogin(data: any): Promise<any>;
+    facebookLoginRedirect(req: any): Promise<any>;
     reset(email: string): Promise<void>;
     resetPassword(reset: {
         token: number;

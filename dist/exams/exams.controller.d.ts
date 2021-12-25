@@ -6,6 +6,7 @@ export declare class ExamsController {
     constructor(examService: ExamsService);
     createExam(createExamDto: CreateExamDto, req: any): Promise<any>;
     findAllExams(): Promise<any>;
+    findAllPlainExamsByCourseId(id: any, req: any): Promise<any>;
     findAllRawExams(): Promise<any>;
     findLatestExam(): Promise<any>;
     findFeaturedExam(): Promise<any>;
@@ -35,7 +36,7 @@ export declare class ExamsController {
     createFeedback(createFeedbackDto: CreateFeedbackDto): Promise<{
         message: string;
     }>;
-    ChangePendingStatus(ids: any): Promise<{
+    ChangePendingStatus(status: any): Promise<{
         message: string;
     }>;
     updateExamById(examId: any, createExamDto: CreateExamDto): Promise<any>;

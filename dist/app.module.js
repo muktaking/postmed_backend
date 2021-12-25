@@ -19,6 +19,8 @@ const questions_module_1 = require("./questions/questions.module");
 const typeorm_config_1 = require("./typeormconfig/typeorm.config");
 const users_module_1 = require("./users/users.module");
 const routine_module_1 = require("./routine/routine.module");
+const courses_controller_1 = require("./courses/courses.controller");
+const courses_module_1 = require("./courses/courses.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -37,7 +39,9 @@ AppModule = __decorate([
             postexams_module_1.PostexamsModule,
             dashboard_module_1.DashboardModule,
             routine_module_1.RoutineModule,
+            courses_module_1.CoursesModule,
         ],
+        controllers: [courses_controller_1.CoursesController],
     })
 ], AppModule);
 exports.AppModule = AppModule;

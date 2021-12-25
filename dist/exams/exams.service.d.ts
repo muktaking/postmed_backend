@@ -10,11 +10,12 @@ import { Profile } from './profile.entity';
 export declare class ExamsService {
     private readonly usersService;
     private questionRepository;
+    private courseRepository;
     private categoryRepository;
     private examRepository;
     private examProfileRepository;
     private feedbackRepository;
-    constructor(usersService: UsersService, questionRepository: QuestionRepository, categoryRepository: CategoryRepository, examRepository: ExamRepository, examProfileRepository: ExamProfileRepository, feedbackRepository: FeedbackRepository);
+    constructor(usersService: UsersService, questionRepository: QuestionRepository, courseRepository: CategoryRepository, categoryRepository: CategoryRepository, examRepository: ExamRepository, examProfileRepository: ExamProfileRepository, feedbackRepository: FeedbackRepository);
     private freeCategoryId;
     private oneTimeAttemptTypeBar;
     getFreeCategoryId(): Promise<any>;
@@ -33,15 +34,17 @@ export declare class ExamsService {
     findTotalExamTaken(email: string): Promise<any>;
     findExamTotalNumber(): Promise<any>;
     findAllExams(): Promise<any>;
+    findAllExamsByCourseIds(courseId: any, stuIds: string): Promise<any>;
+    findAllPlainExamsByCourseIds(courseId: any, stuIds: string): Promise<any>;
     findAllOldExams(): Promise<any>;
     findAllRawExams(): Promise<any>;
     findLatestExam(): Promise<any>;
     findCurrentExam(): Promise<any>;
     getFeaturedExams(): Promise<any>;
-    findExamById(id: string, constraintByCategoryType?: any, email?: any): Promise<any>;
+    findExamById(id: string, constraintByCategoryType?: any, email?: any, stuId?: any): Promise<any>;
     findExamByCatId(id: string): Promise<any>;
     findOldExamByCatId(id: string): Promise<any>;
-    findQuestionsByExamId(id: string, email: any): Promise<{
+    findQuestionsByExamId(id: string, user: any): Promise<{
         exam: {
             id: any;
             singleQuestionMark: any;
@@ -73,7 +76,7 @@ export declare class ExamsService {
     }>;
     getFeedbackByExamId(examId: any): Promise<any>;
     getPendingFeedback(): Promise<any>;
-    changePendingStatus(ids: any): Promise<{
+    changePendingStatus(ids: any, deny?: boolean): Promise<{
         message: string;
     }>;
 }
