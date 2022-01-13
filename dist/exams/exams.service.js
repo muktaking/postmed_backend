@@ -21,28 +21,25 @@ const course_repository_1 = require("../courses/course.repository");
 const courses_service_1 = require("../courses/courses.service");
 const question_repository_1 = require("../questions/question.repository");
 const userExamCourseProfile_repository_1 = require("../userExamProfile/userExamCourseProfile.repository");
+const userExamProfile_entity_1 = require("../userExamProfile/userExamProfile.entity");
 const userExamProfile_repository_1 = require("../userExamProfile/userExamProfile.repository");
 const users_service_1 = require("../users/users.service");
 const utils_1 = require("../utils/utils");
 const typeorm_2 = require("typeorm");
-const courseBasedProfile_repository_1 = require("./courseBasedProfile.repository");
 const exam_entity_1 = require("./exam.entity");
 const exam_repository_1 = require("./exam.repository");
 const feedback_entity_1 = require("./feedback.entity");
 const feedback_repository_1 = require("./feedback.repository");
-const profie_repository_1 = require("./profie.repository");
 const moment = require("moment");
 let ExamsService = class ExamsService {
-    constructor(usersService, coursesService, questionRepository, courseRepository, categoryRepository, examRepository, examProfileRepository, feedbackRepository, courseBasedProfileRepository, userExamCourseProfileRepository, userExamProfileRepository) {
+    constructor(usersService, coursesService, questionRepository, courseRepository, categoryRepository, examRepository, feedbackRepository, userExamCourseProfileRepository, userExamProfileRepository) {
         this.usersService = usersService;
         this.coursesService = coursesService;
         this.questionRepository = questionRepository;
         this.courseRepository = courseRepository;
         this.categoryRepository = categoryRepository;
         this.examRepository = examRepository;
-        this.examProfileRepository = examProfileRepository;
         this.feedbackRepository = feedbackRepository;
-        this.courseBasedProfileRepository = courseBasedProfileRepository;
         this.userExamCourseProfileRepository = userExamCourseProfileRepository;
         this.userExamProfileRepository = userExamProfileRepository;
         this.freeCategoryId = this.getFreeCategoryId();
@@ -104,16 +101,6 @@ let ExamsService = class ExamsService {
             }
         }
         return { examTitles: examTitles.reverse(), stat: stat.reverse() };
-    }
-    async findTotalExamTaken(email) {
-        const [err, profile] = await utils_1.to(this.examProfileRepository.findOne({
-            user: email,
-        }));
-        if (err)
-            throw new common_1.InternalServerErrorException();
-        if (profile)
-            return profile.exams.length;
-        return 0;
     }
     async findTotalExamTakenByCourseId(id, courseId) {
         const [err, profile] = await utils_1.to(this.userExamProfileRepository.findOne({
@@ -497,7 +484,7 @@ let ExamsService = class ExamsService {
             throw new common_1.InternalServerErrorException();
         return exams;
     }
-    async findExamById(id, constraintByCategoryType = null, email = null, stuId = null) {
+    async findExamById(id, constraintByCategoryType = null, stuId = null) {
         if (constraintByCategoryType) {
             const [err, exam] = await utils_1.to(this.examRepository.findOne(+id));
             if (err)
@@ -539,21 +526,6 @@ let ExamsService = class ExamsService {
                     throw new common_1.InternalServerErrorException();
                 if (course.length < 1) {
                     throw new common_1.UnauthorizedException(`Forbidden: Unauthorized Access: Please enroll for the required course.`);
-                }
-            }
-        }
-        if (email) {
-            if (exam.type >= this.oneTimeAttemptTypeBar) {
-                const [err1, profile] = await utils_1.to(this.examProfileRepository.findOne({
-                    user: email,
-                }));
-                if (err1)
-                    throw new common_1.InternalServerErrorException();
-                const [examProfile] = profile.exams.filter((exam) => exam.examId === +id);
-                if (examProfile) {
-                    if (examProfile.attemptNumbers >= 1) {
-                        throw new common_1.UnauthorizedException(`Forbidden: Unauthorized Access: This Exam Can not be Attempt More Than One Time.`);
-                    }
                 }
             }
         }
@@ -616,7 +588,7 @@ let ExamsService = class ExamsService {
         return exams;
     }
     async findQuestionsByExamId(id, user) {
-        const exam = await this.findExamById(id, null, user.email, user.id);
+        const exam = await this.findExamById(id, null, user.id);
         if (exam) {
             let [err, questions] = await utils_1.to(this.questionRepository.find({
                 where: { id: typeorm_2.In(exam.questions.map((e) => +e)) },
@@ -673,37 +645,6 @@ let ExamsService = class ExamsService {
         if (err)
             throw new common_1.InternalServerErrorException();
         return profiles;
-    }
-    async findProfileByUserEmail(email) {
-        const [err, profile] = await utils_1.to(this.examProfileRepository.findOne({
-            user: email,
-        }));
-        if (err)
-            throw new common_1.InternalServerErrorException();
-        return profile;
-    }
-    async findCourseBasedProfileByUser(id) {
-        const [err, profile] = await utils_1.to(this.courseBasedProfileRepository.findOne({
-            id: +id,
-        }));
-        if (err)
-            throw new common_1.InternalServerErrorException();
-        return profile;
-    }
-    async getUserAvgResult(email) {
-        const [err, profile] = await utils_1.to(this.examProfileRepository.findOne({
-            user: email,
-        }));
-        if (err)
-            throw new common_1.InternalServerErrorException();
-        let totalAvgScore = 0;
-        let totalMark = 0;
-        profile &&
-            profile.exams.map((e) => {
-                totalAvgScore += e.averageScore;
-                totalMark += e.totalMark;
-            });
-        return [totalAvgScore.toFixed(2), totalMark.toFixed(2)];
     }
     async getUserAvgResultByCourseId(id, courseId) {
         const [err, profile] = await utils_1.to(this.userExamProfileRepository.findOne({
@@ -870,20 +811,16 @@ ExamsService = __decorate([
     __param(3, typeorm_1.InjectRepository(course_repository_1.CourseRepository)),
     __param(4, typeorm_1.InjectRepository(category_repository_1.CategoryRepository)),
     __param(5, typeorm_1.InjectRepository(exam_repository_1.ExamRepository)),
-    __param(6, typeorm_1.InjectRepository(profie_repository_1.ExamProfileRepository)),
-    __param(7, typeorm_1.InjectRepository(feedback_repository_1.FeedbackRepository)),
-    __param(8, typeorm_1.InjectRepository(courseBasedProfile_repository_1.CourseBasedProfileRepository)),
-    __param(9, typeorm_1.InjectRepository(userExamCourseProfile_repository_1.UserExamCourseProfileRepository)),
-    __param(10, typeorm_1.InjectRepository(userExamProfile_repository_1.UserExamProfileRepository)),
+    __param(6, typeorm_1.InjectRepository(feedback_repository_1.FeedbackRepository)),
+    __param(7, typeorm_1.InjectRepository(userExamCourseProfile_repository_1.UserExamCourseProfileRepository)),
+    __param(8, typeorm_1.InjectRepository(userExamProfile_repository_1.UserExamProfileRepository)),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         courses_service_1.CoursesService,
         question_repository_1.QuestionRepository,
         category_repository_1.CategoryRepository,
         category_repository_1.CategoryRepository,
         exam_repository_1.ExamRepository,
-        profie_repository_1.ExamProfileRepository,
         feedback_repository_1.FeedbackRepository,
-        courseBasedProfile_repository_1.CourseBasedProfileRepository,
         userExamCourseProfile_repository_1.UserExamCourseProfileRepository,
         userExamProfile_repository_1.UserExamProfileRepository])
 ], ExamsService);

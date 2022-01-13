@@ -15,19 +15,16 @@ import { CourseRepository } from 'src/courses/course.repository';
 import { CoursesService } from 'src/courses/courses.service';
 import { QuestionRepository } from 'src/questions/question.repository';
 import { UserExamCourseProfileRepository } from 'src/userExamProfile/userExamCourseProfile.repository';
+import { UserExamProfile } from 'src/userExamProfile/userExamProfile.entity';
 import { UserExamProfileRepository } from 'src/userExamProfile/userExamProfile.repository';
 import { UsersService } from 'src/users/users.service';
 import { to } from 'src/utils/utils';
 import { In, LessThan, LessThanOrEqual, Like, MoreThanOrEqual } from 'typeorm';
-import { CourseBasedProfile } from './courseBasedProfile.entity';
-import { CourseBasedProfileRepository } from './courseBasedProfile.repository';
 import { CreateExamDto } from './dto/exam.dto';
 import { Exam, ExamType } from './exam.entity';
 import { ExamRepository } from './exam.repository';
 import { Feedback, Status } from './feedback.entity';
 import { FeedbackRepository } from './feedback.repository';
-import { ExamProfileRepository } from './profie.repository';
-import { Profile } from './profile.entity';
 import moment = require('moment');
 
 @Injectable()
@@ -47,14 +44,8 @@ export class ExamsService {
     @InjectRepository(ExamRepository)
     private examRepository: ExamRepository,
 
-    @InjectRepository(ExamProfileRepository)
-    private examProfileRepository: ExamProfileRepository,
-
     @InjectRepository(FeedbackRepository)
     private feedbackRepository: FeedbackRepository,
-
-    @InjectRepository(CourseBasedProfileRepository)
-    private courseBasedProfileRepository: CourseBasedProfileRepository,
     @InjectRepository(UserExamCourseProfileRepository)
     private userExamCourseProfileRepository: UserExamCourseProfileRepository,
     @InjectRepository(UserExamProfileRepository)
@@ -137,17 +128,6 @@ export class ExamsService {
     }
 
     return { examTitles: examTitles.reverse(), stat: stat.reverse() };
-  }
-
-  async findTotalExamTaken(email: string) {
-    const [err, profile] = await to(
-      this.examProfileRepository.findOne({
-        user: email,
-      })
-    );
-    if (err) throw new InternalServerErrorException();
-    if (profile) return profile.exams.length;
-    return 0;
   }
 
   async findTotalExamTakenByCourseId(id, courseId) {
@@ -650,7 +630,6 @@ export class ExamsService {
   async findExamById(
     id: string,
     constraintByCategoryType = null,
-    email = null,
     stuId = null
   ) {
     if (constraintByCategoryType) {
@@ -702,29 +681,6 @@ export class ExamsService {
           throw new UnauthorizedException(
             `Forbidden: Unauthorized Access: Please enroll for the required course.`
           );
-        }
-      }
-    }
-
-    if (email) {
-      if (exam.type >= this.oneTimeAttemptTypeBar) {
-        const [err1, profile] = await to(
-          this.examProfileRepository.findOne({
-            user: email,
-          })
-        );
-        if (err1) throw new InternalServerErrorException();
-
-        const [examProfile] = profile.exams.filter(
-          (exam) => exam.examId === +id
-        );
-
-        if (examProfile) {
-          if (examProfile.attemptNumbers >= 1) {
-            throw new UnauthorizedException(
-              `Forbidden: Unauthorized Access: This Exam Can not be Attempt More Than One Time.`
-            );
-          }
         }
       }
     }
@@ -798,7 +754,7 @@ export class ExamsService {
 
   // // <--------------------->
   async findQuestionsByExamId(id: string, user) {
-    const exam = await this.findExamById(id, null, user.email, user.id);
+    const exam = await this.findExamById(id, null, user.id);
 
     if (exam) {
       let [err, questions] = await to(
@@ -871,55 +827,10 @@ export class ExamsService {
   }
 
   // // <----------------------->
-  async findAllProfile(): Promise<Profile[]> {
+  async findAllProfile(): Promise<UserExamProfile[]> {
     const [err, profiles] = await to(this.userExamProfileRepository.find());
     if (err) throw new InternalServerErrorException();
     return profiles;
-  }
-
-  async findProfileByUserEmail(
-    email: string
-    //examId: string
-  ): Promise<Profile> {
-    const [err, profile] = await to(
-      this.examProfileRepository.findOne({
-        user: email,
-        // $and: [{ "exams._id": examId }, { user: email }],
-      })
-    );
-    if (err) throw new InternalServerErrorException();
-    return profile;
-  }
-
-  async findCourseBasedProfileByUser(
-    id: string
-    //examId: string
-  ): Promise<CourseBasedProfile> {
-    const [err, profile] = await to(
-      this.courseBasedProfileRepository.findOne({
-        id: +id,
-        // $and: [{ "exams._id": examId }, { user: email }],
-      })
-    );
-    if (err) throw new InternalServerErrorException();
-    return profile;
-  }
-
-  async getUserAvgResult(email: string) {
-    const [err, profile] = await to(
-      this.examProfileRepository.findOne({
-        user: email,
-      })
-    );
-    if (err) throw new InternalServerErrorException();
-    let totalAvgScore = 0;
-    let totalMark = 0;
-    profile &&
-      profile.exams.map((e) => {
-        totalAvgScore += e.averageScore;
-        totalMark += e.totalMark;
-      });
-    return [totalAvgScore.toFixed(2), totalMark.toFixed(2)];
   }
 
   async getUserAvgResultByCourseId(id, courseId) {

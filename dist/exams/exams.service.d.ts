@@ -3,15 +3,12 @@ import { CategoryRepository } from 'src/categories/category.repository';
 import { CoursesService } from 'src/courses/courses.service';
 import { QuestionRepository } from 'src/questions/question.repository';
 import { UserExamCourseProfileRepository } from 'src/userExamProfile/userExamCourseProfile.repository';
+import { UserExamProfile } from 'src/userExamProfile/userExamProfile.entity';
 import { UserExamProfileRepository } from 'src/userExamProfile/userExamProfile.repository';
 import { UsersService } from 'src/users/users.service';
-import { CourseBasedProfile } from './courseBasedProfile.entity';
-import { CourseBasedProfileRepository } from './courseBasedProfile.repository';
 import { CreateExamDto } from './dto/exam.dto';
 import { ExamRepository } from './exam.repository';
 import { FeedbackRepository } from './feedback.repository';
-import { ExamProfileRepository } from './profie.repository';
-import { Profile } from './profile.entity';
 export declare class ExamsService {
     private readonly usersService;
     private readonly coursesService;
@@ -19,12 +16,10 @@ export declare class ExamsService {
     private courseRepository;
     private categoryRepository;
     private examRepository;
-    private examProfileRepository;
     private feedbackRepository;
-    private courseBasedProfileRepository;
     private userExamCourseProfileRepository;
     private userExamProfileRepository;
-    constructor(usersService: UsersService, coursesService: CoursesService, questionRepository: QuestionRepository, courseRepository: CategoryRepository, categoryRepository: CategoryRepository, examRepository: ExamRepository, examProfileRepository: ExamProfileRepository, feedbackRepository: FeedbackRepository, courseBasedProfileRepository: CourseBasedProfileRepository, userExamCourseProfileRepository: UserExamCourseProfileRepository, userExamProfileRepository: UserExamProfileRepository);
+    constructor(usersService: UsersService, coursesService: CoursesService, questionRepository: QuestionRepository, courseRepository: CategoryRepository, categoryRepository: CategoryRepository, examRepository: ExamRepository, feedbackRepository: FeedbackRepository, userExamCourseProfileRepository: UserExamCourseProfileRepository, userExamProfileRepository: UserExamProfileRepository);
     private freeCategoryId;
     private oneTimeAttemptTypeBar;
     getFreeCategoryId(): Promise<any>;
@@ -40,7 +35,6 @@ export declare class ExamsService {
         examTitles: any[];
         stat: any[];
     }>;
-    findTotalExamTaken(email: string): Promise<any>;
     findTotalExamTakenByCourseId(id: any, courseId: any): Promise<any>;
     findExamTotalNumber(): Promise<any>;
     findExamTotalNumberByCourseId(courseId: any): Promise<any>;
@@ -53,7 +47,7 @@ export declare class ExamsService {
     findLatestExamByCourseId(courseId: any): Promise<any>;
     findCurrentExam(): Promise<any>;
     getFeaturedExams(courseId?: any): Promise<any>;
-    findExamById(id: string, constraintByCategoryType?: any, email?: any, stuId?: any): Promise<any>;
+    findExamById(id: string, constraintByCategoryType?: any, stuId?: any): Promise<any>;
     findExamByCatId(id: string): Promise<any>;
     findOldExamByCatId(id: string): Promise<any>;
     findQuestionsByExamId(id: string, user: any): Promise<{
@@ -76,10 +70,7 @@ export declare class ExamsService {
         };
         questions: any;
     }>;
-    findAllProfile(): Promise<Profile[]>;
-    findProfileByUserEmail(email: string): Promise<Profile>;
-    findCourseBasedProfileByUser(id: string): Promise<CourseBasedProfile>;
-    getUserAvgResult(email: string): Promise<string[]>;
+    findAllProfile(): Promise<UserExamProfile[]>;
     getUserAvgResultByCourseId(id: any, courseId: any): Promise<any[]>;
     getUserRank(id: any, courseId: any): Promise<number>;
     createExam(createExamDto: any, creator: string): Promise<any>;

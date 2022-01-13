@@ -122,34 +122,4 @@ export class DashboardService {
 
     return { users, exams, feedbacks, expectedEnrolled };
   }
-
-  // async getFeaturedExams() {
-  //   const [err, exams] = await to(
-  //     this.examRepository.find({
-  //       where: [
-  //         {
-  //           categoryIds: Like(
-  //             '%,' + (await this.featuredCategoryId).toString() + ',%'
-  //           ),
-  //         },
-  //         {
-  //           categoryIds: Like(
-  //             (await this.featuredCategoryId).toString() + ',%'
-  //           ),
-  //         },
-  //         {
-  //           categoryIds: Like(
-  //             '%,' + (await this.featuredCategoryId).toString()
-  //           ),
-  //         },
-  //       ],
-  //       relations: ['categoryType'],
-  //       order: { id: 'DESC' },
-  //       take: 5,
-  //     })
-  //   );
-  //   if (err) throw new InternalServerErrorException();
-
-  //   return exams;
-  //}
 }

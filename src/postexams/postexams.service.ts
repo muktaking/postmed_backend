@@ -8,14 +8,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import * as _ from 'lodash';
 import { CoursesService } from 'src/courses/courses.service';
-import { CourseBasedExamProfileRepository } from 'src/exams/courseBasedExamProfile.repository';
-import { CourseBasedProfileRepository } from 'src/exams/courseBasedProfile.repository';
-import { CoursesProfileRepository } from 'src/exams/coursesProfile.repository';
 import { answerStatus } from 'src/exams/exam.entity';
 import { Exam } from 'src/exams/exam.model';
 import { ExamsService } from 'src/exams/exams.service';
-import { ExamProfileRepository } from 'src/exams/profie.repository';
-import { ExamStat, Profile } from 'src/exams/profile.entity';
 import { QType, Question } from 'src/questions/question.model';
 import { QuestionRepository } from 'src/questions/question.repository';
 import { UserExamProfileService } from 'src/userExamProfile/userExamprofile.service';
@@ -30,16 +25,8 @@ const moment = require('moment');
 export class PostexamsService {
   constructor(
     private readonly usersService: UsersService,
-    @InjectRepository(ExamProfileRepository)
-    private examProfileRepository: ExamProfileRepository,
     @InjectRepository(QuestionRepository)
     private questionRepository: QuestionRepository,
-    @InjectRepository(QuestionRepository)
-    private coursesProfileRepository: CoursesProfileRepository,
-    @InjectRepository(QuestionRepository)
-    private courseBasedProfileRepository: CourseBasedProfileRepository,
-    @InjectRepository(CourseBasedExamProfileRepository)
-    private courseBasedExamProfileRepository: CourseBasedExamProfileRepository,
     private readonly examService: ExamsService,
     private readonly courseService: CoursesService,
     private readonly userExamProfileService: UserExamProfileService
@@ -56,187 +43,6 @@ export class PostexamsService {
   private totalPenaltyMark = 0;
 
   //an object should pass from front--> {examId,[],timeTakenToComplete,user}
-
-  async postExamTasking(
-    getAnswersDto: GetAnswersDto,
-    answersByStudent: Array<StudentAnswer>,
-    user
-  ) {
-    /// answersByStudent[{id,stems[],type}] // stems[0/1/undefined]
-    const { examId, timeTakenToComplete, questionIdsByOrder } = getAnswersDto;
-
-    const exam: Exam = await this.examService.findExamById(examId); //1. Get the exam details by id
-    let profile: Profile = await this.examService.findProfileByUserEmail(
-      //2. get the exam profile of user
-      user.email
-      //examId
-    );
-
-    let examStat: ExamStat | any = {
-      // creating a null exam stat
-      id: null,
-      title: '',
-      type: null,
-      attemptNumbers: null,
-      averageScore: 0,
-      totalMark: null,
-      firstAttemptTime: null,
-      lastAttemptTime: null,
-    };
-    // populate some Global variables
-    this.singleQuestionMark = exam.singleQuestionMark;
-    this.questionStemLength = exam.questionStemLength;
-    this.singleStemMark = exam.singleStemMark;
-    this.penaltyMark = exam.penaltyMark;
-    this.timeLimit = exam.timeLimit;
-    this.totalMark = Math.ceil(this.singleQuestionMark * exam.questions.length); // simple math
-    //this.totalScore = 0;
-
-    //exam profile starts
-
-    if (!profile) {
-      // if user has no profile && has no previous attempt to this exam
-      profile = new Profile(); // then, create a new exam profile & exam stat
-      examStat.examId = examId;
-      examStat.examTitle = exam.title;
-      examStat.examType = exam.type;
-      examStat.attemptNumbers = 1;
-      examStat.totalMark = this.totalMark;
-      examStat.firstAttemptTime = moment().format('YYYY-MM-DD HH:mm:ss');
-      examStat.lastAttemptTime = moment().format('YYYY-MM-DD HH:mm:ss');
-      profile.user = user.email;
-      profile.exams = [];
-      // average score have to add later, so exams key of profile will be added later
-    } else {
-      [examStat] = profile.exams.filter((exam) => exam.examId === +examId); // if user previously attempted
-      if (!examStat) {
-        examStat = {
-          examId: +examId,
-          examTitle: exam.title,
-          examType: exam.type,
-          attemptNumbers: 1,
-          totalMark: this.totalMark,
-          firstAttemptTime: moment().format('YYYY-MM-DD HH:mm:ss'),
-          lastAttemptTime: moment().format('YYYY-MM-DD HH:mm:ss'),
-          averageScore: 0,
-        };
-      } else {
-        examStat.totalMark = this.totalMark;
-        examStat.attemptNumbers++;
-        examStat.lastAttemptTime = moment().format('YYYY-MM-DD HH:mm:ss');
-      }
-    }
-
-    //answer manipulation is started here
-    // console.log(answersByStudent);
-    answersByStudent = answersByStudent.filter((v) => v.stems.length > 0); //the empty stems answer object are rejected
-    answersByStudent = _.sortBy(answersByStudent, (o) => +o.id); // sort answer by ids,
-    // answersByStudent is sorted by id. Because we will match these answers with database saved answer that is also
-    //sorted by id
-    const questionIds = answersByStudent.map((v) => v.id); // get the questions ids that is also answer id
-
-    const [err, questions] = await to(
-      //fetch the questions
-      this.questionRepository.find({
-        //where: { id: In(questionIds.map((e) => +e)) },
-        where: { id: In(questionIdsByOrder) },
-      })
-    );
-
-    const answeredQuestions = questions.filter((question) =>
-      questionIds.includes(question.id.toString())
-    );
-
-    const nonAnsweredQuestions = questions.filter(
-      (question) => !questionIds.includes(question.id.toString())
-    );
-
-    if (err) throw new InternalServerErrorException();
-
-    //const answersByServer = this.answersExtractor(questions);
-
-    let resultArray: Array<Particulars> = []; //result array will hold the total result
-
-    // console.log(
-    //   'answerByStudents',
-    //   answersByStudent.map((q) => q.id)
-    // );
-
-    // console.log(
-    //   'answerByServers',
-    //   answeredQuestions.map((q) => q.id)
-    // );
-
-    //main algorithm starts
-
-    answeredQuestions.map((question, index) => {
-      // mapping questions to validate answer and make marksheet
-
-      const particulars: Particulars = {
-        // particulars is the block of data passed to forntend to show result
-        id: question.id,
-        qText: question.qText,
-        stems: question.stems,
-        generalFeedback: question.generalFeedback,
-        result: { mark: 0 },
-      };
-
-      if (question.qType === QType.Matrix) {
-        particulars.result = this.matrixManipulator(
-          this.answersExtractor(question),
-          answersByStudent[index]
-        );
-      } else if (question.qType === QType.singleBestAnswer) {
-        particulars.result = this.sbaManipulator(
-          this.answersExtractor(question),
-          answersByStudent[index]
-        );
-      }
-      resultArray.push(particulars);
-    });
-
-    examStat.averageScore = this.totalScore;
-
-    if (examStat.attemptNumbers == 1) profile.exams.push(examStat);
-
-    const [error, result] = await to(profile.save());
-
-    if (error) throw new InternalServerErrorException();
-
-    const totalScorePercentage =
-      +(this.totalScore / this.totalMark).toFixed(2) * 100;
-
-    nonAnsweredQuestions.forEach((question) => {
-      const particulars: Particulars = {
-        // particulars is the block of data passed to forntend to show result
-        id: question.id,
-        qText: question.qText,
-        stems: question.stems,
-        generalFeedback: question.generalFeedback,
-        result: { mark: 0 },
-      };
-
-      if (question.qType === QType.Matrix) {
-        particulars.result = { stemResult: [QType.Matrix], mark: 0 };
-      } else if (question.qType === QType.singleBestAnswer) {
-        particulars.result = {
-          stemResult: [QType.singleBestAnswer, +question.stems[0].aStem[0]],
-          mark: 0,
-        };
-      }
-      resultArray.push(particulars);
-    });
-
-    return {
-      examId,
-      resultArray,
-      totalMark: this.totalMark,
-      totalScore: this.totalScore,
-      totalPenaltyMark: this.totalPenaltyMark,
-      totalScorePercentage,
-      timeTakenToComplete,
-    };
-  }
 
   async postExamTaskingByCoursesProfile(
     getAnswersDto: GetAnswersDto,
@@ -458,28 +264,6 @@ export class PostexamsService {
     });
   }
 
-  async examRankById(id: string) {
-    const exam = await this.examService.findExamById(id);
-    const profiles: Profile[] = await this.examService.findAllProfile();
-    let profileCurtailedByExamId = await Promise.all(
-      profiles.map(async (profile) => ({
-        user: await this.usersService.findOneUser(profile.user, true),
-        exam: profile.exams
-          .filter((exam) => exam.examId.toString() === id)
-          .map((exam) => ({
-            score: exam.averageScore,
-            attempts: exam.attemptNumbers,
-            totalMark: exam.totalMark,
-          })),
-      }))
-    );
-    profileCurtailedByExamId = _.sortBy(profileCurtailedByExamId, (o) =>
-      o.exam.length > 0 ? o.exam[0].score : []
-    );
-
-    return { exam, rank: profileCurtailedByExamId.reverse() };
-  }
-
   async examRankByIdConstrainByCourseId(examId: string, courseId: string) {
     let rankProfiles = [];
     const [error, courseProfiles] = await to(
@@ -526,25 +310,6 @@ export class PostexamsService {
       exam,
       rank: rankProfiles,
     };
-    // const exam = await this.examService.findExamById(id);
-    // const profiles: Profile[] = await this.examService.findAllProfile();
-    // let profileCurtailedByExamId = await Promise.all(
-    //   profiles.map(async (profile) => ({
-    //     user: await this.usersService.findOneUser(profile.user, true),
-    //     exam: profile.exams
-    //       .filter((exam) => exam.examId.toString() === id)
-    //       .map((exam) => ({
-    //         score: exam.averageScore,
-    //         attempts: exam.attemptNumbers,
-    //         totalMark: exam.totalMark,
-    //       })),
-    //   }))
-    // );
-    // profileCurtailedByExamId = _.sortBy(profileCurtailedByExamId, (o) =>
-    //   o.exam.length > 0 ? o.exam[0].score : []
-    // );
-
-    // return { exam, rank: profileCurtailedByExamId.reverse() };
   }
 
   //ends
