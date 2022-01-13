@@ -30,8 +30,8 @@ let ExamsController = class ExamsController {
     async findAllExams() {
         return await this.examService.findAllExams();
     }
-    async findAllPlainExamsByCourseId(id, req) {
-        return await this.examService.findAllPlainExamsByCourseIds(id.id, req.user.id);
+    async findAllPlainExamsByCourseId(filter, id, req) {
+        return await this.examService.findAllPlainExamsByCourseIds(id.id, req.user.id, filter);
     }
     async findAllRawExams() {
         return await this.examService.findAllRawExams();
@@ -90,12 +90,12 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findAllExams", null);
 __decorate([
-    common_1.Get('/course/:id'),
+    common_1.Post('/course/:id'),
     common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
     roles_decorator_1.Role(user_entity_1.RolePermitted.student),
-    __param(0, common_1.Param()), __param(1, common_1.Req()),
+    __param(0, common_1.Body()), __param(1, common_1.Param()), __param(2, common_1.Req()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "findAllPlainExamsByCourseId", null);
 __decorate([

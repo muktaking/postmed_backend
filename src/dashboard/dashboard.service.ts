@@ -4,6 +4,7 @@ import { CategoryRepository } from 'src/categories/category.repository';
 import { CoursesService } from 'src/courses/courses.service';
 import { ExamRepository } from 'src/exams/exam.repository';
 import { ExamsService } from 'src/exams/exams.service';
+import { UserExamProfileRepository } from 'src/userExamProfile/userExamProfile.repository';
 import { RolePermitted } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { to } from 'src/utils/utils';
@@ -16,6 +17,8 @@ export class DashboardService {
     private categoryRepository: CategoryRepository,
     @InjectRepository(ExamRepository)
     private examRepository: ExamRepository,
+    @InjectRepository(UserExamProfileRepository)
+    private userExamProfileRepository: UserExamProfileRepository,
     private readonly examService: ExamsService,
     private readonly courseService: CoursesService
   ) {
@@ -32,19 +35,71 @@ export class DashboardService {
     return category ? category.id : null;
   }
 
-  async getStudentDashInfo(email: string) {
-    const [err, userExamInfo] = await to(
-      this.examService.findUserExamInfo(email)
-    );
-    if (err) throw new InternalServerErrorException();
-    const [err1, userExamStat] = await to(
-      this.examService.findUserExamStat(email)
-    );
-    if (err1) throw new InternalServerErrorException();
+  async getStudentDashInfo(id) {
+    const userDashExamInfo = [];
 
-    const featuredExams = await this.examService.getFeaturedExams();
+    const [error, enrolledCourses] = await to(
+      this.courseService.findAllCoursesEnrolledByStudent(id)
+    );
+    if (error)
+      throw new InternalServerErrorException(
+        'Can not get all enrolled courses'
+      );
 
-    return { userExamInfo, featuredExams, userExamStat };
+    if (enrolledCourses) {
+      for (const course of enrolledCourses) {
+        const [errorUserExamProfile, userExamProfile] = await to(
+          this.userExamProfileRepository.findOne({
+            where: { id: +id },
+            relations: ['courses'],
+          })
+        );
+        if (errorUserExamProfile)
+          throw new InternalServerErrorException(errorUserExamProfile);
+
+        if (userExamProfile) {
+          const userExamCourseProfile =
+            userExamProfile.courses &&
+            userExamProfile.courses.filter((e) => e.courseId === +course.id);
+
+          if (userExamCourseProfile.length > 0) {
+            const [err, userExamInfo] = await to(
+              this.examService.findUserExamInfo(id, course.id)
+            );
+
+            if (err)
+              throw new InternalServerErrorException(
+                'Can not get user exam info. ' + err
+              );
+            const [err1, userExamStat] = await to(
+              this.examService.findUserExamStat(id, course.id)
+            );
+            if (err1)
+              throw new InternalServerErrorException(
+                'Can not get user exam stat' + err1
+              );
+
+            const [err2, featuredExams] = await to(
+              this.examService.getFeaturedExams(course.id)
+            );
+            if (err2)
+              throw new InternalServerErrorException(
+                'Can not get featured exams' + err2
+              );
+
+            userDashExamInfo.push({
+              id: course.id,
+              title: course.title,
+              userExamInfo,
+              userExamStat,
+              featuredExams,
+            });
+          }
+        }
+      }
+    }
+
+    return userDashExamInfo.reverse();
   }
 
   async getAdminDashInfo(userRole) {

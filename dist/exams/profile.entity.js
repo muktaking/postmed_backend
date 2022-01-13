@@ -23,7 +23,7 @@ __decorate([
 ], Profile.prototype, "user", void 0);
 __decorate([
     typeorm_1.OneToMany(() => examProfile_entity_1.ExamProfile, (examProfile) => examProfile.profile, { cascade: true, eager: true }),
-    typeorm_1.JoinColumn({ name: "exams" }),
+    typeorm_1.JoinColumn({ name: 'exams' }),
     __metadata("design:type", Array)
 ], Profile.prototype, "exams", void 0);
 Profile = __decorate([

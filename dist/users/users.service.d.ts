@@ -15,6 +15,7 @@ export declare class UsersService {
     }>;
     findAllUsers(userRole: any): Promise<User[]>;
     findOneUser(email: string, nameOnly?: boolean, isForAuth?: boolean): Promise<User | any>;
+    findOneUserById(id: string, nameOnly?: boolean, isForAuth?: boolean): Promise<User | any>;
     findAllStudentNumber(): Promise<number | InternalServerErrorException>;
     changeAvatar(id: any, name: any): Promise<any>;
 }

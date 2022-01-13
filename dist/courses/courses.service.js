@@ -201,6 +201,12 @@ let CoursesService = class CoursesService {
             message: deny ? 'Enrollment denied' : 'Enrollment successful',
         };
     }
+    async findAllEnrolledStudentNumberByCourseId(courseId) {
+        const [err, course] = await utils_1.to(this.findCourseById(courseId));
+        if (err)
+            throw new common_1.InternalServerErrorException('All Enrolled Student Number Can Not Be Counted');
+        return course.enrolledStuIds.length;
+    }
 };
 CoursesService = __decorate([
     common_1.Injectable(),

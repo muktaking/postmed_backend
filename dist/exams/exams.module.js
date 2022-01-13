@@ -13,7 +13,12 @@ const category_repository_1 = require("../categories/category.repository");
 const course_repository_1 = require("../courses/course.repository");
 const courses_module_1 = require("../courses/courses.module");
 const question_repository_1 = require("../questions/question.repository");
+const userExamCourseProfile_repository_1 = require("../userExamProfile/userExamCourseProfile.repository");
+const userExamProfile_repository_1 = require("../userExamProfile/userExamProfile.repository");
 const users_module_1 = require("../users/users.module");
+const courseBasedExamProfile_entity_1 = require("./courseBasedExamProfile.entity");
+const courseBasedProfile_entity_1 = require("./courseBasedProfile.entity");
+const coursesProfile_entity_1 = require("./coursesProfile.entity");
 const exam_repository_1 = require("./exam.repository");
 const exams_controller_1 = require("./exams.controller");
 const exams_service_1 = require("./exams.service");
@@ -31,6 +36,11 @@ ExamsModule = __decorate([
                 question_repository_1.QuestionRepository,
                 profie_repository_1.ExamProfileRepository,
                 feedback_repository_1.FeedbackRepository,
+                coursesProfile_entity_1.CoursesProfile,
+                courseBasedProfile_entity_1.CourseBasedProfile,
+                courseBasedExamProfile_entity_1.CourseBasedExamProfile,
+                userExamProfile_repository_1.UserExamProfileRepository,
+                userExamCourseProfile_repository_1.UserExamCourseProfileRepository,
             ]),
             courses_module_1.CoursesModule,
             categories_module_1.CategoriesModule,

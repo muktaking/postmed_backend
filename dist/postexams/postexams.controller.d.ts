@@ -22,15 +22,8 @@ export declare class PostexamsController {
         totalScorePercentage: number;
         timeTakenToComplete: string;
     }>;
-    examRankByIdForGuest(id: any): Promise<{
+    examRankByIdForGuest(data: any): Promise<{
         exam: any;
-        rank: {
-            user: any;
-            exam: {
-                score: number;
-                attempts: number;
-                totalMark: number;
-            }[];
-        }[];
+        rank: any[];
     }>;
 }

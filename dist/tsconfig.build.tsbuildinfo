@@ -2730,8 +2730,8 @@
         "signature": "fa079c5325c920036a513b077b2378e6bd8f74a14de7769060827968d3303588"
       },
       "../src/users/users.service.ts": {
-        "version": "d3881a054dffe564912b9b9826916d8b8265cf300629b647cda8c419e895676f",
-        "signature": "ec1cda1b9fc08ff3df209eb510f9a7e30c3687c318f0bf3e358e64d55a27da0a"
+        "version": "cad99a64217e5a807c8192f6afefbad24c7f1c3e6614cb510be16decb305ac1d",
+        "signature": "f519a2895414c7e09fc996da8d39d74cef3447daffb616ff3b095f6a830cf758"
       },
       "../src/users/users.controller.ts": {
         "version": "e08364fa6583be95a7746616d4a68c7eb90a4c2d5ab142f0e9442328f419dffd",
@@ -2754,8 +2754,8 @@
         "signature": "2b8a4b64aaf166600efda31d51aaab509997a0649a4a8723b50a60ce29ac195c"
       },
       "../src/auth/auth.controller.ts": {
-        "version": "5f262fe803e86839e693fb56de07aea82108b97e4a73a2c268029f5556e9a932",
-        "signature": "2bc2905fcf1cd1d21f6b1ccbf02b9ac075d7b35056d9d1d06329ca2bb21cb919"
+        "version": "b19049f0374e313282a5ee4ad7b84d08ba003df3f27a5f8a1592131e1c7ff1db",
+        "signature": "1e69a87ecad958ec40a84b2d52d469071904f9602558461bbd4300b65d45f8d9"
       },
       "../node_modules/@types/range-parser/index.d.ts": {
         "version": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
@@ -3046,8 +3046,8 @@
         "signature": "7846656529867ed54d7e5cd0bfc82dace2c758f892de7e8a1d4dd13f7137c966"
       },
       "../src/courses/courses.service.ts": {
-        "version": "c90714ee5e3fa8791a9e070f6c4c6188524869a606c5a6e36ec80d08e3c8caca",
-        "signature": "aead8876d95c217f99701372db0ab7c0d749fcda60568348187915dc08a3e86a"
+        "version": "6d03f32e4859756f055c38e736f2a73328d90b3c4e31415084942f0e451104bf",
+        "signature": "ac09f286878b61321013af6642025adf36c9d8dd7d2aa64a8650385c84601e5e"
       },
       "../src/courses/courses.controller.ts": {
         "version": "107590a8fb3a6b676a612777f63511c8cd0e5c76da41f920d2e59e3a53639dd7",
@@ -3065,6 +3065,38 @@
         "version": "3545ae7c5586cd957987bd3c6475d350aa83c5a824dd29c66c04fb0e9b5a2442",
         "signature": "924336fb4fa06879809f1248814b0795014f41ba75f0d7d031352fa6d032ae0e"
       },
+      "../src/userexamprofile/userexamexamprofile.entity.ts": {
+        "version": "eb4957788a903f0139993bd53d080d860f5e969dd8906ea313ad834e71b42b4b",
+        "signature": "920230763ac468ff1ce60adae3c157ec45591244e35eacab093a218563713d7c"
+      },
+      "../src/userexamprofile/userexamprofile.entity.ts": {
+        "version": "f4f443311af93ddc1d96a713f90cf5d439079cc48d1067a3cfc401b338a3a500",
+        "signature": "05fa02e5ecba51e8baf1750fc5f8b75e7c91c29a9b74bf0b25f1da3a4ea9ed1c"
+      },
+      "../src/userexamprofile/userexamcourseprofile.entity.ts": {
+        "version": "908c7652672dc872a10c7ab4dc5f4a07a1f361049f4a476b0d99f8729143c90d",
+        "signature": "e4be4e811d8c9295879312427f1a691169566d9569354dbf6581e630cade3cb2"
+      },
+      "../src/userexamprofile/userexamcourseprofile.repository.ts": {
+        "version": "c838eae701b155d422f274f92892755943e3d63fac24ad16a19a46f5ab5ef9db",
+        "signature": "d88e267d5708582e49568d0867eaa3c27b139047d50f831cac622b1ba8727536"
+      },
+      "../src/userexamprofile/userexamprofile.repository.ts": {
+        "version": "3ce391b203fc768f3aa0d32178044bb0f055b77bfe89e94c2541482057630889",
+        "signature": "c10c54d8351b218f32750b210ac3c7253be48f2a6eb2aabc430be967f29d9bae"
+      },
+      "../src/exams/coursebasedprofile.entity.ts": {
+        "version": "c2cce6828d6fb53f4e3bebed3cf3e76432c8f5b941c8156061ba5e1c91e3a595",
+        "signature": "46665df4814c973a5de3b8ebf5398f15128dd4c8ae7f96e76190f0597d8ec281"
+      },
+      "../src/exams/coursesprofile.entity.ts": {
+        "version": "12a65919cfe09c951946a89ee044eeff2711adcf95583fbd2a62b6c5e60fb1f2",
+        "signature": "7ead82b536772665bb19916eee76e42d301ae1b78df7e87caa29cc450e924aa0"
+      },
+      "../src/exams/coursebasedexamprofile.entity.ts": {
+        "version": "854fad04a18ef575930c35d1a619c385cf0c7276354233e7ebe46c0d01565268",
+        "signature": "b38bc00ea637b2d6adcc878d1bc48600db299665c369c05651749ca667de5aeb"
+      },
       "../src/exams/exam.model.ts": {
         "version": "6eddd417d603afaf63a4bf90e35ac0139ce8492b22530574513e076f41748412",
         "signature": "82cdc14f3994b57f5f6604acd935efb818f2061fcc41d8003ed4362f0ec5bd17"
@@ -3081,6 +3113,10 @@
         "version": "29731c32bd33833e05e3e42c11cba89ce5a6b5c2a0187529968812b1829bfce3",
         "signature": "d71964749713d733b7a19e3825372538e018eafbe2c7180689daaf5ae787a7ee"
       },
+      "../src/exams/coursebasedprofile.repository.ts": {
+        "version": "65350bb0a82e6a36ec8729f8e3f32ee30c02efe8cf88ce0a821107c637ce0691",
+        "signature": "2ea4696f3d1115653e31715f5aeea87f4567574ed75cf7c694a00b5511cbc205"
+      },
       "../src/exams/feedback.repository.ts": {
         "version": "a048b905b68d6ddc51b88ee11a54f3e2a22f6da3cc3758829a4331912990399d",
         "signature": "54d06511034c1ddd716908dcaacea758a33b8a7b9290a3aa7d5de6866217aaed"
@@ -3090,40 +3126,60 @@
         "signature": "ad3fa4ebeeb5d9d7936f8192e424b9f4ac81a173b2b64f5b0dcae8877ebe01b0"
       },
       "../src/exams/profile.entity.ts": {
-        "version": "1168bdec25d2b8525ad3a086a6abb1455b072e74116c7e93680d24783275dd71",
-        "signature": "d3b43767ed61f8addbb2b31d24c5c96c4c81ba45500a78502043295b1f290ad3"
+        "version": "abd531b55b3488397023d5c0e262cb5f78e7caf8103a111a9e39296b641d3ef8",
+        "signature": "e403bbf7c568e09f1e704a624162993015e663e75761a2e513fb77ad11c72797"
       },
       "../src/exams/profie.repository.ts": {
-        "version": "4183e80d69c9e961f76675a43760a466a15e1bc48e06efaaa88e8a21a7b3325d",
-        "signature": "69606fd9b34c81704420ae0f21dd9a7128452d9541e304ed6e1d8503d1d30628"
+        "version": "72df19f708cff56f37fb14897606896cf740dd7fb52454c94b114541dab67604",
+        "signature": "fd9b6faac70c3747d534b8f5901c859b9cf39ca91584e5ae98015f1d1b09d1bb"
       },
       "../src/exams/exams.service.ts": {
-        "version": "83b67473c674dc2f0546a3db5da014e593759c7b4476784f31f1c48dd28cbf79",
-        "signature": "c14b31ad977218f0348daf1a5e15429e1adeb53f5b3ee218ca8eaf57b7061bd9"
+        "version": "ba069fc99937112eae5467fc3e989770344d4e06691a61f032e2715cda2164d1",
+        "signature": "2cda6933b9b9dbcf08af249fc6960c3bc50d0ad43234518ba5c5f83abbd8122c"
       },
       "../src/exams/exams.controller.ts": {
-        "version": "8fa5fa9f683259696b1168e474a8ecc8374eab8debdcb4a4821e1984fe964d26",
-        "signature": "61a99d3a574aa1986fed736c13056af2463d5c8b7a964f7128e2c1770f416e66"
+        "version": "bbe67f8fda17defaa599968cc37ada0a1bf5e220e613f218b71596c1f8f4950a",
+        "signature": "3e7260d7bbb32374f26a5e583658bf0371be9ff0328b5ff1359584b77a89f554"
       },
       "../src/exams/exams.module.ts": {
-        "version": "86ea87f3efc112771734d415a6532f0747f0adb64809d25ffe3a8da162bdb247",
+        "version": "bab3eb6d1893c502cb0a5f0d9ee053599fad179b07d158416f04e5cdfbfd4d59",
         "signature": "904cd600097d2278f2782ecdb8be6706901685006f68bbdcbae2e4b680cfce01"
       },
+      "../src/userexamprofile/userexamexamprofile.repository.ts": {
+        "version": "fb8386569c8fed840a09ea591c2694407eac69eaa6f6018ead6f9230cc25b9a4",
+        "signature": "3f978fc4217bc90598f87c69bffa0142a7b273811fec427faaefeb1a5d50014c"
+      },
+      "../src/userexamprofile/userexamprofile.service.ts": {
+        "version": "df0e523a446a1b33bcab3234e2d94d9b4ea9df025469e2827f60a446caaae077",
+        "signature": "0333f5c9b1fbc800e9a764ba89c73802923856e7cbf87345c1968a3837bd0298"
+      },
+      "../src/userexamprofile/userexamprofile.controller.ts": {
+        "version": "88454471e7875137e5472810e5c526d5a2f909b38a59c93c255872106909a3b1",
+        "signature": "007d3e2652ca27bd9a8b41db38ba5058b29c08769cd2ca3f99bc9e0075ee03ff"
+      },
+      "../src/userexamprofile/userexamprofile.module.ts": {
+        "version": "c54c988c17d9bcb73fe8d172895af63d686d649ce5222f29f420fe1c53463b17",
+        "signature": "bdd5d5cab3f123cb03d0479306951586a8a6c2673f878c9d92c3c64a5c1d9a42"
+      },
       "../src/dashboard/dashboard.service.ts": {
-        "version": "43a70cdfdd7b636b0a32f17c24d15479ca5b781bb731c2c7efaad81b82d006cc",
-        "signature": "cf968b1e07f4c87bfed84937fb70444bba49d0c4ae100c60ed60764579e1fe95"
+        "version": "b43ad029d3780afd05a5c2a11bfc4c4dafe9e4b7a700b51785335b2b63df27cc",
+        "signature": "caa8c0a73da1ddf66732dab7ddd49c4d21669be93dad9c8b29f504d6ada8f936"
       },
       "../src/dashboard/dashboard.controller.ts": {
-        "version": "e634203526d13c6bf2739f0126a5ca4e27aac551765672285329bfe24da09cd6",
-        "signature": "8573ae160fc62844e3db1c6767e6bb3eab62c700be75f3c60dc378b19b34c1d5"
+        "version": "2b6b0d13f8f312fb99f7423925a6869c200e347bacb4601a64d57ac0a6425c62",
+        "signature": "0e69ea25ceb35f6e2cf289670901685b1dbc83854589ace797f6df41356682a4"
       },
       "../src/dashboard/dashboard.module.ts": {
-        "version": "dd23c735d6cb1124da6ca2db1ce579bbdb20d3b295e6daec21545f78398ae805",
+        "version": "72a0aa828fe0976b7ce861f39cd89904ce300e41662b90cdc010cb9d52f6f931",
         "signature": "7dfc0dea2801af122d19df735dd15d7bb9f5b594eda3e867cb357dd6d786c30a"
       },
+      "../src/exams/coursebasedexamprofile.repository.ts": {
+        "version": "960c6ac1ed7ed1afab54bd6f26ae4e2e66f65451de073fc096d529835a73d6f6",
+        "signature": "f3e249064585b2ad942612fac2d25161b94060935fd0dd9ccc3b9d02ff1137fe"
+      },
       "../src/postexams/dto/get-answers.dto.ts": {
-        "version": "f379916ceb825b4dc61535d8006321bd9d319cd98f6e7768d6062495524a127d",
-        "signature": "774c05128bf4c297ea1cc066cb92cfafff7d43d3140f15abd63cb1be803798ff"
+        "version": "d8550b9fa864ac7263bd5c741f6f8dce4713767145d58af1f80f197a0e0b74ff",
+        "signature": "da2f7e35e60e4556b15c261b2eece668b0d60d5ecc58a101ba61470824ce9ee0"
       },
       "../src/postexams/postexam.model.ts": {
         "version": "9a2c19f503b6c80d6286a2e3d032f3918ec21f36c268d22412e97028951a2b87",
@@ -3133,48 +3189,52 @@
         "version": "fa9ffe42f28b85320ccd6718e81d44e957d92291366da0cb0327c93915b7948e",
         "signature": "a908103c2809287586624b71d6114b10dd31d4cfe68b246ad3e69980bc319ead"
       },
+      "../src/exams/coursesprofile.repository.ts": {
+        "version": "957fb7fcac8fe047f044be2c36edaa5069f5e44b92e84c9194ea2df1fa20ee03",
+        "signature": "08c5734bca35514ba9a7608e3f3f9953fcef41bfe981bec1171bd38a236639b4"
+      },
       "../src/postexams/postexams.service.ts": {
-        "version": "b7a8c8f1f1c83fb4e6eac31cb0044d3079d6ab2e56c2610dcf844505d56b3a35",
-        "signature": "0a3d8f1b9aa6143943f7b59b456a11d5dc546ddfcce8b047e45ba9148d8ff821"
+        "version": "509fc77751c278ac14ecc978b4cdc0d5d7fe3bfb10736c23232195fbf51d8e11",
+        "signature": "82012968a4d8eab99661e2ff02db3fab15907c6ba05beba6689dabece6331b3d"
       },
       "../src/postexams/postexams.controller.ts": {
-        "version": "74b62469316100ce1c519c3401daa21173b260f690dcaa9e3a530ed3171f2550",
-        "signature": "556d00cdaa069c8dc2b6479862e7e343b97d0cf91e090f6ad3156528ae5954c6"
+        "version": "fa4ab61f54aae1406af6506c2d073f5862a83b7eb49bb161085fc5668871043f",
+        "signature": "e3a84af127537cd97a1707d3dc2336706b989296d9b0236ffb4e87b8baf15cd1"
       },
       "../src/postexams/postexams.module.ts": {
-        "version": "ecb7c0ae3e05379e343332fe87f09fccdb07cb6dcbffe02810e78c12c8f40ccf",
+        "version": "95d3318578de5ea95b7515074153a46f50a45964d78b46b5416b43f105c74fb2",
         "signature": "0c3158f9f9613199f13a308add95f80ce7be1954e778cf153e73bd94f169d0d2"
       },
-      "../src/typeormconfig/typeorm.config.ts": {
-        "version": "3d67de5a290fdd8bc2660578b284e79484a322ea21b4503f719033e0095ebd31",
-        "signature": "20c66cb320b090f75350bcdcde9479a854dd2e2e4051814c0dd31af2a8db9977"
-      },
       "../src/routine/addasyllabus.dto.ts": {
-        "version": "935ea209be829214b664b1b1b5e435fdabe3854b66103d527a7f9d1bea7835bd",
-        "signature": "c9334a36cd10dfd08c7f87be4a2d43db0d7e4032f582752d83a338e4a0b17969"
+        "version": "892d9fa5c083c660f6b0ef896603cb74911a73cd648bc464f9de8937cd06e477",
+        "signature": "b90121544c6ee2a61729ccf8c6daead4c1b75f95652ea045b6ebe3182ca819c0"
       },
       "../src/routine/routine.entity.ts": {
-        "version": "dbb1762c0876712c11b262a51b17a90c10a2c2f23440edf2e588273888a52ce8",
-        "signature": "b0b070cc1d52b395a64c6dffca01a0ea20cb637f01bf45c62c6c63bea8f3695d"
+        "version": "326b74622ed65cdc1a45c8a32c524016cd6d9b487229257502309aaf0c7e28be",
+        "signature": "7c6671e9c83d3653e9f5df420651fa62987b89bbcfcca0d37f1acdc848c37ee7"
       },
       "../src/routine/routine.repository.ts": {
         "version": "25017445fbe94bc36dbf549304ab1f5650433041a4f197ccc0f5198b476c848b",
         "signature": "80021d92f627a19338f0d4709300f4bb8ec1840046beeba2e36e541aa20bda82"
       },
       "../src/routine/routine.service.ts": {
-        "version": "8509177c956de83842899578c4d54b3db92cd384fad08bb4fc8b193fa3c12bce",
-        "signature": "491f4a54af49759ec31f6d4af67c9beeb865c66cc7bf73233b6f381be15b8b4f"
+        "version": "4f0424263baee300575db42be8c130ab1d5217935733f5f7408d45a84fa3eff9",
+        "signature": "7546057fc1d8344adc73162d098ad546735aaddef43e3e606083a248624cfbdb"
       },
       "../src/routine/routine.controller.ts": {
-        "version": "6ec2c296a1ca7ab46223e249053649e49cd62ecf948c0e9a34f773a9fe76b353",
-        "signature": "fbe645930013e9a1753191eed0676209d5a1fceaafd40f45116e913ba5e4e43e"
+        "version": "201b38ba2dafe0444e42038f5722e437b95fb630fe29be22fdd8fed82dc0e8ba",
+        "signature": "6c99c4b502c72e8a150004ea56761fd7b16be783712d9b7cf3efb2c1ccb4771c"
       },
       "../src/routine/routine.module.ts": {
         "version": "bc12183d8e376f6be3bb90a8220bf10c867921dbec41262795eb9f160c1214d3",
         "signature": "03f978dca28293220298101208cb04d9956871b0813f48805602797822a8f660"
       },
+      "../src/typeormconfig/typeorm.config.ts": {
+        "version": "3d67de5a290fdd8bc2660578b284e79484a322ea21b4503f719033e0095ebd31",
+        "signature": "20c66cb320b090f75350bcdcde9479a854dd2e2e4051814c0dd31af2a8db9977"
+      },
       "../src/app.module.ts": {
-        "version": "3d25066dcda9b00acb30e3b5a966e72da66e7093cd4ccec6ad0d9157170068b3",
+        "version": "c4f5273d0c4e323d308c5a70b5ce0d387955aa6b2fb599bed984d6b95077ac73",
         "signature": "9fc7f7b6ad854404973b8cba8e6d883f758237991968e9a3965d716d46f1da88"
       },
       "../src/main.ts": {
@@ -9750,6 +9810,75 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "../src/userexamprofile/userexamexamprofile.entity.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/exams/exam.entity.ts",
+        "../src/userexamprofile/userexamcourseprofile.entity.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/userexamprofile/userexamprofile.entity.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/userexamprofile/userexamcourseprofile.entity.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/userexamprofile/userexamcourseprofile.entity.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/userexamprofile/userexamexamprofile.entity.ts",
+        "../src/userexamprofile/userexamprofile.entity.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/userexamprofile/userexamcourseprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/userexamprofile/userexamcourseprofile.entity.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/userexamprofile/userexamprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/userexamprofile/userexamprofile.entity.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/exams/coursebasedprofile.entity.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/exams/coursesprofile.entity.ts",
+        "../src/exams/exam.entity.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/exams/coursesprofile.entity.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/exams/coursebasedexamprofile.entity.ts",
+        "../src/exams/coursebasedprofile.entity.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/exams/coursebasedexamprofile.entity.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/exams/coursesprofile.entity.ts",
+        "../src/exams/exam.entity.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "../src/exams/exam.model.ts": [
         "../node_modules/@types/mongoose/index.d.ts",
         "../node_modules/@types/node/fs.d.ts",
@@ -9775,6 +9904,14 @@
       "../src/exams/dto/flag.dto.ts": [
         "../node_modules/class-validator/index.d.ts",
         "../src/exams/feedback.entity.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/exams/coursebasedprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/exams/coursebasedprofile.entity.ts",
         "../node_modules/@types/node/fs.d.ts",
         "../node_modules/@types/node/ts3.2/fs.d.ts",
         "../node_modules/@types/node/util.d.ts",
@@ -9819,10 +9956,15 @@
         "../node_modules/@nestjs/typeorm/index.d.ts",
         "../src/categories/category.repository.ts",
         "../src/courses/course.repository.ts",
+        "../src/courses/courses.service.ts",
         "../src/questions/question.repository.ts",
+        "../src/userexamprofile/userexamcourseprofile.repository.ts",
+        "../src/userexamprofile/userexamprofile.repository.ts",
         "../src/users/users.service.ts",
         "../src/utils/utils.ts",
         "../node_modules/typeorm/index.d.ts",
+        "../src/exams/coursebasedprofile.entity.ts",
+        "../src/exams/coursebasedprofile.repository.ts",
         "../src/exams/dto/exam.dto.ts",
         "../src/exams/exam.entity.ts",
         "../src/exams/exam.repository.ts",
@@ -9858,12 +10000,60 @@
         "../src/courses/course.repository.ts",
         "../src/courses/courses.module.ts",
         "../src/questions/question.repository.ts",
+        "../src/userexamprofile/userexamcourseprofile.repository.ts",
+        "../src/userexamprofile/userexamprofile.repository.ts",
         "../src/users/users.module.ts",
+        "../src/exams/coursebasedexamprofile.entity.ts",
+        "../src/exams/coursebasedprofile.entity.ts",
+        "../src/exams/coursesprofile.entity.ts",
         "../src/exams/exam.repository.ts",
         "../src/exams/exams.controller.ts",
         "../src/exams/exams.service.ts",
         "../src/exams/feedback.repository.ts",
         "../src/exams/profie.repository.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/userexamprofile/userexamexamprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/userexamprofile/userexamexamprofile.entity.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/userexamprofile/userexamprofile.service.ts": [
+        "../node_modules/@nestjs/common/index.d.ts",
+        "../node_modules/@nestjs/typeorm/index.d.ts",
+        "../src/utils/utils.ts",
+        "../src/userexamprofile/userexamcourseprofile.repository.ts",
+        "../src/userexamprofile/userexamexamprofile.repository.ts",
+        "../src/userexamprofile/userexamprofile.entity.ts",
+        "../src/userexamprofile/userexamprofile.repository.ts",
+        "../node_modules/moment/ts3.1-typings/moment.d.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/userexamprofile/userexamprofile.controller.ts": [
+        "../node_modules/@nestjs/common/index.d.ts",
+        "../src/userexamprofile/userexamprofile.service.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/userexamprofile/userexamprofile.module.ts": [
+        "../node_modules/@nestjs/common/index.d.ts",
+        "../node_modules/@nestjs/typeorm/index.d.ts",
+        "../src/userexamprofile/userexamcourseprofile.repository.ts",
+        "../src/userexamprofile/userexamexamprofile.repository.ts",
+        "../src/userexamprofile/userexamprofile.controller.ts",
+        "../src/userexamprofile/userexamprofile.repository.ts",
+        "../src/userexamprofile/userexamprofile.service.ts",
         "../node_modules/@types/node/fs.d.ts",
         "../node_modules/@types/node/ts3.2/fs.d.ts",
         "../node_modules/@types/node/util.d.ts",
@@ -9876,6 +10066,7 @@
         "../src/courses/courses.service.ts",
         "../src/exams/exam.repository.ts",
         "../src/exams/exams.service.ts",
+        "../src/userexamprofile/userexamprofile.repository.ts",
         "../src/users/user.entity.ts",
         "../src/users/users.service.ts",
         "../src/utils/utils.ts",
@@ -9903,9 +10094,19 @@
         "../src/courses/courses.module.ts",
         "../src/exams/exam.repository.ts",
         "../src/exams/exams.module.ts",
+        "../src/userexamprofile/userexamprofile.module.ts",
+        "../src/userexamprofile/userexamprofile.repository.ts",
         "../src/users/users.module.ts",
         "../src/dashboard/dashboard.controller.ts",
         "../src/dashboard/dashboard.service.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../src/exams/coursebasedexamprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/exams/coursebasedexamprofile.entity.ts",
         "../node_modules/@types/node/fs.d.ts",
         "../node_modules/@types/node/ts3.2/fs.d.ts",
         "../node_modules/@types/node/util.d.ts",
@@ -9934,9 +10135,21 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "../src/exams/coursesprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/exams/coursesprofile.entity.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "../src/postexams/postexams.service.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
         "../node_modules/@nestjs/typeorm/index.d.ts",
+        "../src/courses/courses.service.ts",
+        "../src/exams/coursebasedexamprofile.repository.ts",
+        "../src/exams/coursebasedprofile.repository.ts",
+        "../src/exams/coursesprofile.repository.ts",
         "../src/exams/exam.entity.ts",
         "../src/exams/exam.model.ts",
         "../src/exams/exams.service.ts",
@@ -9944,6 +10157,7 @@
         "../src/exams/profile.entity.ts",
         "../src/questions/question.model.ts",
         "../src/questions/question.repository.ts",
+        "../src/userexamprofile/userexamprofile.service.ts",
         "../src/users/users.service.ts",
         "../src/utils/utils.ts",
         "../node_modules/typeorm/index.d.ts",
@@ -9969,19 +10183,18 @@
       "../src/postexams/postexams.module.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
         "../node_modules/@nestjs/typeorm/index.d.ts",
+        "../src/courses/courses.module.ts",
+        "../src/exams/coursebasedexamprofile.entity.ts",
+        "../src/exams/coursebasedexamprofile.repository.ts",
+        "../src/exams/coursebasedprofile.entity.ts",
+        "../src/exams/coursesprofile.entity.ts",
         "../src/exams/exams.module.ts",
         "../src/exams/profie.repository.ts",
         "../src/questions/question.repository.ts",
+        "../src/userexamprofile/userexamprofile.module.ts",
         "../src/users/users.module.ts",
         "../src/postexams/postexams.controller.ts",
         "../src/postexams/postexams.service.ts",
-        "../node_modules/@types/node/fs.d.ts",
-        "../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/typeormconfig/typeorm.config.ts": [
-        "../node_modules/@nestjs/typeorm/index.d.ts",
         "../node_modules/@types/node/fs.d.ts",
         "../node_modules/@types/node/ts3.2/fs.d.ts",
         "../node_modules/@types/node/util.d.ts",
@@ -10044,6 +10257,13 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "../src/typeormconfig/typeorm.config.ts": [
+        "../node_modules/@nestjs/typeorm/index.d.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "../src/app.module.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
         "../node_modules/@nestjs/config/index.d.ts",
@@ -10051,15 +10271,16 @@
         "../node_modules/@nestjs/typeorm/index.d.ts",
         "../src/auth/auth.module.ts",
         "../src/categories/categories.module.ts",
+        "../src/courses/courses.controller.ts",
+        "../src/courses/courses.module.ts",
         "../src/dashboard/dashboard.module.ts",
         "../src/exams/exams.module.ts",
         "../src/postexams/postexams.module.ts",
         "../src/questions/questions.module.ts",
-        "../src/typeormconfig/typeorm.config.ts",
-        "../src/users/users.module.ts",
         "../src/routine/routine.module.ts",
-        "../src/courses/courses.controller.ts",
-        "../src/courses/courses.module.ts",
+        "../src/typeormconfig/typeorm.config.ts",
+        "../src/userexamprofile/userexamprofile.module.ts",
+        "../src/users/users.module.ts",
         "../node_modules/@types/node/fs.d.ts",
         "../node_modules/@types/node/ts3.2/fs.d.ts",
         "../node_modules/@types/node/util.d.ts",
@@ -16430,7 +16651,8 @@
       "../src/courses/courses.service.ts": [
         "../src/courses/course.repository.ts",
         "../src/users/user.repository.ts",
-        "../src/courses/dto/course.dto.ts"
+        "../src/courses/dto/course.dto.ts",
+        "../node_modules/@nestjs/common/index.d.ts"
       ],
       "../src/courses/courses.controller.ts": [
         "../src/courses/courses.service.ts",
@@ -16443,6 +16665,43 @@
         "../node_modules/typeorm/index.d.ts",
         "../src/exams/exam.entity.ts"
       ],
+      "../src/userexamprofile/userexamexamprofile.entity.ts": [
+        "../src/exams/exam.entity.ts",
+        "../node_modules/typeorm/index.d.ts",
+        "../src/userexamprofile/userexamcourseprofile.entity.ts"
+      ],
+      "../src/userexamprofile/userexamprofile.entity.ts": [
+        "../src/userexamprofile/userexamcourseprofile.entity.ts",
+        "../node_modules/typeorm/index.d.ts"
+      ],
+      "../src/userexamprofile/userexamcourseprofile.entity.ts": [
+        "../src/userexamprofile/userexamprofile.entity.ts",
+        "../src/userexamprofile/userexamexamprofile.entity.ts",
+        "../node_modules/typeorm/index.d.ts"
+      ],
+      "../src/userexamprofile/userexamcourseprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/userexamprofile/userexamcourseprofile.entity.ts"
+      ],
+      "../src/userexamprofile/userexamprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/userexamprofile/userexamprofile.entity.ts"
+      ],
+      "../src/exams/coursebasedprofile.entity.ts": [
+        "../src/exams/exam.entity.ts",
+        "../src/exams/coursesprofile.entity.ts",
+        "../node_modules/typeorm/index.d.ts"
+      ],
+      "../src/exams/coursesprofile.entity.ts": [
+        "../src/exams/coursebasedprofile.entity.ts",
+        "../src/exams/coursebasedexamprofile.entity.ts",
+        "../node_modules/typeorm/index.d.ts"
+      ],
+      "../src/exams/coursebasedexamprofile.entity.ts": [
+        "../src/exams/exam.entity.ts",
+        "../node_modules/typeorm/index.d.ts",
+        "../src/exams/coursesprofile.entity.ts"
+      ],
       "../src/exams/exam.model.ts": [
         "../node_modules/@types/mongoose/index.d.ts"
       ],
@@ -16454,6 +16713,10 @@
       ],
       "../src/exams/dto/flag.dto.ts": [
         "../src/exams/feedback.entity.ts"
+      ],
+      "../src/exams/coursebasedprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/exams/coursebasedprofile.entity.ts"
       ],
       "../src/exams/feedback.repository.ts": [
         "../node_modules/typeorm/index.d.ts",
@@ -16476,13 +16739,18 @@
       "../src/exams/exams.service.ts": [
         "../node_modules/typeorm/index.d.ts",
         "../src/users/users.service.ts",
+        "../src/courses/courses.service.ts",
         "../src/questions/question.repository.ts",
         "../src/categories/category.repository.ts",
         "../src/exams/exam.repository.ts",
         "../src/exams/profie.repository.ts",
         "../src/exams/feedback.repository.ts",
+        "../src/exams/coursebasedprofile.repository.ts",
+        "../src/userexamprofile/userexamcourseprofile.repository.ts",
+        "../src/userexamprofile/userexamprofile.repository.ts",
         "../node_modules/@nestjs/common/index.d.ts",
         "../src/exams/profile.entity.ts",
+        "../src/exams/coursebasedprofile.entity.ts",
         "../src/exams/dto/exam.dto.ts"
       ],
       "../src/exams/exams.controller.ts": [
@@ -16491,15 +16759,33 @@
         "../src/exams/dto/exam.dto.ts",
         "../src/exams/dto/flag.dto.ts"
       ],
+      "../src/userexamprofile/userexamexamprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/userexamprofile/userexamexamprofile.entity.ts"
+      ],
+      "../src/userexamprofile/userexamprofile.service.ts": [
+        "../src/userexamprofile/userexamprofile.repository.ts",
+        "../src/userexamprofile/userexamcourseprofile.repository.ts",
+        "../src/userexamprofile/userexamexamprofile.repository.ts",
+        "../src/userexamprofile/userexamprofile.entity.ts"
+      ],
+      "../src/userexamprofile/userexamprofile.controller.ts": [
+        "../src/userexamprofile/userexamprofile.service.ts"
+      ],
       "../src/dashboard/dashboard.service.ts": [
         "../src/users/users.service.ts",
         "../src/categories/category.repository.ts",
         "../src/exams/exam.repository.ts",
+        "../src/userexamprofile/userexamprofile.repository.ts",
         "../src/exams/exams.service.ts",
         "../src/courses/courses.service.ts"
       ],
       "../src/dashboard/dashboard.controller.ts": [
         "../src/dashboard/dashboard.service.ts"
+      ],
+      "../src/exams/coursebasedexamprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/exams/coursebasedexamprofile.entity.ts"
       ],
       "../src/postexams/postexam.model.ts": [
         "../src/questions/question.model.ts"
@@ -16508,11 +16794,20 @@
         "../src/postexams/postexam.model.ts",
         "../node_modules/@nestjs/common/index.d.ts"
       ],
+      "../src/exams/coursesprofile.repository.ts": [
+        "../node_modules/typeorm/index.d.ts",
+        "../src/exams/coursesprofile.entity.ts"
+      ],
       "../src/postexams/postexams.service.ts": [
         "../src/users/users.service.ts",
         "../src/exams/profie.repository.ts",
         "../src/questions/question.repository.ts",
+        "../src/exams/coursesprofile.repository.ts",
+        "../src/exams/coursebasedprofile.repository.ts",
+        "../src/exams/coursebasedexamprofile.repository.ts",
         "../src/exams/exams.service.ts",
+        "../src/courses/courses.service.ts",
+        "../src/userexamprofile/userexamprofile.service.ts",
         "../src/postexams/dto/get-answers.dto.ts",
         "../src/postexams/postexam.model.ts"
       ],
@@ -16520,9 +16815,6 @@
         "../src/postexams/postexam.model.ts",
         "../src/postexams/postexams.service.ts",
         "../src/postexams/dto/get-answers.dto.ts"
-      ],
-      "../src/typeormconfig/typeorm.config.ts": [
-        "../node_modules/@nestjs/typeorm/index.d.ts"
       ],
       "../src/routine/routine.entity.ts": [
         "../node_modules/typeorm/index.d.ts"
@@ -16537,6 +16829,9 @@
       "../src/routine/routine.controller.ts": [
         "../src/routine/routine.service.ts",
         "../src/routine/addasyllabus.dto.ts"
+      ],
+      "../src/typeormconfig/typeorm.config.ts": [
+        "../node_modules/@nestjs/typeorm/index.d.ts"
       ],
       "../src/categories/category.model.ts": [
         "../node_modules/@types/mongoose/index.d.ts"
@@ -17454,6 +17749,7 @@
       "../src/users/users.module.ts",
       "../node_modules/generate-password/src/generate.d.ts",
       "../src/auth/jwt.interface.ts",
+      "../src/auth/auth.service.ts",
       "../src/auth/auth.controller.ts",
       "../node_modules/@types/range-parser/index.d.ts",
       "../node_modules/@types/express-serve-static-core/index.d.ts",
@@ -17532,10 +17828,19 @@
       "../src/courses/courses.module.ts",
       "../src/exams/exam.entity.ts",
       "../src/exams/exam.repository.ts",
+      "../src/userexamprofile/userexamexamprofile.entity.ts",
+      "../src/userexamprofile/userexamprofile.entity.ts",
+      "../src/userexamprofile/userexamcourseprofile.entity.ts",
+      "../src/userexamprofile/userexamcourseprofile.repository.ts",
+      "../src/userexamprofile/userexamprofile.repository.ts",
+      "../src/exams/coursebasedprofile.entity.ts",
+      "../src/exams/coursesprofile.entity.ts",
+      "../src/exams/coursebasedexamprofile.entity.ts",
       "../src/exams/exam.model.ts",
       "../src/exams/dto/exam.dto.ts",
       "../src/exams/feedback.entity.ts",
       "../src/exams/dto/flag.dto.ts",
+      "../src/exams/coursebasedprofile.repository.ts",
       "../src/exams/feedback.repository.ts",
       "../src/exams/examprofile.entity.ts",
       "../src/exams/profile.entity.ts",
@@ -17543,22 +17848,27 @@
       "../src/exams/exams.service.ts",
       "../src/exams/exams.controller.ts",
       "../src/exams/exams.module.ts",
-      "../src/dashboard/dashboard.service.ts",
+      "../src/userexamprofile/userexamexamprofile.repository.ts",
+      "../src/userexamprofile/userexamprofile.service.ts",
+      "../src/userexamprofile/userexamprofile.controller.ts",
+      "../src/userexamprofile/userexamprofile.module.ts",
       "../src/dashboard/dashboard.controller.ts",
       "../src/dashboard/dashboard.module.ts",
+      "../src/exams/coursebasedexamprofile.repository.ts",
       "../src/postexams/dto/get-answers.dto.ts",
       "../src/postexams/postexam.model.ts",
       "../src/postexams/pipe/answer-validation.pipe.ts",
+      "../src/exams/coursesprofile.repository.ts",
       "../src/postexams/postexams.service.ts",
       "../src/postexams/postexams.controller.ts",
       "../src/postexams/postexams.module.ts",
-      "../src/typeormconfig/typeorm.config.ts",
       "../src/routine/addasyllabus.dto.ts",
       "../src/routine/routine.entity.ts",
       "../src/routine/routine.repository.ts",
       "../src/routine/routine.service.ts",
       "../src/routine/routine.controller.ts",
       "../src/routine/routine.module.ts",
+      "../src/typeormconfig/typeorm.config.ts",
       "../src/app.module.ts",
       "../src/main.ts",
       "../src/auth/get-user.decorator.ts",
@@ -17596,7 +17906,7 @@
       "../node_modules/@types/webpack/index.d.ts",
       "../node_modules/@types/yargs-parser/index.d.ts",
       "../node_modules/@types/yargs/index.d.ts",
-      "../src/auth/auth.service.ts"
+      "../src/dashboard/dashboard.service.ts"
     ]
   },
   "version": "3.7.5"

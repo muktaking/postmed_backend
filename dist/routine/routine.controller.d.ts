@@ -4,6 +4,7 @@ export declare class RoutineController {
     private readonly routineService;
     constructor(routineService: RoutineService);
     getRoutine(): Promise<any>;
+    getRoutineByCourseId(id: any): Promise<any>;
     getRawRoutine(): Promise<any>;
     getSyllabusById(id: any): Promise<any>;
     addASyllabus(addASyllabus: AddASyllabusDto): Promise<{

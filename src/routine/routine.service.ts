@@ -35,6 +35,23 @@ export class RoutineService {
     return routine;
   }
 
+  async getRoutineByCourseId(id) {
+    const [err, routine] = await to(
+      this.routineRepository.find({
+        where: {
+          courseId: +id,
+          //endDate: MoreThanOrEqual(new Date()),
+        },
+      })
+    );
+    if (err) {
+      console.log(err);
+      throw new InternalServerErrorException();
+    }
+
+    return routine.reverse();
+  }
+
   @UseGuards(AuthGuard('jwt'))
   @Role(RolePermitted.admin)
   async getRawRoutine() {
@@ -62,12 +79,13 @@ export class RoutineService {
   @UseGuards(AuthGuard('jwt'))
   @Role(RolePermitted.admin)
   async addASyllabus(addASyllabusDto) {
-    const { startDate, endDate, syllabus } = addASyllabusDto;
+    const { startDate, endDate, syllabus, courseId } = addASyllabusDto;
 
     const routine = new Routine();
     routine.startDate = startDate;
     routine.endDate = endDate;
     routine.syllabus = syllabus;
+    routine.courseId = courseId;
 
     const [err, result] = await to(routine.save());
     if (err) {
@@ -81,7 +99,7 @@ export class RoutineService {
   @UseGuards(AuthGuard('jwt'))
   @Role(RolePermitted.admin)
   async editASyllabus(addASyllabusDto) {
-    const { id, startDate, endDate, syllabus } = addASyllabusDto;
+    const { id, startDate, endDate, syllabus, courseId } = addASyllabusDto;
 
     const [error, routine] = await to(this.routineRepository.findOne(+id));
     if (error) {
@@ -92,6 +110,7 @@ export class RoutineService {
     routine.startDate = startDate;
     routine.endDate = endDate;
     routine.syllabus = syllabus;
+    routine.courseId = courseId;
 
     const [err, result] = await to(routine.save());
     if (err) {

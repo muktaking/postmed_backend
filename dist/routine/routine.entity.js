@@ -28,6 +28,10 @@ __decorate([
     typeorm_1.Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", typeorm_1.Timestamp)
 ], Routine.prototype, "endDate", void 0);
+__decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", Number)
+], Routine.prototype, "courseId", void 0);
 Routine = __decorate([
     typeorm_1.Entity()
 ], Routine);

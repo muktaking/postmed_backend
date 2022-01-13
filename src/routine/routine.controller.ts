@@ -17,7 +17,11 @@ export class RoutineController {
   async getRoutine() {
     return await this.routineService.getRoutine();
   }
-
+  @Get('/course/:id')
+  async getRoutineByCourseId(@Param('id') id) {
+    console.log(id);
+    return await this.routineService.getRoutineByCourseId(id);
+  }
   @Get('/raw')
   async getRawRoutine() {
     return await this.routineService.getRawRoutine();

@@ -1,10 +1,16 @@
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   Scope,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as _ from 'lodash';
+import { CoursesService } from 'src/courses/courses.service';
+import { CourseBasedExamProfileRepository } from 'src/exams/courseBasedExamProfile.repository';
+import { CourseBasedProfileRepository } from 'src/exams/courseBasedProfile.repository';
+import { CoursesProfileRepository } from 'src/exams/coursesProfile.repository';
 import { answerStatus } from 'src/exams/exam.entity';
 import { Exam } from 'src/exams/exam.model';
 import { ExamsService } from 'src/exams/exams.service';
@@ -12,6 +18,7 @@ import { ExamProfileRepository } from 'src/exams/profie.repository';
 import { ExamStat, Profile } from 'src/exams/profile.entity';
 import { QType, Question } from 'src/questions/question.model';
 import { QuestionRepository } from 'src/questions/question.repository';
+import { UserExamProfileService } from 'src/userExamProfile/userExamprofile.service';
 import { UsersService } from 'src/users/users.service';
 import { to } from 'src/utils/utils';
 import { In } from 'typeorm';
@@ -27,7 +34,15 @@ export class PostexamsService {
     private examProfileRepository: ExamProfileRepository,
     @InjectRepository(QuestionRepository)
     private questionRepository: QuestionRepository,
-    private readonly examService: ExamsService
+    @InjectRepository(QuestionRepository)
+    private coursesProfileRepository: CoursesProfileRepository,
+    @InjectRepository(QuestionRepository)
+    private courseBasedProfileRepository: CourseBasedProfileRepository,
+    @InjectRepository(CourseBasedExamProfileRepository)
+    private courseBasedExamProfileRepository: CourseBasedExamProfileRepository,
+    private readonly examService: ExamsService,
+    private readonly courseService: CoursesService,
+    private readonly userExamProfileService: UserExamProfileService
   ) {}
 
   //Gobal
@@ -223,6 +238,143 @@ export class PostexamsService {
     };
   }
 
+  async postExamTaskingByCoursesProfile(
+    getAnswersDto: GetAnswersDto,
+    answersByStudent: Array<StudentAnswer>,
+    user
+  ) {
+    /// answersByStudent[{id,stems[],type}] // stems[0/1/undefined]
+    const {
+      examId,
+      courseId,
+      timeTakenToComplete,
+      questionIdsByOrder,
+    } = getAnswersDto;
+
+    const [examError, exam] = await to(this.examService.findExamById(examId)); //1. Get the exam details by id
+    if (examError)
+      throw new HttpException(
+        'Problems at retriving Exam',
+        HttpStatus.SERVICE_UNAVAILABLE
+      );
+    const [courseError, course] = await to(
+      this.courseService.findCourseById(courseId)
+    );
+
+    if (courseError)
+      throw new HttpException(
+        'Problems at retriving Course',
+        HttpStatus.SERVICE_UNAVAILABLE
+      );
+
+    // populate some Global variables
+    this.singleQuestionMark = exam.singleQuestionMark;
+    this.questionStemLength = exam.questionStemLength;
+    this.singleStemMark = exam.singleStemMark;
+    this.penaltyMark = exam.penaltyMark;
+    this.timeLimit = exam.timeLimit;
+    this.totalMark = Math.ceil(this.singleQuestionMark * exam.questions.length); // simple math
+    //this.totalScore = 0;
+
+    //answer manipulation is started here
+    // console.log(answersByStudent);
+    answersByStudent = answersByStudent.filter((v) => v.stems.length > 0); //the empty stems answer object are rejected
+    answersByStudent = _.sortBy(answersByStudent, (o) => +o.id); // sort answer by ids,
+    // answersByStudent is sorted by id. Because we will match these answers with database saved answer that is also
+    //sorted by id
+    const questionIds = answersByStudent.map((v) => v.id); // get the questions ids that is also answer id
+
+    const [err, questions] = await to(
+      //fetch the questions
+      this.questionRepository.find({
+        //where: { id: In(questionIds.map((e) => +e)) },
+        where: { id: In(questionIdsByOrder) },
+      })
+    );
+
+    const answeredQuestions = questions.filter((question) =>
+      questionIds.includes(question.id.toString())
+    );
+
+    const nonAnsweredQuestions = questions.filter(
+      (question) => !questionIds.includes(question.id.toString())
+    );
+
+    if (err) throw new InternalServerErrorException();
+
+    //const answersByServer = this.answersExtractor(questions);
+
+    let resultArray: Array<Particulars> = []; //result array will hold the total result
+
+    //main algorithm starts
+
+    answeredQuestions.map((question, index) => {
+      // mapping questions to validate answer and make marksheet
+
+      const particulars: Particulars = {
+        // particulars is the block of data passed to forntend to show result
+        id: question.id,
+        qText: question.qText,
+        stems: question.stems,
+        generalFeedback: question.generalFeedback,
+        result: { mark: 0 },
+      };
+
+      if (question.qType === QType.Matrix) {
+        particulars.result = this.matrixManipulator(
+          this.answersExtractor(question),
+          answersByStudent[index]
+        );
+      } else if (question.qType === QType.singleBestAnswer) {
+        particulars.result = this.sbaManipulator(
+          this.answersExtractor(question),
+          answersByStudent[index]
+        );
+      }
+      resultArray.push(particulars);
+    });
+
+    await this.userExamProfileService.manipulateProfile(user, {
+      course,
+      exam,
+      score: this.totalScore,
+    });
+
+    const totalScorePercentage =
+      +(this.totalScore / this.totalMark).toFixed(2) * 100;
+
+    nonAnsweredQuestions.forEach((question) => {
+      const particulars: Particulars = {
+        // particulars is the block of data passed to forntend to show result
+        id: question.id,
+        qText: question.qText,
+        stems: question.stems,
+        generalFeedback: question.generalFeedback,
+        result: { mark: 0 },
+      };
+
+      if (question.qType === QType.Matrix) {
+        particulars.result = { stemResult: [QType.Matrix], mark: 0 };
+      } else if (question.qType === QType.singleBestAnswer) {
+        particulars.result = {
+          stemResult: [QType.singleBestAnswer, +question.stems[0].aStem[0]],
+          mark: 0,
+        };
+      }
+      resultArray.push(particulars);
+    });
+
+    return {
+      examId,
+      resultArray,
+      totalMark: this.totalMark,
+      totalScore: this.totalScore,
+      totalPenaltyMark: this.totalPenaltyMark,
+      totalScorePercentage,
+      timeTakenToComplete,
+    };
+  }
+
   async postExamTaskingForFree(
     getAnswersDto: GetAnswersDto,
     answersByStudent: Array<StudentAnswer>
@@ -326,6 +478,73 @@ export class PostexamsService {
     );
 
     return { exam, rank: profileCurtailedByExamId.reverse() };
+  }
+
+  async examRankByIdConstrainByCourseId(examId: string, courseId: string) {
+    let rankProfiles = [];
+    const [error, courseProfiles] = await to(
+      this.userExamProfileService.findAllUserCourseProfilesByCourseId(courseId)
+    );
+    if (error) throw new InternalServerErrorException(error);
+
+    const [errorExam, exam] = await to(this.examService.findExamById(examId));
+    if (errorExam) throw new InternalServerErrorException(errorExam);
+
+    if (courseProfiles) {
+      for (const courseProfile of courseProfiles) {
+        const [examProfile] = courseProfile.exams.filter(
+          (exam) => exam.examId === +examId
+        );
+        const [nameError, user] = await to(
+          this.usersService.findOneUserById(
+            courseProfile.userExamProfile.id,
+            true
+          )
+        );
+        if (nameError) throw new InternalServerErrorException(nameError);
+        //console.log(user);
+        if (examProfile) {
+          rankProfiles.push({
+            user: user,
+            exam: [
+              {
+                score: examProfile.score[0],
+                attempts: examProfile.attemptNumbers,
+                totalMark: examProfile.totalMark,
+              },
+            ],
+          });
+        }
+      }
+    }
+
+    rankProfiles = _.sortBy(rankProfiles, (o) =>
+      o.exam.length > 0 ? o.exam[0].score : []
+    ).reverse();
+
+    return {
+      exam,
+      rank: rankProfiles,
+    };
+    // const exam = await this.examService.findExamById(id);
+    // const profiles: Profile[] = await this.examService.findAllProfile();
+    // let profileCurtailedByExamId = await Promise.all(
+    //   profiles.map(async (profile) => ({
+    //     user: await this.usersService.findOneUser(profile.user, true),
+    //     exam: profile.exams
+    //       .filter((exam) => exam.examId.toString() === id)
+    //       .map((exam) => ({
+    //         score: exam.averageScore,
+    //         attempts: exam.attemptNumbers,
+    //         totalMark: exam.totalMark,
+    //       })),
+    //   }))
+    // );
+    // profileCurtailedByExamId = _.sortBy(profileCurtailedByExamId, (o) =>
+    //   o.exam.length > 0 ? o.exam[0].score : []
+    // );
+
+    // return { exam, rank: profileCurtailedByExamId.reverse() };
   }
 
   //ends

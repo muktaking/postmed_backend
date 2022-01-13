@@ -232,6 +232,59 @@ export class UsersService {
     return user;
   }
 
+  async findOneUserById(
+    id: string,
+    nameOnly: boolean = false,
+    isForAuth: boolean = false
+  ): Promise<User | any> {
+    if (nameOnly) {
+      const [err, user] = await to(
+        this.userRepository.findOne(
+          { id: +id },
+          { select: ['id', 'firstName', 'lastName'] }
+        )
+      );
+      if (err) throw new InternalServerErrorException();
+      if (user == null) return;
+      return { name: user.firstName + ' ' + user.lastName, id: user.id };
+    }
+    if (isForAuth) {
+      const [err, user] = await to(
+        this.userRepository.findOne(
+          { id: +id },
+          { select: ['id', 'email', 'password', 'role'] }
+        )
+      );
+      if (err) throw new InternalServerErrorException();
+      return user;
+    }
+    const [err, user] = await to(
+      this.userRepository.findOne(
+        { id: +id },
+        {
+          select: [
+            'id',
+            'firstName',
+            'userName',
+            'lastName',
+            'role',
+            'email',
+            'avatar',
+            'createdAt',
+            'mobile',
+            'faculty',
+            'institution',
+            'address',
+            'gender',
+          ],
+        }
+      )
+    );
+    if (err) throw new InternalServerErrorException();
+
+    return user;
+  }
+
   async findAllStudentNumber(): Promise<number | InternalServerErrorException> {
     //const [err, result] = await to(this.userRepository.count());
     const [err, result] = await to(

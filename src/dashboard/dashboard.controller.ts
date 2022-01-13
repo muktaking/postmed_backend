@@ -1,22 +1,22 @@
-import { Controller, Get, Req, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
-import { Role } from "src/roles.decorator";
-import { RolesGuard } from "src/roles.guard";
-import { RolePermitted } from "src/users/user.model";
-import { DashboardService } from "./dashboard.service";
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { Role } from 'src/roles.decorator';
+import { RolesGuard } from 'src/roles.guard';
+import { RolePermitted } from 'src/users/user.model';
+import { DashboardService } from './dashboard.service';
 
-@Controller("dashboard")
+@Controller('dashboard')
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
   @Get()
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Role(RolePermitted.student)
   async getStudentDashInfo(@Req() req) {
-    return await this.dashboardService.getStudentDashInfo(req.user.email);
+    return await this.dashboardService.getStudentDashInfo(req.user.id);
   }
 
-  @Get("admin")
-  @UseGuards(AuthGuard("jwt"), RolesGuard)
+  @Get('admin')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Role(RolePermitted.mentor)
   async getAdminDashInfo(@Req() req) {
     return await this.dashboardService.getAdminDashInfo(req.user.role);

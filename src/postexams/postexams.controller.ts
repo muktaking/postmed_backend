@@ -1,8 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
-  Param,
   Post,
   Req,
   UseGuards,
@@ -27,7 +25,7 @@ export class PostexamsController {
     @Body('answers', AnswerValidationPipe) answers: StudentAnswer[],
     @Req() req
   ) {
-    return await this.postexamsService.postExamTasking(
+    return await this.postexamsService.postExamTaskingByCoursesProfile(
       getAnswersDto,
       answers,
       req.user
@@ -53,10 +51,13 @@ export class PostexamsController {
   //   return await this.postexamsService.examRankById(id, req._id);
   // }
 
-  @Get('rank/:id')
+  @Post('rank/:id')
   // @UseGuards(AuthGuard("jwt"))
   // @UsePipes(ValidationPipe)
-  async examRankByIdForGuest(@Param('id') id) {
-    return await this.postexamsService.examRankById(id);
+  async examRankByIdForGuest(@Body() data) {
+    return await this.postexamsService.examRankByIdConstrainByCourseId(
+      data.id,
+      data.courseId
+    );
   }
 }

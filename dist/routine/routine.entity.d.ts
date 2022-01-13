@@ -4,4 +4,5 @@ export declare class Routine extends BaseEntity {
     syllabus: string;
     startDate: Timestamp;
     endDate: Timestamp;
+    courseId: number;
 }

@@ -22,6 +22,10 @@ let RoutineController = class RoutineController {
     async getRoutine() {
         return await this.routineService.getRoutine();
     }
+    async getRoutineByCourseId(id) {
+        console.log(id);
+        return await this.routineService.getRoutineByCourseId(id);
+    }
     async getRawRoutine() {
         return await this.routineService.getRawRoutine();
     }
@@ -44,6 +48,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], RoutineController.prototype, "getRoutine", null);
+__decorate([
+    common_1.Get('/course/:id'),
+    __param(0, common_1.Param('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], RoutineController.prototype, "getRoutineByCourseId", null);
 __decorate([
     common_1.Get('/raw'),
     __metadata("design:type", Function),

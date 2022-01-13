@@ -19,4 +19,7 @@ export class Routine extends BaseEntity {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   endDate: Timestamp;
+
+  @Column()
+  courseId: number;
 }

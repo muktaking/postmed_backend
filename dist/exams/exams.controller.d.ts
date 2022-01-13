@@ -6,7 +6,7 @@ export declare class ExamsController {
     constructor(examService: ExamsService);
     createExam(createExamDto: CreateExamDto, req: any): Promise<any>;
     findAllExams(): Promise<any>;
-    findAllPlainExamsByCourseId(id: any, req: any): Promise<any>;
+    findAllPlainExamsByCourseId(filter: any, id: any, req: any): Promise<any>;
     findAllRawExams(): Promise<any>;
     findLatestExam(): Promise<any>;
     findFeaturedExam(): Promise<any>;

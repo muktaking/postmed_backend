@@ -31,12 +31,6 @@ let AuthController = class AuthController {
     async facebookLogin(data) {
         return await this.authService.facebookLogin(data.fbApi);
     }
-    async facebookLoginRedirect(req) {
-        return {
-            statusCode: common_1.HttpStatus.OK,
-            data: req.user,
-        };
-    }
     async reset(email) {
         return await this.authService.reset(email);
     }
@@ -66,14 +60,6 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "facebookLogin", null);
-__decorate([
-    common_1.Get('/facebook/redirect'),
-    common_1.UseGuards(passport_1.AuthGuard('facebook')),
-    __param(0, common_1.Req()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "facebookLoginRedirect", null);
 __decorate([
     common_1.Post('/reset'),
     __param(0, common_1.Body('email')),

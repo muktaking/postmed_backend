@@ -19,6 +19,11 @@ __decorate([
 ], GetAnswersDto.prototype, "examId", void 0);
 __decorate([
     class_validator_1.IsNotEmpty(),
+    class_validator_1.IsNumberString(),
+    __metadata("design:type", String)
+], GetAnswersDto.prototype, "courseId", void 0);
+__decorate([
+    class_validator_1.IsNotEmpty(),
     __metadata("design:type", String)
 ], GetAnswersDto.prototype, "timeTakenToComplete", void 0);
 __decorate([

@@ -182,6 +182,42 @@ let UsersService = class UsersService {
             throw new common_1.InternalServerErrorException();
         return user;
     }
+    async findOneUserById(id, nameOnly = false, isForAuth = false) {
+        if (nameOnly) {
+            const [err, user] = await utils_1.to(this.userRepository.findOne({ id: +id }, { select: ['id', 'firstName', 'lastName'] }));
+            if (err)
+                throw new common_1.InternalServerErrorException();
+            if (user == null)
+                return;
+            return { name: user.firstName + ' ' + user.lastName, id: user.id };
+        }
+        if (isForAuth) {
+            const [err, user] = await utils_1.to(this.userRepository.findOne({ id: +id }, { select: ['id', 'email', 'password', 'role'] }));
+            if (err)
+                throw new common_1.InternalServerErrorException();
+            return user;
+        }
+        const [err, user] = await utils_1.to(this.userRepository.findOne({ id: +id }, {
+            select: [
+                'id',
+                'firstName',
+                'userName',
+                'lastName',
+                'role',
+                'email',
+                'avatar',
+                'createdAt',
+                'mobile',
+                'faculty',
+                'institution',
+                'address',
+                'gender',
+            ],
+        }));
+        if (err)
+            throw new common_1.InternalServerErrorException();
+        return user;
+    }
     async findAllStudentNumber() {
         const [err, result] = await utils_1.to(this.userRepository
             .createQueryBuilder('user')

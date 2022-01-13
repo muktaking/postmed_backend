@@ -12,15 +12,16 @@ const platform_express_1 = require("@nestjs/platform-express");
 const typeorm_1 = require("@nestjs/typeorm");
 const auth_module_1 = require("./auth/auth.module");
 const categories_module_1 = require("./categories/categories.module");
+const courses_controller_1 = require("./courses/courses.controller");
+const courses_module_1 = require("./courses/courses.module");
 const dashboard_module_1 = require("./dashboard/dashboard.module");
 const exams_module_1 = require("./exams/exams.module");
 const postexams_module_1 = require("./postexams/postexams.module");
 const questions_module_1 = require("./questions/questions.module");
-const typeorm_config_1 = require("./typeormconfig/typeorm.config");
-const users_module_1 = require("./users/users.module");
 const routine_module_1 = require("./routine/routine.module");
-const courses_controller_1 = require("./courses/courses.controller");
-const courses_module_1 = require("./courses/courses.module");
+const typeorm_config_1 = require("./typeormconfig/typeorm.config");
+const userExamProfile_module_1 = require("./userExamProfile/userExamProfile.module");
+const users_module_1 = require("./users/users.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -29,7 +30,7 @@ AppModule = __decorate([
             config_1.ConfigModule.forRoot(),
             typeorm_1.TypeOrmModule.forRoot(typeorm_config_1.typeOrmConfig),
             platform_express_1.MulterModule.register({
-                dest: "./uploads",
+                dest: './uploads',
             }),
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
@@ -40,6 +41,7 @@ AppModule = __decorate([
             dashboard_module_1.DashboardModule,
             routine_module_1.RoutineModule,
             courses_module_1.CoursesModule,
+            userExamProfile_module_1.UserExamProfileModule,
         ],
         controllers: [courses_controller_1.CoursesController],
     })

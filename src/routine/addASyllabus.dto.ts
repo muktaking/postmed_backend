@@ -1,4 +1,4 @@
-import { IsDateString, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsNumber, MaxLength } from 'class-validator';
 
 export class AddASyllabusDto {
   @IsNotEmpty()
@@ -12,4 +12,8 @@ export class AddASyllabusDto {
   @IsNotEmpty()
   @MaxLength(500)
   syllabus: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  courseId: string;
 }

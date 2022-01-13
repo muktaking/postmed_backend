@@ -12,6 +12,8 @@ const category_repository_1 = require("../categories/category.repository");
 const courses_module_1 = require("../courses/courses.module");
 const exam_repository_1 = require("../exams/exam.repository");
 const exams_module_1 = require("../exams/exams.module");
+const userExamProfile_module_1 = require("../userExamProfile/userExamProfile.module");
+const userExamProfile_repository_1 = require("../userExamProfile/userExamProfile.repository");
 const users_module_1 = require("../users/users.module");
 const dashboard_controller_1 = require("./dashboard.controller");
 const dashboard_service_1 = require("./dashboard.service");
@@ -22,10 +24,15 @@ DashboardModule = __decorate([
         controllers: [dashboard_controller_1.DashboardController],
         providers: [dashboard_service_1.DashboardService],
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([exam_repository_1.ExamRepository, category_repository_1.CategoryRepository]),
+            typeorm_1.TypeOrmModule.forFeature([
+                exam_repository_1.ExamRepository,
+                category_repository_1.CategoryRepository,
+                userExamProfile_repository_1.UserExamProfileRepository,
+            ]),
             exams_module_1.ExamsModule,
             users_module_1.UsersModule,
             courses_module_1.CoursesModule,
+            userExamProfile_module_1.UserExamProfileModule,
         ],
     })
 ], DashboardModule);

@@ -12,7 +12,6 @@ export declare class AuthController {
         expireIn: any;
     }>;
     facebookLogin(data: any): Promise<any>;
-    facebookLoginRedirect(req: any): Promise<any>;
     reset(email: string): Promise<void>;
     resetPassword(reset: {
         token: number;

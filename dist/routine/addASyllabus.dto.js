@@ -27,5 +27,10 @@ __decorate([
     class_validator_1.MaxLength(500),
     __metadata("design:type", String)
 ], AddASyllabusDto.prototype, "syllabus", void 0);
+__decorate([
+    class_validator_1.IsNotEmpty(),
+    class_validator_1.IsNumber(),
+    __metadata("design:type", String)
+], AddASyllabusDto.prototype, "courseId", void 0);
 exports.AddASyllabusDto = AddASyllabusDto;
 //# sourceMappingURL=addASyllabus.dto.js.map

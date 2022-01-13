@@ -46,15 +46,19 @@ export class CoursesService {
         where: [
           {
             enrolledStuIds: Like(stuId),
+            //endDate: MoreThanOrEqual(new Date()),
           },
           {
             enrolledStuIds: Like('%,' + stuId + ',%'),
+            //endDate: MoreThanOrEqual(new Date()),
           },
           {
             enrolledStuIds: Like(stuId + ',%'),
+            //endDate: MoreThanOrEqual(new Date()),
           },
           {
             enrolledStuIds: Like('%,' + stuId),
+            //endDate: MoreThanOrEqual(new Date()),
           },
         ],
       })
@@ -223,5 +227,19 @@ export class CoursesService {
     return {
       message: deny ? 'Enrollment denied' : 'Enrollment successful',
     };
+  }
+
+  async findAllEnrolledStudentNumberByCourseId(
+    courseId
+  ): Promise<number | InternalServerErrorException> {
+    //const [err, result] = await to(this.userRepository.count());
+    const [err, course] = await to(this.findCourseById(courseId));
+
+    if (err)
+      throw new InternalServerErrorException(
+        'All Enrolled Student Number Can Not Be Counted'
+      );
+
+    return course.enrolledStuIds.length;
   }
 }

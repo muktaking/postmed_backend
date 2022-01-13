@@ -37,6 +37,18 @@ let RoutineService = class RoutineService {
         }
         return routine;
     }
+    async getRoutineByCourseId(id) {
+        const [err, routine] = await utils_1.to(this.routineRepository.find({
+            where: {
+                courseId: +id,
+            },
+        }));
+        if (err) {
+            console.log(err);
+            throw new common_1.InternalServerErrorException();
+        }
+        return routine.reverse();
+    }
     async getRawRoutine() {
         const [err, routine] = await utils_1.to(this.routineRepository.find());
         if (err) {
@@ -54,11 +66,12 @@ let RoutineService = class RoutineService {
         return syllabus;
     }
     async addASyllabus(addASyllabusDto) {
-        const { startDate, endDate, syllabus } = addASyllabusDto;
+        const { startDate, endDate, syllabus, courseId } = addASyllabusDto;
         const routine = new routine_entity_1.Routine();
         routine.startDate = startDate;
         routine.endDate = endDate;
         routine.syllabus = syllabus;
+        routine.courseId = courseId;
         const [err, result] = await utils_1.to(routine.save());
         if (err) {
             console.log(err);
@@ -67,7 +80,7 @@ let RoutineService = class RoutineService {
         return { message: 'Syllabus added successfully' };
     }
     async editASyllabus(addASyllabusDto) {
-        const { id, startDate, endDate, syllabus } = addASyllabusDto;
+        const { id, startDate, endDate, syllabus, courseId } = addASyllabusDto;
         const [error, routine] = await utils_1.to(this.routineRepository.findOne(+id));
         if (error) {
             console.log(error);
@@ -76,6 +89,7 @@ let RoutineService = class RoutineService {
         routine.startDate = startDate;
         routine.endDate = endDate;
         routine.syllabus = syllabus;
+        routine.courseId = courseId;
         const [err, result] = await utils_1.to(routine.save());
         if (err) {
             console.log(err);

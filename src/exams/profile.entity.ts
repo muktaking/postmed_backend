@@ -5,9 +5,9 @@ import {
   JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
-} from "typeorm";
-import { ExamType } from "./exam.entity";
-import { ExamProfile } from "./examProfile.entity";
+} from 'typeorm';
+import { ExamType } from './exam.entity';
+import { ExamProfile } from './examProfile.entity';
 
 export interface ExamStat {
   id: string;
@@ -33,6 +33,6 @@ export class Profile extends BaseEntity {
     (examProfile) => examProfile.profile,
     { cascade: true, eager: true }
   )
-  @JoinColumn({ name: "exams" })
+  @JoinColumn({ name: 'exams' })
   exams: ExamProfile[];
 }

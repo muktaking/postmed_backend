@@ -23,7 +23,7 @@ let DashboardController = class DashboardController {
         this.dashboardService = dashboardService;
     }
     async getStudentDashInfo(req) {
-        return await this.dashboardService.getStudentDashInfo(req.user.email);
+        return await this.dashboardService.getStudentDashInfo(req.user.id);
     }
     async getAdminDashInfo(req) {
         return await this.dashboardService.getAdminDashInfo(req.user.role);
@@ -31,7 +31,7 @@ let DashboardController = class DashboardController {
 };
 __decorate([
     common_1.Get(),
-    common_1.UseGuards(passport_1.AuthGuard("jwt"), roles_guard_1.RolesGuard),
+    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
     roles_decorator_1.Role(user_model_1.RolePermitted.student),
     __param(0, common_1.Req()),
     __metadata("design:type", Function),
@@ -39,8 +39,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], DashboardController.prototype, "getStudentDashInfo", null);
 __decorate([
-    common_1.Get("admin"),
-    common_1.UseGuards(passport_1.AuthGuard("jwt"), roles_guard_1.RolesGuard),
+    common_1.Get('admin'),
+    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
     roles_decorator_1.Role(user_model_1.RolePermitted.mentor),
     __param(0, common_1.Req()),
     __metadata("design:type", Function),
@@ -48,7 +48,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], DashboardController.prototype, "getAdminDashInfo", null);
 DashboardController = __decorate([
-    common_1.Controller("dashboard"),
+    common_1.Controller('dashboard'),
     __metadata("design:paramtypes", [dashboard_service_1.DashboardService])
 ], DashboardController);
 exports.DashboardController = DashboardController;

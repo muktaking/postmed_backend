@@ -60,13 +60,15 @@ export class ExamsController {
     return await this.examService.findAllExams();
   }
 
-  @Get('/course/:id')
+  @Post('/course/:id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Role(RolePermitted.student)
-  async findAllPlainExamsByCourseId(@Param() id, @Req() req) {
+  async findAllPlainExamsByCourseId(@Body() filter, @Param() id, @Req() req) {
+    //console.log(filter);
     return await this.examService.findAllPlainExamsByCourseIds(
       id.id,
-      req.user.id
+      req.user.id,
+      filter
     );
   }
 

@@ -1,8 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
-  HttpStatus,
   Post,
   Req,
   UseGuards,
@@ -40,15 +38,6 @@ export class AuthController {
   async facebookLogin(@Body() data): Promise<any> {
     //console.log(data.fbApi);
     return await this.authService.facebookLogin(data.fbApi);
-  }
-
-  @Get('/facebook/redirect')
-  @UseGuards(AuthGuard('facebook'))
-  async facebookLoginRedirect(@Req() req): Promise<any> {
-    return {
-      statusCode: HttpStatus.OK,
-      data: req.user,
-    };
   }
 
   @Post('/reset')
