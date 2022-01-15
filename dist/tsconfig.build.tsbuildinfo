@@ -2757,6 +2757,10 @@
         "version": "b19049f0374e313282a5ee4ad7b84d08ba003df3f27a5f8a1592131e1c7ff1db",
         "signature": "1e69a87ecad958ec40a84b2d52d469071904f9602558461bbd4300b65d45f8d9"
       },
+      "../src/auth/jwt.strategy.ts": {
+        "version": "fed00a6c738b0d903071f6cc2f0b8b1fb95e6299517d49619988983bba0a1a59",
+        "signature": "f13f0d7a4b13b9e8c2569061a93fe7d212f734ec0078eb837877b5faa941105b"
+      },
       "../node_modules/@types/range-parser/index.d.ts": {
         "version": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
         "signature": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b"
@@ -2789,18 +2793,6 @@
         "version": "82740a0724b94de65a10042e62192d3e39a1dd89ea231d00c81874d34e0b26a6",
         "signature": "82740a0724b94de65a10042e62192d3e39a1dd89ea231d00c81874d34e0b26a6"
       },
-      "../node_modules/@types/passport-facebook/index.d.ts": {
-        "version": "19e7d324264e8de09a61866e206b5686aca74d603a877bd51eb926770a499942",
-        "signature": "19e7d324264e8de09a61866e206b5686aca74d603a877bd51eb926770a499942"
-      },
-      "../src/auth/facebook.strategy.ts": {
-        "version": "640d4b02ccced03c27a3424634de1134283f5b62f55db166b24e170bdfaf861c",
-        "signature": "c497d36e7f1e1301d75b172cfc269dee078503e20bf5681b5399de869a090fff"
-      },
-      "../src/auth/jwt.strategy.ts": {
-        "version": "fed00a6c738b0d903071f6cc2f0b8b1fb95e6299517d49619988983bba0a1a59",
-        "signature": "f13f0d7a4b13b9e8c2569061a93fe7d212f734ec0078eb837877b5faa941105b"
-      },
       "../node_modules/@types/passport-strategy/index.d.ts": {
         "version": "29d59e921bc723594bbfc98230d24f38f0d5a669f28fcf989b7468f4f95b7c52",
         "signature": "29d59e921bc723594bbfc98230d24f38f0d5a669f28fcf989b7468f4f95b7c52"
@@ -2814,7 +2806,7 @@
         "signature": "c9a6e42a798cc1cb1f8b5f7cf75be0cd5c4cb26f3dbcb768e13ec6f7608aa096"
       },
       "../src/auth/auth.module.ts": {
-        "version": "1238a846e15ff36dd45aaeb82fed54802b1de17ae79fece78f99ec93e2e28624",
+        "version": "440ab99c81e7798d225e0f63280015e7baa0f0daf58b89d215c3858589af3ddd",
         "signature": "2e5d258cf85349b02b015c3f1b8873c152d182c3819a7ccc3aff16fc3037a5fc"
       },
       "../src/questions/stem.entity.ts": {
@@ -3288,6 +3280,10 @@
       "../node_modules/@types/json5/index.d.ts": {
         "version": "96d14f21b7652903852eef49379d04dbda28c16ed36468f8c9fa08f7c14c9538",
         "signature": "96d14f21b7652903852eef49379d04dbda28c16ed36468f8c9fa08f7c14c9538"
+      },
+      "../node_modules/@types/passport-facebook/index.d.ts": {
+        "version": "19e7d324264e8de09a61866e206b5686aca74d603a877bd51eb926770a499942",
+        "signature": "19e7d324264e8de09a61866e206b5686aca74d603a877bd51eb926770a499942"
       },
       "../node_modules/@types/source-list-map/index.d.ts": {
         "version": "67fc055eb86a0632e2e072838f889ffe1754083cb13c8c80a06a7d895d877aae",
@@ -9062,6 +9058,15 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "../src/auth/jwt.strategy.ts": [
+        "../node_modules/@nestjs/common/index.d.ts",
+        "../node_modules/@nestjs/passport/index.d.ts",
+        "../src/auth/auth.service.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "../node_modules/@types/range-parser/index.d.ts": [
         "../node_modules/@types/node/fs.d.ts",
         "../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -9126,38 +9131,6 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../node_modules/@types/passport-facebook/index.d.ts": [
-        "../node_modules/@types/passport/index.d.ts",
-        "../node_modules/@types/express/index.d.ts",
-        "../node_modules/@types/node/fs.d.ts",
-        "../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/auth/facebook.strategy.ts": [
-        "../node_modules/@nestjs/common/index.d.ts",
-        "../node_modules/@nestjs/jwt/index.d.ts",
-        "../node_modules/@nestjs/passport/index.d.ts",
-        "../node_modules/@nestjs/typeorm/index.d.ts",
-        "../node_modules/generate-password/src/generate.d.ts",
-        "../node_modules/@types/passport-facebook/index.d.ts",
-        "../src/users/user.entity.ts",
-        "../src/users/user.repository.ts",
-        "../src/utils/utils.ts",
-        "../node_modules/@types/node/fs.d.ts",
-        "../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../src/auth/jwt.strategy.ts": [
-        "../node_modules/@nestjs/common/index.d.ts",
-        "../node_modules/@nestjs/passport/index.d.ts",
-        "../src/auth/auth.service.ts",
-        "../node_modules/@types/node/fs.d.ts",
-        "../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "../node_modules/@types/passport-strategy/index.d.ts": [
         "../node_modules/@types/passport/index.d.ts",
         "../node_modules/@types/express/index.d.ts",
@@ -9194,7 +9167,6 @@
         "../src/users/users.module.ts",
         "../src/auth/auth.controller.ts",
         "../src/auth/auth.service.ts",
-        "../src/auth/facebook.strategy.ts",
         "../src/auth/jwt.strategy.ts",
         "../src/auth/local.strategy.ts",
         "../node_modules/@types/node/fs.d.ts",
@@ -10309,6 +10281,14 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "../node_modules/@types/passport-facebook/index.d.ts": [
+        "../node_modules/@types/passport/index.d.ts",
+        "../node_modules/@types/express/index.d.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "../node_modules/@types/source-list-map/index.d.ts": [
         "../node_modules/@types/node/fs.d.ts",
         "../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -10986,11 +10966,6 @@
       ],
       "../src/auth/jwt.strategy.ts": [
         "../src/auth/auth.service.ts"
-      ],
-      "../src/auth/facebook.strategy.ts": [
-        "../node_modules/@nestjs/jwt/index.d.ts",
-        "../node_modules/@types/passport-facebook/index.d.ts",
-        "../src/users/user.repository.ts"
       ],
       "../src/auth/auth.controller.ts": [
         "../src/users/dto/create-user.dto.ts",
@@ -12772,6 +12747,14 @@
         "../node_modules/@types/node/util.d.ts",
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "../node_modules/@types/passport-facebook/index.d.ts": [
+        "../node_modules/@types/passport/index.d.ts",
+        "../node_modules/@types/express/index.d.ts",
+        "../node_modules/@types/node/fs.d.ts",
+        "../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../node_modules/@types/node/util.d.ts",
+        "../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "../node_modules/@types/passport-local/index.d.ts": [
         "../node_modules/@types/passport-strategy/index.d.ts",
         "../node_modules/@types/express/index.d.ts",
@@ -12782,14 +12765,6 @@
         "../node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "../node_modules/@types/passport-strategy/index.d.ts": [
-        "../node_modules/@types/passport/index.d.ts",
-        "../node_modules/@types/express/index.d.ts",
-        "../node_modules/@types/node/fs.d.ts",
-        "../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../node_modules/@types/node/util.d.ts",
-        "../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../node_modules/@types/passport-facebook/index.d.ts": [
         "../node_modules/@types/passport/index.d.ts",
         "../node_modules/@types/express/index.d.ts",
         "../node_modules/@types/node/fs.d.ts",
