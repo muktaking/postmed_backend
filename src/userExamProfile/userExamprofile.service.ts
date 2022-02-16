@@ -28,9 +28,17 @@ export class UserExamProfileService {
     //examId: string
   ): Promise<UserExamProfile> {
     const [err, profile] = await to(
-      this.userExamProfileRepository.findOne({
-        id: +id,
-      })
+      this.userExamProfileRepository
+        //   .findOne({
+        //     id: +id,
+        //   })
+        //
+        .createQueryBuilder('userExamProfile')
+        .leftJoinAndSelect('userExamProfile.courses', 'courses')
+        .leftJoinAndSelect('courses.exams', 'exams')
+        .leftJoinAndSelect('exams.examActivityStat', 'eStat')
+        .where({ id: +id })
+        .getOne()
     );
     if (err)
       throw new HttpException(
@@ -67,7 +75,9 @@ export class UserExamProfileService {
       totalMark,
       firstAttemptTime: moment().format('YYYY-MM-DD HH:mm:ss'),
       lastAttemptTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+      examActivityStat: [],
     });
+    //examProfile.examActivityStat.push(examData.examActivityStat);
 
     let courseProfile = this.userExamCourseProfileRepository.create({
       courseId: +course.id,
@@ -78,6 +88,7 @@ export class UserExamProfileService {
     });
 
     if (!profile) {
+      examProfile.examActivityStat.push(examData.examActivityStat);
       courseProfile.exams.push(examProfile);
 
       profile = this.userExamProfileRepository.create({
@@ -100,7 +111,9 @@ export class UserExamProfileService {
             'YYYY-MM-DD HH:mm:ss'
           );
           examProfileExisted.score.push(score);
+          examProfileExisted.examActivityStat.push(examData.examActivityStat);
           const [error, result] = await to(examProfileExisted.save());
+          console.log(error);
           if (error) throw new InternalServerErrorException();
           return result;
         } else {
@@ -109,6 +122,8 @@ export class UserExamProfileService {
             +courseProfileExisted.totalScore + score;
 
           examProfile.score.push(score);
+          examProfile.examActivityStat.push(examData.examActivityStat);
+
           courseProfileExisted.exams.push(examProfile);
 
           let [error, result] = await to(examProfile.save());
@@ -170,5 +185,42 @@ export class UserExamProfileService {
     );
     if (err) throw new InternalServerErrorException();
     return userCourseProfiles;
+  }
+
+  async findAllUserExamActivityStat(stuId = 69) {
+    const [err, userExamProfile] = await to(
+      this.userExamProfileRepository
+        .createQueryBuilder('userEP')
+        .leftJoinAndSelect('userEP.courses', 'courses')
+        .leftJoinAndSelect('courses.exams', 'exams')
+        .leftJoinAndSelect('exams.examActivityStat', 'eStat')
+        .leftJoinAndSelect('eStat.questionActivityStat', 'qStat')
+        .leftJoinAndSelect('qStat.stemActivityStat', 'sStat')
+        .where('userEP.id = :id', { id: stuId })
+        .andWhere('courses.courseId = :courseId', { courseId: 3 })
+        .andWhere('exams.examId = :examId', { examId: 20 })
+        .getMany()
+    );
+    console.log(err);
+    if (err) throw new InternalServerErrorException();
+    return userExamProfile;
+  }
+
+  async findAllUserExamActivityStatByCourseId(stuId, courseId) {
+    const [err, userExamProfile] = await to(
+      this.userExamProfileRepository
+        .createQueryBuilder('userEP')
+        .leftJoinAndSelect('userEP.courses', 'courses')
+        .leftJoinAndSelect('courses.exams', 'exams')
+        .leftJoinAndSelect('exams.examActivityStat', 'eStat')
+        .leftJoinAndSelect('eStat.questionActivityStat', 'qStat')
+        .leftJoinAndSelect('qStat.stemActivityStat', 'sStat')
+        .where('userEP.id = :id', { id: stuId })
+        .andWhere('courses.courseId = :courseId', { courseId: courseId })
+        .getMany()
+    );
+
+    if (err) throw new InternalServerErrorException();
+    return userExamProfile;
   }
 }

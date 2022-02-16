@@ -14,8 +14,14 @@ export class Course extends BaseEntity {
   @Column({ type: 'varchar', length: 200, nullable: false })
   title: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'text', nullable: false })
   description: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  imageUrl: string;
+
+  @Column({ type: 'smallint', nullable: true })
+  price: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Timestamp | string;

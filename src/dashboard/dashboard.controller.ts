@@ -19,6 +19,6 @@ export class DashboardController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Role(RolePermitted.mentor)
   async getAdminDashInfo(@Req() req) {
-    return await this.dashboardService.getAdminDashInfo(req.user.role);
+    return await this.dashboardService.getAdminDashInfo(req.user);
   }
 }

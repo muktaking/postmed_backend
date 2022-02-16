@@ -21,23 +21,38 @@ const exam_model_1 = require("../exams/exam.model");
 const exams_service_1 = require("../exams/exams.service");
 const question_model_1 = require("../questions/question.model");
 const question_repository_1 = require("../questions/question.repository");
+const examActivityStat_repository_1 = require("../userExamProfile/examActivityStat.repository");
+const questionActivityStat_entity_1 = require("../userExamProfile/questionActivityStat.entity");
+const questionActivityStat_repository_1 = require("../userExamProfile/questionActivityStat.repository");
+const stemActivityStat_repository_1 = require("../userExamProfile/stemActivityStat.repository");
 const userExamprofile_service_1 = require("../userExamProfile/userExamprofile.service");
 const users_service_1 = require("../users/users.service");
 const utils_1 = require("../utils/utils");
 const typeorm_2 = require("typeorm");
 const moment = require('moment');
 let PostexamsService = class PostexamsService {
-    constructor(usersService, questionRepository, examService, courseService, userExamProfileService) {
+    constructor(usersService, questionRepository, examActivityStatRepository, questionActivityStatRepository, stemActivityStatRepository, examService, courseService, userExamProfileService) {
         this.usersService = usersService;
         this.questionRepository = questionRepository;
+        this.examActivityStatRepository = examActivityStatRepository;
+        this.questionActivityStatRepository = questionActivityStatRepository;
+        this.stemActivityStatRepository = stemActivityStatRepository;
         this.examService = examService;
         this.courseService = courseService;
         this.userExamProfileService = userExamProfileService;
         this.totalScore = 0;
         this.totalPenaltyMark = 0;
+        this.totalWrongScore = 0;
+        this.totalWrongStems = 0;
+        this.totalRightStems = 0;
+        this.totalRightSbaQuestions = 0;
+        this.totalWrongSbaQuestions = 0;
     }
     async postExamTaskingByCoursesProfile(getAnswersDto, answersByStudent, user) {
         const { examId, courseId, timeTakenToComplete, questionIdsByOrder, } = getAnswersDto;
+        const examActivityStat = this.examActivityStatRepository.create({
+            questionActivityStat: [],
+        });
         const [examError, exam] = await utils_1.to(this.examService.findExamById(examId));
         if (examError)
             throw new common_1.HttpException('Problems at retriving Exam', common_1.HttpStatus.SERVICE_UNAVAILABLE);
@@ -62,6 +77,11 @@ let PostexamsService = class PostexamsService {
             throw new common_1.InternalServerErrorException();
         let resultArray = [];
         answeredQuestions.map((question, index) => {
+            const questionActivityStat = this.questionActivityStatRepository.create({
+                questionId: question.id,
+                stemActivityStat: [],
+            });
+            examActivityStat.questionActivityStat.push(questionActivityStat);
             const particulars = {
                 id: question.id,
                 qText: question.qText,
@@ -70,18 +90,28 @@ let PostexamsService = class PostexamsService {
                 result: { mark: 0 },
             };
             if (question.qType === question_model_1.QType.Matrix) {
-                particulars.result = this.matrixManipulator(this.answersExtractor(question), answersByStudent[index]);
+                particulars.result = this.matrixManipulator(this.answersExtractor(question), answersByStudent[index], questionActivityStat);
             }
             else if (question.qType === question_model_1.QType.singleBestAnswer) {
-                particulars.result = this.sbaManipulator(this.answersExtractor(question), answersByStudent[index]);
+                particulars.result = this.sbaManipulator(this.answersExtractor(question), answersByStudent[index], questionActivityStat);
             }
             resultArray.push(particulars);
         });
-        await this.userExamProfileService.manipulateProfile(user, {
+        examActivityStat.totalScore = this.totalScore;
+        examActivityStat.totalPenaltyScore = this.penaltyMark;
+        examActivityStat.totalWrongScore = this.totalWrongScore;
+        examActivityStat.totalRightStems = this.totalRightStems;
+        examActivityStat.totalWrongStems = this.totalWrongStems;
+        examActivityStat.totalRightSbaQuestions = this.totalRightSbaQuestions;
+        examActivityStat.totalWrongSbaQuestions = this.totalWrongSbaQuestions;
+        const [userExamProfileError, userExamProfileRes] = await utils_1.to(this.userExamProfileService.manipulateProfile(user, {
             course,
             exam,
             score: this.totalScore,
-        });
+            examActivityStat,
+        }));
+        if (userExamProfileError)
+            throw new common_1.InternalServerErrorException(userExamProfileError.message);
         const totalScorePercentage = +(this.totalScore / this.totalMark).toFixed(2) * 100;
         nonAnsweredQuestions.forEach((question) => {
             const particulars = {
@@ -102,6 +132,7 @@ let PostexamsService = class PostexamsService {
             }
             resultArray.push(particulars);
         });
+        resultArray.sort((a, b) => questionIdsByOrder.indexOf(+a.id) - questionIdsByOrder.indexOf(+b.id));
         return {
             examId,
             resultArray,
@@ -112,8 +143,8 @@ let PostexamsService = class PostexamsService {
             timeTakenToComplete,
         };
     }
-    async postExamTaskingForFree(getAnswersDto, answersByStudent) {
-        const { examId, timeTakenToComplete, questionIdsByOrder } = getAnswersDto;
+    async postExamTaskingForFree(getFreeAnswersDto, answersByStudent) {
+        const { examId, timeTakenToComplete, questionIdsByOrder, } = getFreeAnswersDto;
         const exam = await this.examService.findExamById(examId);
         this.singleQuestionMark = exam.singleQuestionMark;
         this.questionStemLength = exam.questionStemLength;
@@ -140,10 +171,10 @@ let PostexamsService = class PostexamsService {
                 result: { mark: 0 },
             };
             if (question.qType === question_model_1.QType.Matrix) {
-                particulars.result = this.matrixManipulator(this.answersExtractor(question), answersByStudent[index]);
+                particulars.result = this.matrixManipulatorForFree(this.answersExtractor(question), answersByStudent[index]);
             }
             else if (question.qType === question_model_1.QType.singleBestAnswer) {
-                particulars.result = this.sbaManipulator(this.answersExtractor(question), answersByStudent[index]);
+                particulars.result = this.sbaManipulatorForFree(this.answersExtractor(question), answersByStudent[index]);
             }
             resultArray.push(particulars);
         });
@@ -197,8 +228,44 @@ let PostexamsService = class PostexamsService {
             rank: rankProfiles,
         };
     }
-    matrixManipulator(serverAns, studentAns) {
-        console.log(serverAns, studentAns);
+    matrixManipulator(serverAns, studentAns, questionActivityStat) {
+        const stemValidatedArray = serverAns.map((v, i) => {
+            const stemActivityStat = this.stemActivityStatRepository.create({
+                aStem: studentAns.stems[i],
+            });
+            questionActivityStat.stemActivityStat.push(stemActivityStat);
+            if (studentAns)
+                if (v === studentAns.stems[i]) {
+                    stemActivityStat.aStemStatus = exam_entity_1.answerStatus.True.toString();
+                    return exam_entity_1.answerStatus.True;
+                }
+                else {
+                    if (typeof studentAns.stems[i] === 'string') {
+                        stemActivityStat.aStemStatus = exam_entity_1.answerStatus.False.toString();
+                        return exam_entity_1.answerStatus.False;
+                    }
+                    return exam_entity_1.answerStatus.NotAnswered;
+                }
+        });
+        const correct = stemValidatedArray.filter((v) => v === exam_entity_1.answerStatus.True)
+            .length;
+        const wrong = stemValidatedArray.filter((v) => v === exam_entity_1.answerStatus.False)
+            .length;
+        const mark = +(+(+this.singleStemMark * correct).toFixed(2) -
+            Number((this.penaltyMark * wrong).toFixed(2))).toFixed(2);
+        this.totalScore += mark;
+        this.totalPenaltyMark += +(this.penaltyMark * wrong).toFixed(2);
+        this.totalWrongScore += +(+this.singleStemMark * wrong).toFixed(2);
+        this.totalWrongStems += wrong;
+        this.totalRightStems += correct;
+        questionActivityStat.score = mark;
+        questionActivityStat.wrongScore = +(+this.singleStemMark * wrong).toFixed(2);
+        questionActivityStat.penaltyScore = Number((this.penaltyMark * wrong).toFixed(2));
+        questionActivityStat.rightStems = correct;
+        questionActivityStat.wrongStems = wrong;
+        return { stemResult: [question_model_1.QType.Matrix, ...stemValidatedArray], mark };
+    }
+    matrixManipulatorForFree(serverAns, studentAns) {
         const stemValidatedArray = serverAns.map((v, i) => {
             if (studentAns)
                 if (v === studentAns.stems[i])
@@ -219,7 +286,35 @@ let PostexamsService = class PostexamsService {
         this.totalPenaltyMark += +(this.penaltyMark * wrong).toFixed(2);
         return { stemResult: [question_model_1.QType.Matrix, ...stemValidatedArray], mark };
     }
-    sbaManipulator(serverAns, studentAns) {
+    sbaManipulator(serverAns, studentAns, questionActivityStat) {
+        const stemActivityStat = this.stemActivityStatRepository.create({
+            aStem: studentAns.stems[0],
+            aStemStatus: studentAns.stems[0] === serverAns[0] ? '1' : '0',
+        });
+        questionActivityStat.stemActivityStat.push(stemActivityStat);
+        const mark = studentAns.stems[0] === serverAns[0]
+            ? this.singleQuestionMark
+            : this.penaltyMark === 0
+                ? 0
+                : -(this.penaltyMark * this.questionStemLength);
+        this.totalScore += +mark.toFixed(2);
+        if (mark < 0) {
+            this.totalPenaltyMark += +(this.penaltyMark * this.questionStemLength).toFixed(2);
+        }
+        this.totalWrongScore +=
+            studentAns.stems[0] !== serverAns[0] ? this.singleQuestionMark : 0;
+        this.totalWrongSbaQuestions += studentAns.stems[0] !== serverAns[0] ? 1 : 0;
+        this.totalRightSbaQuestions += studentAns.stems[0] === serverAns[0] ? 1 : 0;
+        questionActivityStat.score = mark;
+        questionActivityStat.wrongScore =
+            studentAns.stems[0] !== serverAns[0] ? this.singleQuestionMark : 0;
+        questionActivityStat.penaltyScore = -(this.penaltyMark * this.questionStemLength);
+        return {
+            stemResult: [question_model_1.QType.singleBestAnswer, +serverAns[0], +studentAns.stems[0]],
+            mark,
+        };
+    }
+    sbaManipulatorForFree(serverAns, studentAns) {
         const mark = studentAns.stems[0] === serverAns[0]
             ? this.singleQuestionMark
             : this.penaltyMark === 0
@@ -239,8 +334,14 @@ let PostexamsService = class PostexamsService {
 PostexamsService = __decorate([
     common_1.Injectable({ scope: common_1.Scope.REQUEST }),
     __param(1, typeorm_1.InjectRepository(question_repository_1.QuestionRepository)),
+    __param(2, typeorm_1.InjectRepository(examActivityStat_repository_1.ExamActivityStatRepository)),
+    __param(3, typeorm_1.InjectRepository(questionActivityStat_repository_1.QuestionActivityStatRepository)),
+    __param(4, typeorm_1.InjectRepository(stemActivityStat_repository_1.StemActivityStatRepository)),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         question_repository_1.QuestionRepository,
+        examActivityStat_repository_1.ExamActivityStatRepository,
+        questionActivityStat_repository_1.QuestionActivityStatRepository,
+        stemActivityStat_repository_1.StemActivityStatRepository,
         exams_service_1.ExamsService,
         courses_service_1.CoursesService,
         userExamprofile_service_1.UserExamProfileService])

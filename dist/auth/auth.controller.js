@@ -29,7 +29,7 @@ let AuthController = class AuthController {
         return await this.authService.login(req.user);
     }
     async facebookLogin(data) {
-        return await this.authService.facebookLogin(data.fbApi);
+        return await this.authService.facebookLoginAutoLog(data.fbApi);
     }
     async reset(email) {
         return await this.authService.reset(email);

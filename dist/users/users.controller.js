@@ -59,7 +59,7 @@ __decorate([
 __decorate([
     common_1.Post('/files'),
     common_1.UseGuards(passport_1.AuthGuard('jwt')),
-    roles_decorator_1.Role(user_entity_1.RolePermitted.admin),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.coordinator),
     common_1.UseInterceptors(platform_express_1.FileInterceptor('file', {
         storage: multer_1.diskStorage({
             destination: './uploads/files',
@@ -84,7 +84,7 @@ __decorate([
 __decorate([
     common_1.Delete('/:id'),
     common_1.UseGuards(passport_1.AuthGuard('jwt')),
-    roles_decorator_1.Role(user_entity_1.RolePermitted.admin),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.coordinator),
     __param(0, common_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),

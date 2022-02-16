@@ -3,6 +3,7 @@ import { CoursesService } from 'src/courses/courses.service';
 import { ExamRepository } from 'src/exams/exam.repository';
 import { ExamsService } from 'src/exams/exams.service';
 import { UserExamProfileRepository } from 'src/userExamProfile/userExamProfile.repository';
+import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 export declare class DashboardService {
     private usersService;
@@ -15,7 +16,7 @@ export declare class DashboardService {
     private featuredCategoryId;
     getFeaturedCategoryId(): Promise<any>;
     getStudentDashInfo(id: any): Promise<any[]>;
-    getAdminDashInfo(userRole: any): Promise<{
+    getAdminDashInfo(user: User): Promise<{
         users: any[];
         exams: any[];
         feedbacks: any[];

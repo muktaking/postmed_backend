@@ -37,14 +37,13 @@ let QuestionsController = class QuestionsController {
         return await this.questionService.findQuestionByFilter('categoryId', categoryId.id);
     }
     async createQuestion(createQuestionDto, stem, req) {
-        console.log(stem);
         return await this.questionService.createQuestion(createQuestionDto, stem, req.user.id);
     }
     async createQuestionByUpload(req, category, file) {
         return await this.questionService.createQuestionByUpload(req.user.id, category, file);
     }
     async updateQuestionById(questionId, createQuestionDto, stem, req) {
-        return await this.questionService.updateQuestionById(questionId.id, createQuestionDto, stem, req.user.id);
+        return await this.questionService.updateQuestionById(questionId.id, createQuestionDto, stem, req.user);
     }
     async deleteQuestionById(questionId) {
         return await this.questionService.deleteQuestion(questionId.id);
@@ -71,7 +70,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], QuestionsController.prototype, "getQuestionById", null);
 __decorate([
-    roles_decorator_1.Role(user_model_1.RolePermitted.moderator),
+    roles_decorator_1.Role(user_model_1.RolePermitted.mentor),
     common_1.Get('/category/:id'),
     __param(0, common_1.Param()),
     __metadata("design:type", Function),

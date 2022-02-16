@@ -1,4 +1,6 @@
+import * as fs from 'fs';
 import { extname } from 'path';
+import * as sharp from 'sharp';
 
 export const imageFileFilter = (req, file, callback) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
@@ -36,3 +38,33 @@ export const editFileName = (req, file, callback) => {
     .join('');
   callback(null, `${name}-${randomName}${fileExtName}`);
 };
+
+export async function imageResizer(image, folderPath) {
+  const resizeImage = await sharp(image.path)
+    .resize(350, 180)
+    .png()
+    .toBuffer();
+
+  const resizeImageName = image.filename.split('.')[0] + '_350_180.png';
+
+  const resizeImagePathName = `./uploads/images/${folderPath}/${resizeImageName}`;
+
+  const imagePathPromise = new Promise((resolve, reject) => {
+    fs.writeFile(resizeImagePathName, resizeImage, (err) => {
+      if (!err) {
+        fs.unlink(
+          `./uploads/images/${folderPath}/${image.filename}`,
+          (delErr) => {
+            if (delErr) {
+              console.log(delErr);
+            }
+          }
+        );
+        resolve('images/' + folderPath + '/' + resizeImageName);
+      } else {
+        reject(err.message);
+      }
+    });
+  });
+  return imagePathPromise;
+}

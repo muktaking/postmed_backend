@@ -5,6 +5,7 @@ import { QuestionRepository } from 'src/questions/question.repository';
 import { UserExamCourseProfileRepository } from 'src/userExamProfile/userExamCourseProfile.repository';
 import { UserExamProfile } from 'src/userExamProfile/userExamProfile.entity';
 import { UserExamProfileRepository } from 'src/userExamProfile/userExamProfile.repository';
+import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { CreateExamDto } from './dto/exam.dto';
 import { ExamRepository } from './exam.repository';
@@ -40,14 +41,15 @@ export declare class ExamsService {
     findExamTotalNumberByCourseId(courseId: any): Promise<any>;
     findAllExams(): Promise<any>;
     findAllExamsByCourseIds(courseId: any, stuIds: string): Promise<any>;
-    findAllPlainExamsByCourseIds(courseId: any, stuIds: string, filter?: any): Promise<any>;
+    findAllPlainExamsByCourseIds(courseId: any, filter?: any): Promise<any>;
+    findAllPlainExamsByCourseIdsWithAuth(courseId: any, stuIds: string, filter?: any): Promise<any>;
     findAllOldExams(): Promise<any>;
     findAllRawExams(): Promise<any>;
     findLatestExam(): Promise<any>;
     findLatestExamByCourseId(courseId: any): Promise<any>;
     findCurrentExam(): Promise<any>;
     getFeaturedExams(courseId?: any): Promise<any>;
-    findExamById(id: string, constraintByCategoryType?: any, stuId?: any): Promise<any>;
+    findExamById(examId: string, courseId?: any, constraintByCategoryType?: any, stuId?: any): Promise<any>;
     findExamByCatId(id: string): Promise<any>;
     findOldExamByCatId(id: string): Promise<any>;
     findQuestionsByExamId(id: string, user: any): Promise<{
@@ -73,7 +75,7 @@ export declare class ExamsService {
     findAllProfile(): Promise<UserExamProfile[]>;
     getUserAvgResultByCourseId(id: any, courseId: any): Promise<any[]>;
     getUserRank(id: any, courseId: any): Promise<number>;
-    createExam(createExamDto: any, creator: string): Promise<any>;
+    createExam(createExamDto: any, creator: User): Promise<any>;
     updateExamById(id: string, createExamDto: CreateExamDto): Promise<any>;
     deleteExam(...args: any[]): Promise<import("typeorm").DeleteResult>;
     createFeedback(createFeedbackDto: any): Promise<{
@@ -84,4 +86,5 @@ export declare class ExamsService {
     changePendingStatus(ids: any, deny?: boolean): Promise<{
         message: string;
     }>;
+    getPdfByExamId(examId: string): Promise<string>;
 }

@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const exam_entity_1 = require("../exams/exam.entity");
+const examActivityStat_entity_1 = require("./examActivityStat.entity");
 const userExamCourseProfile_entity_1 = require("./userExamCourseProfile.entity");
 let UserExamExamProfile = class UserExamExamProfile extends typeorm_1.BaseEntity {
 };
@@ -54,6 +55,10 @@ __decorate([
     typeorm_1.ManyToOne(() => userExamCourseProfile_entity_1.UserExamCourseProfile, (userExamcourseProfile) => userExamcourseProfile.exams),
     __metadata("design:type", userExamCourseProfile_entity_1.UserExamCourseProfile)
 ], UserExamExamProfile.prototype, "course", void 0);
+__decorate([
+    typeorm_1.OneToMany(() => examActivityStat_entity_1.ExamActivityStat, (examActivityStat) => examActivityStat.userExamExamProfile, { cascade: true }),
+    __metadata("design:type", Array)
+], UserExamExamProfile.prototype, "examActivityStat", void 0);
 UserExamExamProfile = __decorate([
     typeorm_1.Entity()
 ], UserExamExamProfile);

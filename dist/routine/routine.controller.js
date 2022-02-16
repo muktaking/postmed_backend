@@ -13,6 +13,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
+const passport_1 = require("@nestjs/passport");
+const roles_decorator_1 = require("../roles.decorator");
+const user_entity_1 = require("../users/user.entity");
 const addASyllabus_dto_1 = require("./addASyllabus.dto");
 const routine_service_1 = require("./routine.service");
 let RoutineController = class RoutineController {
@@ -23,7 +26,6 @@ let RoutineController = class RoutineController {
         return await this.routineService.getRoutine();
     }
     async getRoutineByCourseId(id) {
-        console.log(id);
         return await this.routineService.getRoutineByCourseId(id);
     }
     async getRawRoutine() {
@@ -70,6 +72,8 @@ __decorate([
 ], RoutineController.prototype, "getSyllabusById", null);
 __decorate([
     common_1.Post(),
+    common_1.UseGuards(passport_1.AuthGuard('jwt')),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.moderator),
     __param(0, common_1.Body()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [addASyllabus_dto_1.AddASyllabusDto]),
@@ -77,6 +81,8 @@ __decorate([
 ], RoutineController.prototype, "addASyllabus", null);
 __decorate([
     common_1.Put(),
+    common_1.UseGuards(passport_1.AuthGuard('jwt')),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.moderator),
     __param(0, common_1.Body()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [addASyllabus_dto_1.AddASyllabusDto]),
@@ -84,6 +90,8 @@ __decorate([
 ], RoutineController.prototype, "editASyllabus", null);
 __decorate([
     common_1.Delete('/:id'),
+    common_1.UseGuards(passport_1.AuthGuard('jwt')),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.moderator),
     __param(0, common_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),

@@ -1,3 +1,4 @@
+import { User } from 'src/users/user.entity';
 import { CreateQuestionDto } from './create-question.dto';
 import { Question } from './question.entity';
 import { QuestionRepository } from './question.repository';
@@ -19,7 +20,7 @@ export declare class QuestionsService {
     updateQuestionById(id: string, createQuestionDto: CreateQuestionDto, stem: {
         stem: Stem[];
         error: string;
-    }, modifiedBy: string): Promise<{
+    }, modifiedBy: User): Promise<{
         id: number;
         title: string;
         categoryId: number;

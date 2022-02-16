@@ -9,6 +9,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { jsPDF } from 'jspdf';
 import * as _ from 'lodash';
 import { CategoryRepository } from 'src/categories/category.repository';
 import { CourseRepository } from 'src/courses/course.repository';
@@ -17,6 +18,7 @@ import { QuestionRepository } from 'src/questions/question.repository';
 import { UserExamCourseProfileRepository } from 'src/userExamProfile/userExamCourseProfile.repository';
 import { UserExamProfile } from 'src/userExamProfile/userExamProfile.entity';
 import { UserExamProfileRepository } from 'src/userExamProfile/userExamProfile.repository';
+import { RolePermitted, User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { to } from 'src/utils/utils';
 import { In, LessThan, LessThanOrEqual, Like, MoreThanOrEqual } from 'typeorm';
@@ -287,75 +289,21 @@ export class ExamsService {
     }
   }
 
-  async findAllPlainExamsByCourseIds(courseId, stuIds: string, filter = null) {
-    const [error, course] = await to(this.courseRepository.findOne(+courseId));
+  async findAllPlainExamsByCourseIds(courseId, filter = null) {
+    const [error, course] = await to(
+      this.courseRepository.findOne({
+        where: { id: +courseId, endDate: MoreThanOrEqual(new Date()) },
+      })
+    );
 
     if (error) throw new InternalServerErrorException();
 
     if (course) {
       if (
-        course.enrolledStuIds &&
-        course.enrolledStuIds.includes(stuIds.toString())
+        filter && // 👈 null and undefined check
+        Object.keys(filter).length !== 0
       ) {
-        if (
-          filter && // 👈 null and undefined check
-          Object.keys(filter).length !== 0
-        ) {
-          const { text, examType } = filter;
-          let [err, exams] = await to(
-            this.examRepository.find({
-              select: [
-                'id',
-                'title',
-                'type',
-                'description',
-                'startDate',
-                'endDate',
-                //"categoryType",
-              ],
-              // where: {
-              //   startDate: LessThanOrEqual(new Date()),
-              //   endDate: MoreThanOrEqual(new Date()),
-              // },
-              where: [
-                {
-                  courseIds: Like(courseId),
-                  title: Like('%' + text + '%'),
-                  type: In(examType),
-                  startDate: LessThanOrEqual(new Date()),
-                  //endDate: MoreThanOrEqual(new Date()),
-                },
-                {
-                  courseIds: Like('%,' + courseId + ',%'),
-                  title: Like('%' + text + '%'),
-                  type: In(examType),
-                  startDate: LessThanOrEqual(new Date()),
-                  //endDate: MoreThanOrEqual(new Date()),
-                },
-                {
-                  courseIds: Like(courseId + ',%'),
-                  title: Like('%' + text + '%'),
-                  type: In(examType),
-                  startDate: LessThanOrEqual(new Date()),
-                  //endDate: MoreThanOrEqual(new Date()),
-                },
-                {
-                  courseIds: Like('%,' + courseId),
-                  title: Like('%' + text + '%'),
-                  type: In(examType),
-                  startDate: LessThanOrEqual(new Date()),
-                  //endDate: MoreThanOrEqual(new Date()),
-                },
-              ],
-
-              relations: ['categoryType'],
-              order: { endDate: 'DESC' },
-            })
-          );
-
-          if (err) throw new InternalServerErrorException();
-          return exams;
-        }
+        const { text, examType } = filter;
         let [err, exams] = await to(
           this.examRepository.find({
             select: [
@@ -374,21 +322,29 @@ export class ExamsService {
             where: [
               {
                 courseIds: Like(courseId),
+                title: Like('%' + text + '%'),
+                type: In(examType),
                 startDate: LessThanOrEqual(new Date()),
                 //endDate: MoreThanOrEqual(new Date()),
               },
               {
                 courseIds: Like('%,' + courseId + ',%'),
+                title: Like('%' + text + '%'),
+                type: In(examType),
                 startDate: LessThanOrEqual(new Date()),
                 //endDate: MoreThanOrEqual(new Date()),
               },
               {
                 courseIds: Like(courseId + ',%'),
+                title: Like('%' + text + '%'),
+                type: In(examType),
                 startDate: LessThanOrEqual(new Date()),
                 //endDate: MoreThanOrEqual(new Date()),
               },
               {
                 courseIds: Like('%,' + courseId),
+                title: Like('%' + text + '%'),
+                type: In(examType),
                 startDate: LessThanOrEqual(new Date()),
                 //endDate: MoreThanOrEqual(new Date()),
               },
@@ -398,23 +354,203 @@ export class ExamsService {
             order: { endDate: 'DESC' },
           })
         );
-        console.log(err);
+
         if (err) throw new InternalServerErrorException();
-        // exams = {
-        //   assignment: _.filter(exams, (e) => e.type === ExamType.Assignment),
-        //   weekly: _.filter(exams, (e) => e.type === ExamType.Weekly),
-        //   monthly: _.filter(exams, (e) => e.type === ExamType.Monthly),
-        //   assesment: _.filter(exams, (e) => e.type === ExamType.Assesment),
-        //   term: _.filter(exams, (e) => e.type === ExamType.Term),
-        //   test: _.filter(exams, (e) => e.type === ExamType.Test),
-        //   final: _.filter(exams, (e) => e.type === ExamType.Final),
-        // };
         return exams;
-      } else {
-        throw new UnauthorizedException(
-          `Forbidden: Unauthorized Access: Please enroll for the required course.`
-        );
       }
+      let [err, exams] = await to(
+        this.examRepository.find({
+          select: [
+            'id',
+            'title',
+            'type',
+            'description',
+            'startDate',
+            'endDate',
+            //"categoryType",
+          ],
+          // where: {
+          //   startDate: LessThanOrEqual(new Date()),
+          //   endDate: MoreThanOrEqual(new Date()),
+          // },
+          where: [
+            {
+              courseIds: Like(courseId),
+              startDate: LessThanOrEqual(new Date()),
+              //endDate: MoreThanOrEqual(new Date()),
+            },
+            {
+              courseIds: Like('%,' + courseId + ',%'),
+              startDate: LessThanOrEqual(new Date()),
+              //endDate: MoreThanOrEqual(new Date()),
+            },
+            {
+              courseIds: Like(courseId + ',%'),
+              startDate: LessThanOrEqual(new Date()),
+              //endDate: MoreThanOrEqual(new Date()),
+            },
+            {
+              courseIds: Like('%,' + courseId),
+              startDate: LessThanOrEqual(new Date()),
+              //endDate: MoreThanOrEqual(new Date()),
+            },
+          ],
+
+          relations: ['categoryType'],
+          order: { endDate: 'DESC' },
+        })
+      );
+      if (err) throw new InternalServerErrorException();
+      // exams = {
+      //   assignment: _.filter(exams, (e) => e.type === ExamType.Assignment),
+      //   weekly: _.filter(exams, (e) => e.type === ExamType.Weekly),
+      //   monthly: _.filter(exams, (e) => e.type === ExamType.Monthly),
+      //   assesment: _.filter(exams, (e) => e.type === ExamType.Assesment),
+      //   term: _.filter(exams, (e) => e.type === ExamType.Term),
+      //   test: _.filter(exams, (e) => e.type === ExamType.Test),
+      //   final: _.filter(exams, (e) => e.type === ExamType.Final),
+      // };
+      return exams;
+    } else {
+      throw new NotFoundException();
+    }
+  }
+
+  async findAllPlainExamsByCourseIdsWithAuth(
+    courseId,
+    stuIds: string,
+    filter = null
+  ) {
+    const [error, course] = await to(
+      this.courseRepository.findOne({
+        where: { id: +courseId, endDate: MoreThanOrEqual(new Date()) },
+      })
+    );
+
+    if (error) throw new InternalServerErrorException();
+
+    if (course) {
+      // if (
+      //   course.enrolledStuIds &&
+      //   course.enrolledStuIds.includes(stuIds.toString())
+      // ) {
+      if (
+        filter && // 👈 null and undefined check
+        Object.keys(filter).length !== 0
+      ) {
+        const { text, examType } = filter;
+        let [err, exams] = await to(
+          this.examRepository.find({
+            select: [
+              'id',
+              'title',
+              'type',
+              'description',
+              'startDate',
+              'endDate',
+              //"categoryType",
+            ],
+            // where: {
+            //   startDate: LessThanOrEqual(new Date()),
+            //   endDate: MoreThanOrEqual(new Date()),
+            // },
+            where: [
+              {
+                courseIds: Like(courseId),
+                title: Like('%' + text + '%'),
+                type: In(examType),
+                startDate: LessThanOrEqual(new Date()),
+                //endDate: MoreThanOrEqual(new Date()),
+              },
+              {
+                courseIds: Like('%,' + courseId + ',%'),
+                title: Like('%' + text + '%'),
+                type: In(examType),
+                startDate: LessThanOrEqual(new Date()),
+                //endDate: MoreThanOrEqual(new Date()),
+              },
+              {
+                courseIds: Like(courseId + ',%'),
+                title: Like('%' + text + '%'),
+                type: In(examType),
+                startDate: LessThanOrEqual(new Date()),
+                //endDate: MoreThanOrEqual(new Date()),
+              },
+              {
+                courseIds: Like('%,' + courseId),
+                title: Like('%' + text + '%'),
+                type: In(examType),
+                startDate: LessThanOrEqual(new Date()),
+                //endDate: MoreThanOrEqual(new Date()),
+              },
+            ],
+
+            relations: ['categoryType'],
+            order: { endDate: 'DESC' },
+          })
+        );
+
+        if (err) throw new InternalServerErrorException();
+        return exams;
+      }
+      let [err, exams] = await to(
+        this.examRepository.find({
+          select: [
+            'id',
+            'title',
+            'type',
+            'description',
+            'startDate',
+            'endDate',
+            //"categoryType",
+          ],
+          // where: {
+          //   startDate: LessThanOrEqual(new Date()),
+          //   endDate: MoreThanOrEqual(new Date()),
+          // },
+          where: [
+            {
+              courseIds: Like(courseId),
+              startDate: LessThanOrEqual(new Date()),
+              //endDate: MoreThanOrEqual(new Date()),
+            },
+            {
+              courseIds: Like('%,' + courseId + ',%'),
+              startDate: LessThanOrEqual(new Date()),
+              //endDate: MoreThanOrEqual(new Date()),
+            },
+            {
+              courseIds: Like(courseId + ',%'),
+              startDate: LessThanOrEqual(new Date()),
+              //endDate: MoreThanOrEqual(new Date()),
+            },
+            {
+              courseIds: Like('%,' + courseId),
+              startDate: LessThanOrEqual(new Date()),
+              //endDate: MoreThanOrEqual(new Date()),
+            },
+          ],
+
+          relations: ['categoryType'],
+          order: { endDate: 'DESC' },
+        })
+      );
+      if (err) throw new InternalServerErrorException();
+      // exams = {
+      //   assignment: _.filter(exams, (e) => e.type === ExamType.Assignment),
+      //   weekly: _.filter(exams, (e) => e.type === ExamType.Weekly),
+      //   monthly: _.filter(exams, (e) => e.type === ExamType.Monthly),
+      //   assesment: _.filter(exams, (e) => e.type === ExamType.Assesment),
+      //   term: _.filter(exams, (e) => e.type === ExamType.Term),
+      //   test: _.filter(exams, (e) => e.type === ExamType.Test),
+      //   final: _.filter(exams, (e) => e.type === ExamType.Final),
+      // };
+      return exams;
+      // } else {
+      //   throw new UnauthorizedException(
+      //     `Forbidden: Unauthorized Access: Please enroll for the required course.`
+      //   );
+      // }
     } else {
       throw new NotFoundException();
     }
@@ -465,12 +601,14 @@ export class ExamsService {
           'startDate',
           'endDate',
           'createdAt',
+          'courseIds',
           //"categoryType",
         ],
         relations: ['categoryType'],
         order: { createdAt: 'DESC' },
       })
     );
+
     if (err) throw new InternalServerErrorException();
 
     exams = {
@@ -628,12 +766,13 @@ export class ExamsService {
   }
 
   async findExamById(
-    id: string,
+    examId: string,
+    courseId = null,
     constraintByCategoryType = null,
     stuId = null
   ) {
     if (constraintByCategoryType) {
-      const [err, exam] = await to(this.examRepository.findOne(+id));
+      const [err, exam] = await to(this.examRepository.findOne(+examId));
 
       if (err) throw new InternalServerErrorException();
 
@@ -648,38 +787,43 @@ export class ExamsService {
       return exam;
     }
 
-    const [err, exam] = await to(this.examRepository.findOne(id));
+    const [err, exam] = await to(this.examRepository.findOne(+examId));
+
     if (err) throw new InternalServerErrorException();
-    //console.log(stuId);
 
     if (stuId) {
-      if (exam.courseIds.length > 0) {
+      if (courseId) {
         const [err, course] = await to(
           this.courseRepository.find({
             where: [
               {
-                id: In(exam.courseIds),
+                id: +courseId,
                 enrolledStuIds: Like(+stuId),
+                endDate: MoreThanOrEqual(new Date()),
               },
               {
-                id: In(exam.courseIds),
+                id: +courseId,
                 enrolledStuIds: Like('%,' + stuId + ',%'),
+                endDate: MoreThanOrEqual(new Date()),
               },
               {
-                id: In(exam.courseIds),
+                id: +courseId,
                 enrolledStuIds: Like(stuId + ',%'),
+                endDate: MoreThanOrEqual(new Date()),
               },
               {
-                id: In(exam.courseIds),
+                id: +courseId,
                 enrolledStuIds: Like('%,' + stuId),
+                endDate: MoreThanOrEqual(new Date()),
               },
             ],
           })
         );
         if (err) throw new InternalServerErrorException();
+
         if (course.length < 1) {
           throw new UnauthorizedException(
-            `Forbidden: Unauthorized Access: Please enroll for the required course.`
+            `Forbidden: Unauthorized Access. Please enroll for the required course or the course is ended.`
           );
         }
       }
@@ -754,7 +898,8 @@ export class ExamsService {
 
   // // <--------------------->
   async findQuestionsByExamId(id: string, user) {
-    const exam = await this.findExamById(id, null, user.id);
+    const [examId, courseId] = id.split('_');
+    const exam = await this.findExamById(examId, courseId, null, user.id);
 
     if (exam) {
       let [err, questions] = await to(
@@ -785,7 +930,7 @@ export class ExamsService {
   }
 
   async findFreeQuestionsByExamId(id: string) {
-    const exam = await this.findExamById(id, await this.freeCategoryId);
+    const exam = await this.findExamById(id, null, await this.freeCategoryId);
     if (exam) {
       let [err, questions] = await to(
         this.questionRepository
@@ -892,7 +1037,7 @@ export class ExamsService {
   }
 
   //<-------------------------------->
-  async createExam(createExamDto, creator: string) {
+  async createExam(createExamDto, creator: User) {
     const {
       title,
       type,
@@ -907,6 +1052,23 @@ export class ExamsService {
       penaltyMark,
       timeLimit,
     } = createExamDto;
+
+    if (creator.role < RolePermitted.coordinator) {
+      const [error, accessRight] = await to(
+        this.usersService.getAccessRight(creator.id)
+      );
+      console.log(error, accessRight);
+      if (error) throw new InternalServerErrorException(error.message);
+
+      if (accessRight) {
+        const accessableCourseIds = accessRight.accesableCourseIds;
+        if (!accessableCourseIds.includes(courseType.toString())) {
+          throw new UnauthorizedException();
+        }
+      } else {
+        throw new UnauthorizedException();
+      }
+    }
 
     const exam = new Exam();
 
@@ -924,7 +1086,7 @@ export class ExamsService {
     exam.questionStemLength = questionStemLength;
     exam.penaltyMark = penaltyMark;
     exam.timeLimit = timeLimit;
-    exam.creatorId = +creator;
+    exam.creatorId = +creator.id;
 
     categoryType.forEach((e) => {
       exam.categoryType.push({ id: +e });
@@ -974,7 +1136,7 @@ export class ExamsService {
     exam.questionStemLength = questionStemLength;
     (exam.penaltyMark = penaltyMark), (exam.timeLimit = timeLimit);
     //exam.creatorId = +creator;
-    exam.createdAt = moment().format('YYYY-MM-DD HH=mm=sss');
+    //exam.createdAt = moment().format('YYYY-MM-DD HH=mm=sss');
 
     categoryType.forEach((e) => {
       exam.categoryType.push({ id: +e });
@@ -1043,10 +1205,12 @@ export class ExamsService {
   async getPendingFeedback() {
     const [err, feedbacks] = await to(
       this.feedbackRepository.find({
-        select: ['id', 'name', 'feedbackStatus', 'message', 'examId'],
+        //select: ['id', 'name', 'feedbackStatus', 'message', 'examId'],
         where: { status: Status.Pending },
+        relations: ['exam'],
       })
     );
+
     if (err) {
       console.log(err);
       throw new InternalServerErrorException();
@@ -1081,5 +1245,11 @@ export class ExamsService {
     await this.feedbackRepository.save(feedbacks);
 
     return { message: 'Change Status to published successfully.' };
+  }
+
+  async getPdfByExamId(examId: string) {
+    const doc = new jsPDF();
+    doc.text('Hello world!', 10, 10);
+    return doc.output(); // will save the file in the current working directory
   }
 }

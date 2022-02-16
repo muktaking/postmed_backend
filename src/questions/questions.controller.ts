@@ -44,7 +44,7 @@ export class QuestionsController {
     return await this.questionService.findQuestionById(id.id);
   }
 
-  @Role(RolePermitted.moderator)
+  @Role(RolePermitted.mentor)
   @Get('/category/:id')
   async getQuestionsByCategory(@Param() categoryId) {
     return await this.questionService.findQuestionByFilter(
@@ -52,6 +52,7 @@ export class QuestionsController {
       categoryId.id
     );
   }
+
   @Post()
   @Role(RolePermitted.mentor)
   @UsePipes(ValidationPipe)
@@ -60,7 +61,6 @@ export class QuestionsController {
     @Body('stem', StemValidationPipe) stem: { stem: Stem[]; error: string },
     @Req() req
   ) {
-    console.log(stem);
     return await this.questionService.createQuestion(
       createQuestionDto,
       stem,
@@ -100,12 +100,11 @@ export class QuestionsController {
     @Body('stem', StemValidationPipe) stem: { stem: Stem[]; error: string },
     @Req() req
   ) {
-    //console.log(questionId.id, createQuestionDto, stem, req.user.id);
     return await this.questionService.updateQuestionById(
       questionId.id,
       createQuestionDto,
       stem,
-      req.user.id
+      req.user
     );
   }
 

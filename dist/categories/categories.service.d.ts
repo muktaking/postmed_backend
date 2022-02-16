@@ -1,7 +1,7 @@
-import { QuestionRepository } from "src/questions/question.repository";
-import { Category } from "./category.entity";
-import { CategoryRepository } from "./category.repository";
-import { createCategoryDto } from "./dto/category.dto";
+import { QuestionRepository } from 'src/questions/question.repository';
+import { Category } from './category.entity';
+import { CategoryRepository } from './category.repository';
+import { createCategoryDto } from './dto/category.dto';
 export declare class CategoriesService {
     private categoryRepository;
     private questionRepository;

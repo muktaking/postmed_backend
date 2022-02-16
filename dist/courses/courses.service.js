@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const user_entity_1 = require("../users/user.entity");
 const user_repository_1 = require("../users/user.repository");
 const utils_1 = require("../utils/utils");
 const typeorm_2 = require("typeorm");
@@ -24,11 +25,13 @@ let CoursesService = class CoursesService {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
     }
-    async createCourse(createCourseDto, creator) {
-        const { title, description, startDate, endDate } = createCourseDto;
+    async createCourse(createCourseDto, imagePath, creator) {
+        const { title, description, price, startDate, endDate } = createCourseDto;
         const course = new course_entity_1.Course();
         course.title = title;
         course.description = description;
+        course.price = price ? +price : null;
+        course.imageUrl = imagePath;
         course.startDate = startDate;
         course.endDate = endDate;
         course.creatorId = +creator;
@@ -36,10 +39,45 @@ let CoursesService = class CoursesService {
         if (err) {
             throw new common_1.InternalServerErrorException();
         }
-        return result;
+        return { message: 'Created Course Successfully' };
     }
-    async findAllCourses() {
-        const [err, courses] = await utils_1.to(this.courseRepository.find());
+    async findAllCourses(user = null) {
+        if (user &&
+            (user.role === user_entity_1.RolePermitted.mentor ||
+                user.role === user_entity_1.RolePermitted.moderator)) {
+            const [error, userDetails] = await utils_1.to(this.userRepository.findOne({
+                where: { id: user.id },
+                relations: ['accessRight'],
+            }));
+            if (error)
+                throw new common_1.InternalServerErrorException(error.message);
+            if (userDetails.accessRight) {
+                const accessableCourseIds = userDetails.accessRight.accessableCourseIds;
+                const [err, courses] = await utils_1.to(this.courseRepository.find({
+                    where: {
+                        id: typeorm_2.In(accessableCourseIds),
+                        endDate: typeorm_2.MoreThanOrEqual(new Date()),
+                    },
+                    order: { startDate: 'DESC' },
+                }));
+                if (err)
+                    throw new common_1.InternalServerErrorException(err.message);
+                return courses;
+            }
+            return null;
+        }
+        const [err, courses] = await utils_1.to(this.courseRepository.find({
+            where: { endDate: typeorm_2.MoreThanOrEqual(new Date()) },
+            order: { startDate: 'DESC' },
+        }));
+        if (err)
+            throw new common_1.InternalServerErrorException();
+        return courses;
+    }
+    async findAllRawCourses() {
+        const [err, courses] = await utils_1.to(this.courseRepository.find({
+            order: { startDate: 'DESC' },
+        }));
         if (err)
             throw new common_1.InternalServerErrorException();
         return courses;
@@ -60,6 +98,7 @@ let CoursesService = class CoursesService {
                     enrolledStuIds: typeorm_2.Like('%,' + stuId),
                 },
             ],
+            order: { startDate: 'DESC' },
         }));
         console.log(err);
         if (err)
@@ -72,25 +111,42 @@ let CoursesService = class CoursesService {
             throw new common_1.InternalServerErrorException();
         return course;
     }
-    async updateCourseById(courseUpdated, id) {
-        const { title, description, startDate, endDate } = courseUpdated;
+    async updateCourseById(courseUpdated, id, imagePath) {
+        const { title, description, price, startDate, endDate } = courseUpdated;
+        const [err, course] = await utils_1.to(this.courseRepository.findOne({ id: +id }));
+        if (err)
+            throw new common_1.InternalServerErrorException(err.message);
+        course.title = title;
+        course.description = description;
+        course.price = price;
+        course.startDate = startDate;
+        course.endDate = endDate;
+        if (imagePath) {
+            const [delImageErr, delImageRes] = await utils_1.to(utils_1.deleteImageFile(course.imageUrl));
+            if (delImageErr)
+                throw new common_1.InternalServerErrorException(delImageErr.message);
+            if (delImageRes) {
+                course.imageUrl = imagePath;
+            }
+        }
+        const [err1, result] = await utils_1.to(course.save());
+        if (err1)
+            throw new common_1.InternalServerErrorException(err1.message);
+        return { message: 'Successfuly Edited the course' };
+    }
+    async deleteCourseById(id) {
         const [err, course] = await utils_1.to(this.courseRepository.findOne({ id: +id }));
         if (err)
             throw new common_1.InternalServerErrorException();
-        course.title = title;
-        course.description = description;
-        course.startDate = startDate;
-        course.endDate = endDate;
-        const [err1, result] = await utils_1.to(course.save());
-        if (err1)
-            throw new common_1.InternalServerErrorException();
-        return result;
-    }
-    async deleteCourseById(id) {
-        const [err, result] = await utils_1.to(this.courseRepository.delete({ id: +id }));
-        if (err)
-            throw new common_1.InternalServerErrorException();
-        return result;
+        const [delImageErr, delImageRes] = await utils_1.to(utils_1.deleteImageFile(course.imageUrl));
+        if (delImageErr)
+            throw new common_1.InternalServerErrorException(delImageErr.message);
+        if (delImageRes) {
+            const [error, result] = await utils_1.to(this.courseRepository.delete({ id: +id }));
+            if (error)
+                throw new common_1.InternalServerErrorException();
+            return { message: 'Successfuly deleted the course' };
+        }
     }
     async enrollmentRequestedByStudent(courseId, stuId) {
         const course = await this.findCourseById(courseId);
@@ -105,6 +161,20 @@ let CoursesService = class CoursesService {
                 course.expectedEnrolledStuIds.includes(stuId.toString())) {
                 return {
                     message: 'You have already requested for enrollment. Please wait for the admin approval.',
+                };
+            }
+            if (!course.price) {
+                if (course.enrolledStuIds) {
+                    course.enrolledStuIds.push(+stuId);
+                }
+                else {
+                    course.enrolledStuIds = [+stuId];
+                }
+                const [err, result] = await utils_1.to(course.save());
+                if (err)
+                    throw new common_1.InternalServerErrorException();
+                return {
+                    message: 'You have successfully enrolled. Please enjoy the exam.',
                 };
             }
             else
@@ -139,22 +209,57 @@ let CoursesService = class CoursesService {
             return stuInfos;
         }
     }
-    async expectedEnrolledStuInfo() {
-        const [err, courses] = await utils_1.to(this.courseRepository.find({
-            select: [
-                'id',
-                'title',
-                'startDate',
-                'endDate',
-                'expectedEnrolledStuIds',
-            ],
-        }));
-        if (err)
-            throw new common_1.InternalServerErrorException();
+    async expectedEnrolledStuInfo(user) {
+        let accessableCourseIds = null;
+        let courses = null;
+        let err = null;
+        if (user.role === user_entity_1.RolePermitted.moderator) {
+            const [error, userDetails] = await utils_1.to(this.userRepository.findOne({
+                where: { id: user.id },
+                relations: ['accessRight'],
+            }));
+            if (error)
+                throw new common_1.InternalServerErrorException(error.message);
+            if (userDetails.accessRight) {
+                accessableCourseIds = userDetails.accessRight.accessableCourseIds;
+                [err, courses] = await utils_1.to(this.courseRepository.find({
+                    select: [
+                        'id',
+                        'title',
+                        'startDate',
+                        'endDate',
+                        'expectedEnrolledStuIds',
+                    ],
+                    where: { id: typeorm_2.In(accessableCourseIds) },
+                    order: { startDate: 'DESC' },
+                }));
+                if (err)
+                    throw new common_1.InternalServerErrorException();
+            }
+            else {
+                return [];
+            }
+        }
+        else {
+            [err, courses] = await utils_1.to(this.courseRepository.find({
+                select: [
+                    'id',
+                    'title',
+                    'startDate',
+                    'endDate',
+                    'expectedEnrolledStuIds',
+                ],
+                order: { startDate: 'DESC' },
+            }));
+            if (err)
+                throw new common_1.InternalServerErrorException();
+        }
         if (courses) {
             const coursesWithStuInfos = [];
             for (const course of courses) {
-                const expectedEnrolledStuIds = course.expectedEnrolledStuIds;
+                const expectedEnrolledStuIds = course.expectedEnrolledStuIds
+                    ? course.expectedEnrolledStuIds
+                    : [];
                 const [err, stuInfos] = await utils_1.to(this.userRepository.find({
                     select: [
                         'id',
@@ -206,6 +311,12 @@ let CoursesService = class CoursesService {
         if (err)
             throw new common_1.InternalServerErrorException('All Enrolled Student Number Can Not Be Counted');
         return course.enrolledStuIds.length;
+    }
+    async findAllEnrolledStudentByCourseId(courseId) {
+        const [err, course] = await utils_1.to(this.findCourseById(courseId));
+        if (err)
+            throw new common_1.InternalServerErrorException('All Enrolled Student Number Can Not Be Counted');
+        return course.enrolledStuIds;
     }
 };
 CoursesService = __decorate([

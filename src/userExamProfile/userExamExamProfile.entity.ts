@@ -3,10 +3,12 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Timestamp,
 } from 'typeorm';
 import { ExamType } from '../exams/exam.entity';
+import { ExamActivityStat } from './examActivityStat.entity';
 import { UserExamCourseProfile } from './userExamCourseProfile.entity';
 
 export interface ExamStat {
@@ -54,4 +56,11 @@ export class UserExamExamProfile extends BaseEntity {
     (userExamcourseProfile) => userExamcourseProfile.exams
   )
   course: UserExamCourseProfile;
+
+  @OneToMany(
+    () => ExamActivityStat,
+    (examActivityStat) => examActivityStat.userExamExamProfile,
+    { cascade: true }
+  )
+  examActivityStat: ExamActivityStat[];
 }

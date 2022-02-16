@@ -21,9 +21,17 @@ __decorate([
     __metadata("design:type", String)
 ], Course.prototype, "title", void 0);
 __decorate([
-    typeorm_1.Column({ type: 'varchar', length: 255, nullable: false }),
+    typeorm_1.Column({ type: 'text', nullable: false }),
     __metadata("design:type", String)
 ], Course.prototype, "description", void 0);
+__decorate([
+    typeorm_1.Column({ type: 'varchar', length: 255, nullable: true }),
+    __metadata("design:type", String)
+], Course.prototype, "imageUrl", void 0);
+__decorate([
+    typeorm_1.Column({ type: 'smallint', nullable: true }),
+    __metadata("design:type", Number)
+], Course.prototype, "price", void 0);
 __decorate([
     typeorm_1.Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Object)

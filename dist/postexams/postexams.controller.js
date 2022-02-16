@@ -24,8 +24,8 @@ let PostexamsController = class PostexamsController {
     async postExamTasking(getAnswersDto, answers, req) {
         return await this.postexamsService.postExamTaskingByCoursesProfile(getAnswersDto, answers, req.user);
     }
-    async postExamTaskingForFree(getAnswersDto, answers) {
-        return await this.postexamsService.postExamTaskingForFree(getAnswersDto, answers);
+    async postExamTaskingForFree(getFreeAnswersDto, answers) {
+        return await this.postexamsService.postExamTaskingForFree(getFreeAnswersDto, answers);
     }
     async examRankByIdForGuest(data) {
         return await this.postexamsService.examRankByIdConstrainByCourseId(data.id, data.courseId);
@@ -48,7 +48,7 @@ __decorate([
     __param(0, common_1.Body()),
     __param(1, common_1.Body('answers', answer_validation_pipe_1.AnswerValidationPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [get_answers_dto_1.GetAnswersDto, Array]),
+    __metadata("design:paramtypes", [get_answers_dto_1.GetFreeAnswersDto, Array]),
     __metadata("design:returntype", Promise)
 ], PostexamsController.prototype, "postExamTaskingForFree", null);
 __decorate([

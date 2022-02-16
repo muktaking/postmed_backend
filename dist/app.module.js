@@ -9,7 +9,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const platform_express_1 = require("@nestjs/platform-express");
+const serve_static_1 = require("@nestjs/serve-static");
 const typeorm_1 = require("@nestjs/typeorm");
+const path_1 = require("path");
 const auth_module_1 = require("./auth/auth.module");
 const categories_module_1 = require("./categories/categories.module");
 const courses_controller_1 = require("./courses/courses.controller");
@@ -22,6 +24,8 @@ const routine_module_1 = require("./routine/routine.module");
 const typeorm_config_1 = require("./typeormconfig/typeorm.config");
 const userExamProfile_module_1 = require("./userExamProfile/userExamProfile.module");
 const users_module_1 = require("./users/users.module");
+const payment_module_1 = require("./payment/payment.module");
+const notification_module_1 = require("./notification/notification.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -29,6 +33,9 @@ AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot(),
             typeorm_1.TypeOrmModule.forRoot(typeorm_config_1.typeOrmConfig),
+            serve_static_1.ServeStaticModule.forRoot({
+                rootPath: path_1.join(__dirname, '..', 'uploads'),
+            }),
             platform_express_1.MulterModule.register({
                 dest: './uploads',
             }),
@@ -42,6 +49,8 @@ AppModule = __decorate([
             routine_module_1.RoutineModule,
             courses_module_1.CoursesModule,
             userExamProfile_module_1.UserExamProfileModule,
+            payment_module_1.PaymentModule,
+            notification_module_1.NotificationModule,
         ],
         controllers: [courses_controller_1.CoursesController],
     })

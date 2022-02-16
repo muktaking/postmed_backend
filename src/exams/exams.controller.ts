@@ -26,32 +26,11 @@ export class ExamsController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Role(RolePermitted.mentor)
+  @Role(RolePermitted.moderator)
   @UsePipes(ValidationPipe)
   async createExam(@Body() createExamDto: CreateExamDto, @Req() req) {
-    return await this.examService.createExam(createExamDto, req.user.id);
+    return await this.examService.createExam(createExamDto, req.user);
   }
-
-  // // @Post()
-  // // @UseGuards(AuthGuard("jwt"))
-  // // async findProfileByUserEmail {
-  // //   return await this.examService.findProfileByUserEmail();
-  // // }
-
-  // @Get("miniinfo")
-  // @UseGuards(AuthGuard("jwt"), RolesGuard)
-  // @Role(RolePermitted.student)
-  // async findUserExamInfo(@Req() req) {
-  //   return await this.examService.findUserExamInfo(req.user.email);
-  // }
-
-  // @Get("total")
-  // @UseGuards(AuthGuard("jwt"), RolesGuard)
-  // @Role(RolePermitted.student)
-  // @UseGuards(AuthGuard("jwt"))
-  // async findExamTotalNumber() {
-  //   return await this.examService.findExamTotalNumber();
-  // }
 
   @Get()
   // @UseGuards(AuthGuard("jwt"), RolesGuard)
@@ -64,8 +43,7 @@ export class ExamsController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Role(RolePermitted.student)
   async findAllPlainExamsByCourseId(@Body() filter, @Param() id, @Req() req) {
-    //console.log(filter);
-    return await this.examService.findAllPlainExamsByCourseIds(
+    return await this.examService.findAllPlainExamsByCourseIdsWithAuth(
       id.id,
       req.user.id,
       filter
@@ -139,7 +117,7 @@ export class ExamsController {
 
   @Patch('feedback')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Role(RolePermitted.mentor)
+  @Role(RolePermitted.moderator)
   async ChangePendingStatus(@Body() status) {
     return await this.examService.changePendingStatus(
       status.ids,
@@ -149,6 +127,7 @@ export class ExamsController {
 
   @Patch(':id')
   async updateExamById(@Param() examId, @Body() createExamDto: CreateExamDto) {
+    console.log(examId, createExamDto);
     return await this.examService.updateExamById(examId.id, createExamDto);
   }
 
@@ -162,5 +141,10 @@ export class ExamsController {
   @Role(RolePermitted.coordinator)
   async deleteQuestion(@Body() examIds) {
     return await this.examService.deleteExam(...examIds.ids);
+  }
+
+  @Get('pdf/:id')
+  async getPdfByExamId(@Param() examId) {
+    return await this.examService.getPdfByExamId(examId.id);
   }
 }

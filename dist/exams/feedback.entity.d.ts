@@ -1,4 +1,5 @@
 import { BaseEntity } from 'typeorm';
+import { Exam } from './exam.entity';
 export declare enum FeedbackStatus {
     belowAverage = 1,
     average = 2,
@@ -14,6 +15,7 @@ export declare class Feedback extends BaseEntity {
     name: string;
     email: string;
     examId: number;
+    exam: Exam;
     status: Status;
     feedbackStatus: FeedbackStatus;
     message: string;

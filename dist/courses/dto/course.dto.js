@@ -13,22 +13,31 @@ const class_validator_1 = require("class-validator");
 class CreateCourseDto {
 }
 __decorate([
+    class_validator_1.IsOptional(),
+    __metadata("design:type", String)
+], CreateCourseDto.prototype, "id", void 0);
+__decorate([
     class_validator_1.IsNotEmpty(),
     class_validator_1.IsString(),
     __metadata("design:type", String)
 ], CreateCourseDto.prototype, "title", void 0);
 __decorate([
     class_validator_1.IsNotEmpty(),
+    class_validator_1.MaxLength(65535),
+    class_validator_1.MinLength(5),
     class_validator_1.IsString(),
     __metadata("design:type", String)
 ], CreateCourseDto.prototype, "description", void 0);
 __decorate([
     class_validator_1.IsOptional(),
+    class_validator_1.IsNumberString(),
+    __metadata("design:type", String)
+], CreateCourseDto.prototype, "price", void 0);
+__decorate([
     class_validator_1.IsNotEmpty(),
     __metadata("design:type", String)
 ], CreateCourseDto.prototype, "startDate", void 0);
 __decorate([
-    class_validator_1.IsOptional(),
     class_validator_1.IsNotEmpty(),
     __metadata("design:type", String)
 ], CreateCourseDto.prototype, "endDate", void 0);

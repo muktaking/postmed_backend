@@ -2,9 +2,12 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   Timestamp,
 } from 'typeorm';
+import { AccessRight } from './accessRight.entity';
 
 export enum RolePermitted {
   guest = 0,
@@ -101,4 +104,8 @@ export class User extends BaseEntity {
 
   @Column({ type: 'timestamp', nullable: true })
   resetTokenExpiration: Timestamp;
+
+  @OneToOne(() => AccessRight)
+  @JoinColumn()
+  accessRight: AccessRight;
 }

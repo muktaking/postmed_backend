@@ -8,7 +8,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetAnswersDto } from './dto/get-answers.dto';
+import { GetAnswersDto, GetFreeAnswersDto } from './dto/get-answers.dto';
 import { AnswerValidationPipe } from './pipe/answer-validation.pipe';
 import { StudentAnswer } from './postexam.model';
 import { PostexamsService } from './postexams.service';
@@ -35,11 +35,11 @@ export class PostexamsController {
   @Post('free')
   @UsePipes(ValidationPipe)
   async postExamTaskingForFree(
-    @Body() getAnswersDto: GetAnswersDto,
+    @Body() getFreeAnswersDto: GetFreeAnswersDto,
     @Body('answers', AnswerValidationPipe) answers: StudentAnswer[]
   ) {
     return await this.postexamsService.postExamTaskingForFree(
-      getAnswersDto,
+      getFreeAnswersDto,
       answers
     );
   }

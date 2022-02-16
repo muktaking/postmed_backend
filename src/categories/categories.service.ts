@@ -2,18 +2,18 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
-} from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import * as config from "config";
-import * as _ from "lodash";
-import { Question } from "src/questions/question.entity";
-import { QuestionRepository } from "src/questions/question.repository";
-import { deleteImageFile, firstltrCapRestLow, to } from "../utils/utils";
-import { Category } from "./category.entity";
-import { CategoryRepository } from "./category.repository";
-import { createCategoryDto } from "./dto/category.dto";
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as config from 'config';
+import * as _ from 'lodash';
+import { Question } from 'src/questions/question.entity';
+import { QuestionRepository } from 'src/questions/question.repository';
+import { deleteImageFile, firstltrCapRestLow, to } from '../utils/utils';
+import { Category } from './category.entity';
+import { CategoryRepository } from './category.repository';
+import { createCategoryDto } from './dto/category.dto';
 
-const serverConfig = config.get("server");
+const serverConfig = config.get('server');
 const SERVER_URL = `${serverConfig.url}:${serverConfig.port}/`;
 
 @Injectable()
@@ -26,7 +26,7 @@ export class CategoriesService {
 
   async findAllCategories() {
     const [err, categories] = await to(
-      this.categoryRepository.find({ order: { slug: "ASC" } })
+      this.categoryRepository.find({ order: { slug: 'ASC' } })
     ); // fetch categories with name property and sort by name in ascending order;
     if (err) throw new InternalServerErrorException();
     //function to storing category according to their hierarchy
@@ -58,14 +58,14 @@ export class CategoriesService {
     let { name, description, parentId, order } = categoryDto;
     name = firstltrCapRestLow(name);
     order = +order;
-    parentId = parentId === "Top" ? null : +parentId;
+    parentId = parentId === 'Top' ? null : +parentId;
     const imageUrl = image.filename;
 
     try {
       let parent = await this.categoryRepository.findOne({ id: +parentId });
 
-      let slug = parentId ? parent.slug : "Top";
-      slug = slug + "_" + name;
+      let slug = parentId ? parent.slug : 'Top';
+      slug = slug + '_' + name;
 
       //create a new category and save in db
       let category = new Category();
@@ -92,16 +92,11 @@ export class CategoriesService {
 
     name = firstltrCapRestLow(name);
     let newCategorySlug;
-    parentId = parentId !== "Top" ? +parentId : null;
-    try {
-    } catch (error) {}
+    parentId = parentId !== 'Top' ? +parentId : null;
+
     const [err, oldCategory] = await to(
       this.categoryRepository.findOne({ id: +id })
     );
-    if (err) {
-      if (image) deleteImageFile(image.filename);
-      throw new InternalServerErrorException();
-    }
 
     if (_.isEqual(oldCategory.parentId, parentId)) {
       const duplicateCategory = await this.categoryRepository.findOne({
@@ -117,23 +112,23 @@ export class CategoriesService {
         if (image) duplicateCategory.imageUrl = image.filename;
         const [err, res] = await to(duplicateCategory.save());
 
-        if (res) return { msg: "category updated successully" };
+        if (res) return { msg: 'category updated successully' };
         if (image) deleteImageFile(image.filename);
         if (err)
           throw new ConflictException(
-            "Category by this name is already present"
+            'Category by this name is already present'
           );
       } else {
         if (image) deleteImageFile(image.filename);
         //if (err)
-        throw new ConflictException("Category by this name is already present");
+        throw new ConflictException('Category by this name is already present');
       }
     }
 
     let childCategories = await this.categoryRepository.find({
       where: [{ id: +id }, { parentId: +id }],
       order: {
-        slug: "ASC",
+        slug: 'ASC',
       },
     });
 
@@ -153,10 +148,10 @@ export class CategoriesService {
           }
 
           element.order = +order;
-          element.parentId = parentId !== "Top" ? +parentId : null;
+          element.parentId = parentId !== 'Top' ? +parentId : null;
           newCategorySlug = element.slug = parentId
-            ? NewParentCategory.slug + "_" + name
-            : "Top_" + name;
+            ? NewParentCategory.slug + '_' + name
+            : 'Top_' + name;
           return;
         }
 
@@ -168,7 +163,7 @@ export class CategoriesService {
           await element.save();
         });
 
-        return { msg: "Category updated successfully" };
+        return { msg: 'Category updated successfully' };
       } catch (error) {
         console.log(error);
         deleteImageFile(image.filename);
@@ -192,8 +187,8 @@ export class CategoriesService {
       childCategories.forEach(async (element) => {
         element.parentId = categoryToDelete.parentId;
         element.slug = element.slug.replace(
-          "_" + categoryToDelete.name + "_",
-          "_"
+          '_' + categoryToDelete.name + '_',
+          '_'
         );
         try {
           await element.save();
@@ -210,17 +205,17 @@ export class CategoriesService {
         });
         if (haveAnyQuestion) {
           let [uncategorized] = await Category.find({
-            name: "Uncategorized",
+            name: 'Uncategorized',
             parentId: null,
           });
           if (!uncategorized) {
             uncategorized = new Category();
-            uncategorized.name = "Uncategorized";
+            uncategorized.name = 'Uncategorized';
             uncategorized.parentId = null;
-            uncategorized.slug = "Top / Uncategorized";
+            uncategorized.slug = 'Top / Uncategorized';
             uncategorized.order = 10000;
-            uncategorized.description = "All uncategorized topics";
-            uncategorized.imageUrl = "/bootstrap/uncat.png";
+            uncategorized.description = 'All uncategorized topics';
+            uncategorized.imageUrl = '/bootstrap/uncat.png';
             await uncategorized.save();
           }
           await this.questionRepository
@@ -234,7 +229,7 @@ export class CategoriesService {
             })
             .execute();
         }
-        return { message: "Category deleted successfully" };
+        return { message: 'Category deleted successfully' };
       } catch (error) {
         console.log(error);
         throw new InternalServerErrorException();
@@ -247,7 +242,7 @@ export class CategoriesService {
 
   async getFreeCategoryId() {
     const [err, category] = await to(
-      this.categoryRepository.findOne({ name: "Free" })
+      this.categoryRepository.findOne({ name: 'Free' })
     );
     if (err) throw new InternalServerErrorException();
     return category ? category._id : null;

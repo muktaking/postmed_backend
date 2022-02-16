@@ -26,7 +26,7 @@ let DashboardController = class DashboardController {
         return await this.dashboardService.getStudentDashInfo(req.user.id);
     }
     async getAdminDashInfo(req) {
-        return await this.dashboardService.getAdminDashInfo(req.user.role);
+        return await this.dashboardService.getAdminDashInfo(req.user);
     }
 };
 __decorate([

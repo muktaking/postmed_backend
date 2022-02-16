@@ -16,6 +16,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const fs = require("fs");
 const _ = require("lodash");
+const user_entity_1 = require("../users/user.entity");
 const utils_1 = require("../utils/utils");
 const XLSX = require("xlsx");
 const question_entity_1 = require("./question.entity");
@@ -111,6 +112,15 @@ let QuestionsService = class QuestionsService {
         }
     }
     async updateQuestionById(id, createQuestionDto, stem, modifiedBy) {
+        const oldQuestion = await this.questionRepository
+            .findOne(+id)
+            .catch((e) => {
+            throw new common_1.HttpException('Could not able to fetch oldQuestion from database ', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        });
+        if (modifiedBy.role < user_entity_1.RolePermitted.moderator) {
+            if (oldQuestion.creatorId !== modifiedBy.id)
+                throw new common_1.UnauthorizedException();
+        }
         const { title, category, qType, qText, generalFeedback, tags, } = createQuestionDto;
         const stems = [];
         stem.stem.forEach((element) => {
@@ -120,12 +130,6 @@ let QuestionsService = class QuestionsService {
             stem.fbStem = element.fbStem;
             stems.push(stem);
         });
-        const oldQuestion = await this.questionRepository
-            .findOne(+id)
-            .catch((e) => {
-            console.log(e);
-            throw new common_1.HttpException('Could not able to fetch oldQuestion from database ', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
-        });
         const newQuestion = Object.assign({}, oldQuestion);
         newQuestion.title = title;
         newQuestion.categoryId = +category;
@@ -134,7 +138,7 @@ let QuestionsService = class QuestionsService {
         newQuestion.generalFeedback = generalFeedback ? generalFeedback : null;
         newQuestion.tags = tags ? tags.join(',') : null;
         newQuestion.modifiedDate = moment().format('YYYY-MM-DD HH=mm=sss');
-        newQuestion.modifiedById = +modifiedBy;
+        newQuestion.modifiedById = +modifiedBy.id;
         newQuestion.stems = stems;
         await this.questionRepository.delete(+id);
         return await this.questionRepository.save(newQuestion);

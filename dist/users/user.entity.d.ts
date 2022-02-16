@@ -1,4 +1,5 @@
 import { BaseEntity, Timestamp } from 'typeorm';
+import { AccessRight } from './accessRight.entity';
 export declare enum RolePermitted {
     guest = 0,
     student = 1,
@@ -47,4 +48,5 @@ export declare class User extends BaseEntity {
     createdAt: Timestamp;
     resetToken: string;
     resetTokenExpiration: Timestamp;
+    accessRight: AccessRight;
 }

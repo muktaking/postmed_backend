@@ -3,10 +3,12 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import * as _ from 'lodash';
+import { RolePermitted, User } from 'src/users/user.entity';
 import { to } from 'src/utils/utils';
 import * as XLSX from 'xlsx';
 import { CreateQuestionDto } from './create-question.dto';
@@ -137,8 +139,21 @@ export class QuestionsService {
     id: string,
     createQuestionDto: CreateQuestionDto,
     stem: { stem: Stem[]; error: string },
-    modifiedBy: string
+    modifiedBy: User
   ) {
+    const oldQuestion = await this.questionRepository
+      .findOne(+id)
+      .catch((e) => {
+        throw new HttpException(
+          'Could not able to fetch oldQuestion from database ',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      });
+
+    if (modifiedBy.role < RolePermitted.moderator) {
+      if (oldQuestion.creatorId !== modifiedBy.id)
+        throw new UnauthorizedException();
+    }
     const {
       title,
       category,
@@ -158,16 +173,6 @@ export class QuestionsService {
       stems.push(stem);
     });
 
-    const oldQuestion = await this.questionRepository
-      .findOne(+id)
-      .catch((e) => {
-        console.log(e);
-        throw new HttpException(
-          'Could not able to fetch oldQuestion from database ',
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      });
-
     const newQuestion = { ...oldQuestion };
     newQuestion.title = title;
     newQuestion.categoryId = +category;
@@ -176,7 +181,7 @@ export class QuestionsService {
     newQuestion.generalFeedback = generalFeedback ? generalFeedback : null;
     newQuestion.tags = tags ? tags.join(',') : null;
     newQuestion.modifiedDate = moment().format('YYYY-MM-DD HH=mm=sss');
-    newQuestion.modifiedById = +modifiedBy;
+    newQuestion.modifiedById = +modifiedBy.id;
     newQuestion.stems = stems;
 
     await this.questionRepository.delete(+id);

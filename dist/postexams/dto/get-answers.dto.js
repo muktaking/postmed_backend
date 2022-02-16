@@ -10,26 +10,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const class_validator_1 = require("class-validator");
-class GetAnswersDto {
+class GetFreeAnswersDto {
 }
 __decorate([
     class_validator_1.IsNotEmpty(),
     class_validator_1.IsNumberString(),
     __metadata("design:type", String)
-], GetAnswersDto.prototype, "examId", void 0);
+], GetFreeAnswersDto.prototype, "examId", void 0);
+__decorate([
+    class_validator_1.IsNotEmpty(),
+    __metadata("design:type", String)
+], GetFreeAnswersDto.prototype, "timeTakenToComplete", void 0);
+__decorate([
+    class_validator_1.IsNotEmpty(),
+    class_validator_1.IsNumber({}, { each: true }),
+    __metadata("design:type", Array)
+], GetFreeAnswersDto.prototype, "questionIdsByOrder", void 0);
+exports.GetFreeAnswersDto = GetFreeAnswersDto;
+class GetAnswersDto extends GetFreeAnswersDto {
+}
 __decorate([
     class_validator_1.IsNotEmpty(),
     class_validator_1.IsNumberString(),
     __metadata("design:type", String)
 ], GetAnswersDto.prototype, "courseId", void 0);
-__decorate([
-    class_validator_1.IsNotEmpty(),
-    __metadata("design:type", String)
-], GetAnswersDto.prototype, "timeTakenToComplete", void 0);
-__decorate([
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsNumber({}, { each: true }),
-    __metadata("design:type", Array)
-], GetAnswersDto.prototype, "questionIdsByOrder", void 0);
 exports.GetAnswersDto = GetAnswersDto;
 //# sourceMappingURL=get-answers.dto.js.map

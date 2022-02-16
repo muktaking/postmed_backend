@@ -1,15 +1,10 @@
 import { IsNotEmpty, IsNumber, IsNumberString } from 'class-validator';
 
-export class GetAnswersDto {
+export class GetFreeAnswersDto {
   @IsNotEmpty()
   @IsNumberString()
   //@IsMongoId()
   examId: string;
-
-  @IsNotEmpty()
-  @IsNumberString()
-  //@IsMongoId()
-  courseId: string;
 
   @IsNotEmpty()
   timeTakenToComplete: string;
@@ -17,4 +12,11 @@ export class GetAnswersDto {
   @IsNotEmpty()
   @IsNumber({}, { each: true })
   questionIdsByOrder: number[];
+}
+
+export class GetAnswersDto extends GetFreeAnswersDto {
+  @IsNotEmpty()
+  @IsNumberString()
+  //@IsMongoId()
+  courseId: string;
 }

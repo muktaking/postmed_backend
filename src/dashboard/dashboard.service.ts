@@ -5,7 +5,7 @@ import { CoursesService } from 'src/courses/courses.service';
 import { ExamRepository } from 'src/exams/exam.repository';
 import { ExamsService } from 'src/exams/exams.service';
 import { UserExamProfileRepository } from 'src/userExamProfile/userExamProfile.repository';
-import { RolePermitted } from 'src/users/user.entity';
+import { RolePermitted, User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { to } from 'src/utils/utils';
 
@@ -102,23 +102,25 @@ export class DashboardService {
     return userDashExamInfo.reverse();
   }
 
-  async getAdminDashInfo(userRole) {
+  async getAdminDashInfo(user: User) {
     let users = [];
     let exams = [];
     let feedbacks = [];
     let expectedEnrolled = [];
     let err = undefined;
-    [err, users] = await to(this.usersService.findAllUsers(userRole));
+    [err, users] = await to(this.usersService.findAllUsers(user));
 
     [err, exams] = await to(this.examService.findAllRawExams());
 
-    if (userRole >= RolePermitted.mentor) {
+    if (user.role >= RolePermitted.mentor) {
       [err, feedbacks] = await to(this.examService.getPendingFeedback());
     }
 
-    [err, expectedEnrolled] = await to(
-      this.courseService.expectedEnrolledStuInfo()
-    );
+    if (user.role > RolePermitted.mentor) {
+      [err, expectedEnrolled] = await to(
+        this.courseService.expectedEnrolledStuInfo(user)
+      );
+    }
 
     return { users, exams, feedbacks, expectedEnrolled };
   }

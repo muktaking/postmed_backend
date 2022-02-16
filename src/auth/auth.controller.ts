@@ -37,7 +37,7 @@ export class AuthController {
   @Post('/facebook')
   async facebookLogin(@Body() data): Promise<any> {
     //console.log(data.fbApi);
-    return await this.authService.facebookLogin(data.fbApi);
+    return await this.authService.facebookLoginAutoLog(data.fbApi);
   }
 
   @Post('/reset')

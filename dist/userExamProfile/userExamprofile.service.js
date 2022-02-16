@@ -26,9 +26,13 @@ let UserExamProfileService = class UserExamProfileService {
         this.userExamExamProfileRepository = userExamExamProfileRepository;
     }
     async findCourseBasedProfileByUserID(id) {
-        const [err, profile] = await utils_1.to(this.userExamProfileRepository.findOne({
-            id: +id,
-        }));
+        const [err, profile] = await utils_1.to(this.userExamProfileRepository
+            .createQueryBuilder('userExamProfile')
+            .leftJoinAndSelect('userExamProfile.courses', 'courses')
+            .leftJoinAndSelect('courses.exams', 'exams')
+            .leftJoinAndSelect('exams.examActivityStat', 'eStat')
+            .where({ id: +id })
+            .getOne());
         if (err)
             throw new common_1.HttpException(`Exam profile of user can not be retrieved.`, common_1.HttpStatus.SERVICE_UNAVAILABLE);
         return profile;
@@ -48,6 +52,7 @@ let UserExamProfileService = class UserExamProfileService {
             totalMark,
             firstAttemptTime: moment().format('YYYY-MM-DD HH:mm:ss'),
             lastAttemptTime: moment().format('YYYY-MM-DD HH:mm:ss'),
+            examActivityStat: [],
         });
         let courseProfile = this.userExamCourseProfileRepository.create({
             courseId: +course.id,
@@ -57,6 +62,7 @@ let UserExamProfileService = class UserExamProfileService {
             exams: [],
         });
         if (!profile) {
+            examProfile.examActivityStat.push(examData.examActivityStat);
             courseProfile.exams.push(examProfile);
             profile = this.userExamProfileRepository.create({
                 id: +user.id,
@@ -71,7 +77,9 @@ let UserExamProfileService = class UserExamProfileService {
                     examProfileExisted.attemptNumbers++;
                     examProfileExisted.lastAttemptTime = moment().format('YYYY-MM-DD HH:mm:ss');
                     examProfileExisted.score.push(score);
+                    examProfileExisted.examActivityStat.push(examData.examActivityStat);
                     const [error, result] = await utils_1.to(examProfileExisted.save());
+                    console.log(error);
                     if (error)
                         throw new common_1.InternalServerErrorException();
                     return result;
@@ -81,6 +89,7 @@ let UserExamProfileService = class UserExamProfileService {
                     courseProfileExisted.totalScore =
                         +courseProfileExisted.totalScore + score;
                     examProfile.score.push(score);
+                    examProfile.examActivityStat.push(examData.examActivityStat);
                     courseProfileExisted.exams.push(examProfile);
                     let [error, result] = await utils_1.to(examProfile.save());
                     if (error)
@@ -118,6 +127,38 @@ let UserExamProfileService = class UserExamProfileService {
         if (err)
             throw new common_1.InternalServerErrorException();
         return userCourseProfiles;
+    }
+    async findAllUserExamActivityStat(stuId = 69) {
+        const [err, userExamProfile] = await utils_1.to(this.userExamProfileRepository
+            .createQueryBuilder('userEP')
+            .leftJoinAndSelect('userEP.courses', 'courses')
+            .leftJoinAndSelect('courses.exams', 'exams')
+            .leftJoinAndSelect('exams.examActivityStat', 'eStat')
+            .leftJoinAndSelect('eStat.questionActivityStat', 'qStat')
+            .leftJoinAndSelect('qStat.stemActivityStat', 'sStat')
+            .where('userEP.id = :id', { id: stuId })
+            .andWhere('courses.courseId = :courseId', { courseId: 3 })
+            .andWhere('exams.examId = :examId', { examId: 20 })
+            .getMany());
+        console.log(err);
+        if (err)
+            throw new common_1.InternalServerErrorException();
+        return userExamProfile;
+    }
+    async findAllUserExamActivityStatByCourseId(stuId, courseId) {
+        const [err, userExamProfile] = await utils_1.to(this.userExamProfileRepository
+            .createQueryBuilder('userEP')
+            .leftJoinAndSelect('userEP.courses', 'courses')
+            .leftJoinAndSelect('courses.exams', 'exams')
+            .leftJoinAndSelect('exams.examActivityStat', 'eStat')
+            .leftJoinAndSelect('eStat.questionActivityStat', 'qStat')
+            .leftJoinAndSelect('qStat.stemActivityStat', 'sStat')
+            .where('userEP.id = :id', { id: stuId })
+            .andWhere('courses.courseId = :courseId', { courseId: courseId })
+            .getMany());
+        if (err)
+            throw new common_1.InternalServerErrorException();
+        return userExamProfile;
     }
 };
 UserExamProfileService = __decorate([

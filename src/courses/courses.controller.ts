@@ -7,14 +7,23 @@ import {
   Patch,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 import { Role } from 'src/roles.decorator';
 import { RolesGuard } from 'src/roles.guard';
 import { RolePermitted } from 'src/users/user.entity';
+import {
+  editFileName,
+  imageFileFilter,
+  imageResizer,
+} from 'src/utils/file-uploading.utils';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/course.dto';
 
@@ -24,15 +33,55 @@ export class CoursesController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Role(RolePermitted.admin)
+  @Role(RolePermitted.coordinator)
   @UsePipes(ValidationPipe)
-  async createExam(@Body() createCourseDto: CreateCourseDto, @Req() req) {
-    return await this.courseService.createCourse(createCourseDto, req.user.id);
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads/images/courses',
+        filename: editFileName,
+      }),
+      fileFilter: imageFileFilter,
+    })
+  )
+  async createCourse(
+    @Body() createCourseDto: CreateCourseDto,
+    @Req() req,
+    @UploadedFile() image
+  ) {
+    let imagePath = null;
+
+    if (image) {
+      try {
+        imagePath = await imageResizer(image, 'courses');
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+    return await this.courseService.createCourse(
+      createCourseDto,
+      imagePath,
+      req.user.id
+    );
   }
 
   @Get()
   async getAllCourses() {
     return await this.courseService.findAllCourses();
+  }
+
+  @Get('/auth')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Role(RolePermitted.student)
+  async getAllCoursesWithAuth(@Req() req) {
+    return await this.courseService.findAllCourses(req.user);
+  }
+
+  @Get('/raw')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Role(RolePermitted.coordinator)
+  async getAllRawCourses() {
+    return await this.courseService.findAllRawCourses();
   }
 
   @Get('enrolled/courses')
@@ -45,7 +94,7 @@ export class CoursesController {
   }
   @Patch('enrolled')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Role(RolePermitted.admin)
+  @Role(RolePermitted.moderator)
   async approveEnrollment(@Body() course) {
     return await this.courseService.approveOrDenyEnrollment(
       course.id,
@@ -60,14 +109,42 @@ export class CoursesController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Role(RolePermitted.coordinator)
+  @UsePipes(ValidationPipe)
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './uploads/images/courses',
+        filename: editFileName,
+      }),
+      fileFilter: imageFileFilter,
+    })
+  )
   async updateCourseById(
     @Body() createCourseDto: CreateCourseDto,
+    @UploadedFile() image,
     @Param('id') id
   ) {
-    return await this.courseService.updateCourseById(createCourseDto, id);
+    let imagePath = null;
+
+    if (image) {
+      try {
+        imagePath = await imageResizer(image, 'courses');
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+    return await this.courseService.updateCourseById(
+      createCourseDto,
+      id,
+      imagePath
+    );
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Role(RolePermitted.coordinator)
   async deleteCourseById(@Param('id') id) {
     return await this.courseService.deleteCourseById(id);
   }

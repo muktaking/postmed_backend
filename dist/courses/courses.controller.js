@@ -14,20 +14,38 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
+const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
 const roles_decorator_1 = require("../roles.decorator");
 const roles_guard_1 = require("../roles.guard");
 const user_entity_1 = require("../users/user.entity");
+const file_uploading_utils_1 = require("../utils/file-uploading.utils");
 const courses_service_1 = require("./courses.service");
 const course_dto_1 = require("./dto/course.dto");
 let CoursesController = class CoursesController {
     constructor(courseService) {
         this.courseService = courseService;
     }
-    async createExam(createCourseDto, req) {
-        return await this.courseService.createCourse(createCourseDto, req.user.id);
+    async createCourse(createCourseDto, req, image) {
+        let imagePath = null;
+        if (image) {
+            try {
+                imagePath = await file_uploading_utils_1.imageResizer(image, 'courses');
+            }
+            catch (error) {
+                console.log(error.message);
+            }
+        }
+        return await this.courseService.createCourse(createCourseDto, imagePath, req.user.id);
     }
     async getAllCourses() {
         return await this.courseService.findAllCourses();
+    }
+    async getAllCoursesWithAuth(req) {
+        return await this.courseService.findAllCourses(req.user);
+    }
+    async getAllRawCourses() {
+        return await this.courseService.findAllRawCourses();
     }
     async getAllCoursesEnrolledByStudent(req) {
         return await this.courseService.findAllCoursesEnrolledByStudent(req.user.id);
@@ -38,8 +56,17 @@ let CoursesController = class CoursesController {
     async getCourseById(id) {
         return await this.courseService.findCourseById(id);
     }
-    async updateCourseById(createCourseDto, id) {
-        return await this.courseService.updateCourseById(createCourseDto, id);
+    async updateCourseById(createCourseDto, image, id) {
+        let imagePath = null;
+        if (image) {
+            try {
+                imagePath = await file_uploading_utils_1.imageResizer(image, 'courses');
+            }
+            catch (error) {
+                console.log(error.message);
+            }
+        }
+        return await this.courseService.updateCourseById(createCourseDto, id, imagePath);
     }
     async deleteCourseById(id) {
         return await this.courseService.deleteCourseById(id);
@@ -51,19 +78,45 @@ let CoursesController = class CoursesController {
 __decorate([
     common_1.Post(),
     common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
-    roles_decorator_1.Role(user_entity_1.RolePermitted.admin),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.coordinator),
     common_1.UsePipes(common_1.ValidationPipe),
-    __param(0, common_1.Body()), __param(1, common_1.Req()),
+    common_1.UseInterceptors(platform_express_1.FileInterceptor('image', {
+        storage: multer_1.diskStorage({
+            destination: './uploads/images/courses',
+            filename: file_uploading_utils_1.editFileName,
+        }),
+        fileFilter: file_uploading_utils_1.imageFileFilter,
+    })),
+    __param(0, common_1.Body()),
+    __param(1, common_1.Req()),
+    __param(2, common_1.UploadedFile()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [course_dto_1.CreateCourseDto, Object]),
+    __metadata("design:paramtypes", [course_dto_1.CreateCourseDto, Object, Object]),
     __metadata("design:returntype", Promise)
-], CoursesController.prototype, "createExam", null);
+], CoursesController.prototype, "createCourse", null);
 __decorate([
     common_1.Get(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], CoursesController.prototype, "getAllCourses", null);
+__decorate([
+    common_1.Get('/auth'),
+    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.student),
+    __param(0, common_1.Req()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CoursesController.prototype, "getAllCoursesWithAuth", null);
+__decorate([
+    common_1.Get('/raw'),
+    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.coordinator),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], CoursesController.prototype, "getAllRawCourses", null);
 __decorate([
     common_1.Get('enrolled/courses'),
     common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
@@ -76,7 +129,7 @@ __decorate([
 __decorate([
     common_1.Patch('enrolled'),
     common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
-    roles_decorator_1.Role(user_entity_1.RolePermitted.admin),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.moderator),
     __param(0, common_1.Body()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -91,14 +144,27 @@ __decorate([
 ], CoursesController.prototype, "getCourseById", null);
 __decorate([
     common_1.Patch(':id'),
+    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.coordinator),
+    common_1.UsePipes(common_1.ValidationPipe),
+    common_1.UseInterceptors(platform_express_1.FileInterceptor('image', {
+        storage: multer_1.diskStorage({
+            destination: './uploads/images/courses',
+            filename: file_uploading_utils_1.editFileName,
+        }),
+        fileFilter: file_uploading_utils_1.imageFileFilter,
+    })),
     __param(0, common_1.Body()),
-    __param(1, common_1.Param('id')),
+    __param(1, common_1.UploadedFile()),
+    __param(2, common_1.Param('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [course_dto_1.CreateCourseDto, Object]),
+    __metadata("design:paramtypes", [course_dto_1.CreateCourseDto, Object, Object]),
     __metadata("design:returntype", Promise)
 ], CoursesController.prototype, "updateCourseById", null);
 __decorate([
     common_1.Delete(':id'),
+    common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.coordinator),
     __param(0, common_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),

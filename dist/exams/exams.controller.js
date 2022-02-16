@@ -25,13 +25,13 @@ let ExamsController = class ExamsController {
         this.examService = examService;
     }
     async createExam(createExamDto, req) {
-        return await this.examService.createExam(createExamDto, req.user.id);
+        return await this.examService.createExam(createExamDto, req.user);
     }
     async findAllExams() {
         return await this.examService.findAllExams();
     }
     async findAllPlainExamsByCourseId(filter, id, req) {
-        return await this.examService.findAllPlainExamsByCourseIds(id.id, req.user.id, filter);
+        return await this.examService.findAllPlainExamsByCourseIdsWithAuth(id.id, req.user.id, filter);
     }
     async findAllRawExams() {
         return await this.examService.findAllRawExams();
@@ -64,6 +64,7 @@ let ExamsController = class ExamsController {
         return await this.examService.changePendingStatus(status.ids, Boolean(status.deny));
     }
     async updateExamById(examId, createExamDto) {
+        console.log(examId, createExamDto);
         return await this.examService.updateExamById(examId.id, createExamDto);
     }
     async deleteQuestionById(examId) {
@@ -72,11 +73,14 @@ let ExamsController = class ExamsController {
     async deleteQuestion(examIds) {
         return await this.examService.deleteExam(...examIds.ids);
     }
+    async getPdfByExamId(examId) {
+        return await this.examService.getPdfByExamId(examId.id);
+    }
 };
 __decorate([
     common_1.Post(),
     common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
-    roles_decorator_1.Role(user_entity_1.RolePermitted.mentor),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.moderator),
     common_1.UsePipes(common_1.ValidationPipe),
     __param(0, common_1.Body()), __param(1, common_1.Req()),
     __metadata("design:type", Function),
@@ -166,7 +170,7 @@ __decorate([
 __decorate([
     common_1.Patch('feedback'),
     common_1.UseGuards(passport_1.AuthGuard('jwt'), roles_guard_1.RolesGuard),
-    roles_decorator_1.Role(user_entity_1.RolePermitted.mentor),
+    roles_decorator_1.Role(user_entity_1.RolePermitted.moderator),
     __param(0, common_1.Body()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -195,6 +199,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ExamsController.prototype, "deleteQuestion", null);
+__decorate([
+    common_1.Get('pdf/:id'),
+    __param(0, common_1.Param()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ExamsController.prototype, "getPdfByExamId", null);
 ExamsController = __decorate([
     common_1.Controller('exams'),
     __metadata("design:paramtypes", [exams_service_1.ExamsService])

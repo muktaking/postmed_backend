@@ -33,4 +33,21 @@ export declare class AuthService {
         id?: undefined;
         expireIn?: undefined;
     }>;
+    facebookLoginAutoLog({ userID, name, email, accessToken, picture }: {
+        userID: any;
+        name: any;
+        email: any;
+        accessToken: any;
+        picture: any;
+    }): Promise<{
+        message: string;
+        accessToken?: undefined;
+        id?: undefined;
+        expireIn?: undefined;
+    } | {
+        accessToken: any;
+        id: any;
+        expireIn: any;
+        message?: undefined;
+    }>;
 }

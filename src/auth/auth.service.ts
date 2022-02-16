@@ -203,9 +203,70 @@ export class AuthService {
       newUser.identityStatus = IdentityStatus.unchecked;
       newUser.avatar = picture.data.url;
       const [err, result] = await to(newUser.save());
-      console.log(err);
       if (err) throw new InternalServerErrorException();
       return { message: 'Wait until Admin approve your account.' };
+    }
+  }
+
+  async facebookLoginAutoLog({ userID, name, email, accessToken, picture }) {
+    if (!name) {
+      return { message: 'You do not aprrove facebook. Thank you' };
+    }
+
+    let payload;
+    const [err, user] = await to(this.userRepository.findOne({ fbId: userID }));
+    if (err) throw new InternalServerErrorException();
+    if (user) {
+      if (user.identityStatus == IdentityStatus.checked) {
+        payload = {
+          email: user.email,
+          id: user.id,
+          role: user.role,
+        };
+        accessToken = await this.jwtService.sign(payload);
+        return {
+          accessToken,
+          id: user.id,
+          expireIn: process.env.JWT_EXPIRESIN || jwtConfig.expiresIn,
+        };
+      } else {
+        throw new UnauthorizedException(
+          'Admin has not approved your account. Please contact with admin.'
+        );
+      }
+    } else {
+      const newUser = new User();
+      newUser.fbId = userID;
+      newUser.firstName = name.split(' ')[0];
+      newUser.lastName = name.split(' ').reverse()[0];
+      newUser.email = email;
+      newUser.userName = name.split(' ')[0];
+      newUser.password = generator
+        .generateMultiple(3, {
+          length: 10,
+          uppercase: false,
+        })
+        .toString();
+      newUser.loginProvider = LoginProvider.facebook;
+      newUser.identityStatus = IdentityStatus.checked;
+      newUser.avatar = picture.data.url;
+      const [err, result] = await to(newUser.save());
+      if (err) throw new InternalServerErrorException();
+
+      if (result) {
+        payload = {
+          email: result.email,
+          id: result.id,
+          role: result.role,
+        };
+        accessToken = await this.jwtService.sign(payload);
+        return {
+          accessToken,
+          id: result.id,
+          expireIn: process.env.JWT_EXPIRESIN || jwtConfig.expiresIn,
+        };
+      }
+      return { message: 'You successfully log in with facebook.' };
     }
   }
 }

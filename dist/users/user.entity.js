@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
+const accessRight_entity_1 = require("./accessRight.entity");
 var RolePermitted;
 (function (RolePermitted) {
     RolePermitted[RolePermitted["guest"] = 0] = "guest";
@@ -125,6 +126,11 @@ __decorate([
     typeorm_1.Column({ type: 'timestamp', nullable: true }),
     __metadata("design:type", typeorm_1.Timestamp)
 ], User.prototype, "resetTokenExpiration", void 0);
+__decorate([
+    typeorm_1.OneToOne(() => accessRight_entity_1.AccessRight),
+    typeorm_1.JoinColumn(),
+    __metadata("design:type", accessRight_entity_1.AccessRight)
+], User.prototype, "accessRight", void 0);
 User = __decorate([
     typeorm_1.Entity()
 ], User);

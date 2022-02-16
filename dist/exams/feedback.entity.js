@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
+const exam_entity_1 = require("./exam.entity");
 var FeedbackStatus;
 (function (FeedbackStatus) {
     FeedbackStatus[FeedbackStatus["belowAverage"] = 1] = "belowAverage";
@@ -40,6 +41,10 @@ __decorate([
     typeorm_1.Column(),
     __metadata("design:type", Number)
 ], Feedback.prototype, "examId", void 0);
+__decorate([
+    typeorm_1.ManyToOne(() => exam_entity_1.Exam),
+    __metadata("design:type", exam_entity_1.Exam)
+], Feedback.prototype, "exam", void 0);
 __decorate([
     typeorm_1.Column({
         type: 'enum',

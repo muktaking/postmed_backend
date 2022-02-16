@@ -38,7 +38,7 @@ export class UsersController {
 
   @Post('/files')
   @UseGuards(AuthGuard('jwt'))
-  @Role(RolePermitted.admin)
+  @Role(RolePermitted.coordinator)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -61,18 +61,8 @@ export class UsersController {
 
   @Delete('/:id')
   @UseGuards(AuthGuard('jwt'))
-  @Role(RolePermitted.admin)
+  @Role(RolePermitted.coordinator)
   async deleteUser(@Param('id') id) {
     return await this.userService.deleteUser(id);
   }
-
-  // @Get("all")
-  // async getAlltUsers(): Promise<any> {
-  //   return await this.userService.findAllUsers();
-  // }
-
-  // @Get("all")
-  // async geAlltUsers(): Promise<any> {
-  //   return await this.userService.findAllUsers();
-  // }
 }

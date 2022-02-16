@@ -10,7 +10,8 @@ import * as bcrypt from 'bcryptjs';
 import * as csv from 'csv-parser';
 import * as fs from 'fs';
 import { to } from 'src/utils/utils';
-import { LessThan } from 'typeorm';
+import { LessThanOrEqual } from 'typeorm';
+import { AccessRightRepository } from './accessRight.repository';
 import { createUserDto } from './dto/create-user.dto';
 import { RolePermitted, User } from './user.entity';
 import { UserRepository } from './user.repository';
@@ -19,7 +20,9 @@ import { UserRepository } from './user.repository';
 export class UsersService {
   constructor(
     @InjectRepository(UserRepository)
-    private userRepository: UserRepository
+    private userRepository: UserRepository,
+    @InjectRepository(AccessRightRepository)
+    private accessRightRepository: AccessRightRepository
   ) {}
 
   async createUser(createUserDto: createUserDto) {
@@ -96,27 +99,32 @@ export class UsersService {
       institution,
       faculty,
       address,
+      accessableCourseIds,
+      canCreateExam,
     } = editUser;
 
-    const [err, user] = await to(this.userRepository.findOne(+id));
+    const [err, user] = await to(
+      this.userRepository.findOne({
+        where: { id: +id },
+        relations: ['accessRight'],
+      })
+    );
 
-    if (err) {
-      console.log(err);
-      throw new InternalServerErrorException();
-    }
+    if (err) throw new InternalServerErrorException(err.message);
 
-    if (userStat.role >= RolePermitted.admin) {
+    if (+id === userStat || userStat.role >= RolePermitted.mentor) {
       user.firstName = firstName;
       user.lastName = lastName;
       user.userName = userName;
-      user.email = email;
       user.gender = gender;
+    }
+
+    if (+id === userStat || userStat.role >= RolePermitted.moderator) {
+      user.email = email;
       user.mobile = mobile;
-      // user.institution = institution;
-      // user.faculty = +faculty;
-      // user.avatar = 'boy';
-      user.role = +role;
-      user.identityStatus = +identityStatus;
+      user.institution = institution;
+      user.faculty = faculty;
+      user.address = address;
       //hashing password
       if (password) {
         const salt = await bcrypt.genSalt(10);
@@ -124,16 +132,37 @@ export class UsersService {
       }
     }
 
-    if (+id === userStat.id && user.role < RolePermitted.admin) {
-      user.firstName = firstName;
-      user.lastName = lastName;
-      user.userName = userName;
-      user.email = email;
-      user.gender = gender;
-      user.mobile = mobile;
-      user.institution = institution;
-      user.faculty = faculty;
-      user.address = address;
+    if (userStat.role >= RolePermitted.coordinator) {
+      user.role =
+        +role > RolePermitted.coordinator ? RolePermitted.moderator : +role;
+      user.identityStatus = +identityStatus;
+
+      if (accessableCourseIds && accessableCourseIds.length > 0) {
+        if (
+          +role > RolePermitted.student &&
+          +role < RolePermitted.coordinator
+        ) {
+          if (user.accessRight) {
+            //console.log(user.accessRight, canCreateExam);
+            user.accessRight.accessableCourseIds = accessableCourseIds;
+            user.accessRight.canCreateExam =
+              canCreateExam === '1' ? true : false;
+            const [error, accessRightResponse] = await to(
+              user.accessRight.save()
+            );
+            if (error) throw new InternalServerErrorException(error.message);
+          } else {
+            const accessRight = this.accessRightRepository.create({
+              accessableCourseIds: accessableCourseIds,
+              canCreateExam: canCreateExam === '1' ? true : false,
+            });
+
+            const [error, accessRightResponse] = await to(accessRight.save());
+            if (error) throw new InternalServerErrorException(error.message);
+            user.accessRight = accessRight;
+          }
+        }
+      }
     }
 
     try {
@@ -155,27 +184,28 @@ export class UsersService {
     return { message: `User deleted successfully` };
   }
 
-  async findAllUsers(userRole) {
+  async findAllUsers(user: User) {
     return await this.userRepository.find({
-      select: [
-        'id',
-        'firstName',
-        'userName',
-        'lastName',
-        'role',
-        'email',
-        'avatar',
-        'createdAt',
-        'gender',
-        'loginProvider',
-        'identityStatus',
-        'mobile',
-        'faculty',
-        'institution',
-      ],
+      // select: [
+      //   'id',
+      //   'firstName',
+      //   'userName',
+      //   'lastName',
+      //   'role',
+      //   'email',
+      //   'avatar',
+      //   'createdAt',
+      //   'gender',
+      //   'loginProvider',
+      //   'identityStatus',
+      //   'mobile',
+      //   'faculty',
+      //   'institution',
+      // ],
       where: {
-        role: LessThan(userRole),
+        role: LessThanOrEqual(user.role),
       },
+      relations: ['accessRight'],
     });
   }
 
@@ -310,5 +340,16 @@ export class UsersService {
       );
     }
     return result;
+  }
+
+  async getAccessRight(id) {
+    const [err, user] = await to(
+      this.userRepository.findOne({
+        where: { id: +id },
+        relations: ['accessRight'],
+      })
+    );
+    if (err) throw new InternalServerErrorException(err.message);
+    return user.accessRight;
   }
 }

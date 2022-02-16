@@ -1,4 +1,11 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Exam } from './exam.entity';
 
 export enum FeedbackStatus {
   belowAverage = 1,
@@ -26,12 +33,8 @@ export class Feedback extends BaseEntity {
   @Column()
   examId: number;
 
-  // @Column({
-  //   type: 'enum',
-  //   enum: Status,
-  //   default: Status.Pending,
-  // })
-  // status: Status;
+  @ManyToOne(() => Exam)
+  exam: Exam;
 
   @Column({
     type: 'enum',

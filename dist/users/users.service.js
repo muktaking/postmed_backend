@@ -19,11 +19,13 @@ const csv = require("csv-parser");
 const fs = require("fs");
 const utils_1 = require("../utils/utils");
 const typeorm_2 = require("typeorm");
+const accessRight_repository_1 = require("./accessRight.repository");
 const user_entity_1 = require("./user.entity");
 const user_repository_1 = require("./user.repository");
 let UsersService = class UsersService {
-    constructor(userRepository) {
+    constructor(userRepository, accessRightRepository) {
         this.userRepository = userRepository;
+        this.accessRightRepository = accessRightRepository;
     }
     async createUser(createUserDto) {
         let { firstName, lastName, userName, password, email, gender, } = createUserDto;
@@ -72,36 +74,57 @@ let UsersService = class UsersService {
         });
     }
     async editUser(editUser, userStat) {
-        let { id, firstName, lastName, userName, password, email, gender, role, identityStatus, mobile, institution, faculty, address, } = editUser;
-        const [err, user] = await utils_1.to(this.userRepository.findOne(+id));
-        if (err) {
-            console.log(err);
-            throw new common_1.InternalServerErrorException();
-        }
-        if (userStat.role >= user_entity_1.RolePermitted.admin) {
+        let { id, firstName, lastName, userName, password, email, gender, role, identityStatus, mobile, institution, faculty, address, accessableCourseIds, canCreateExam, } = editUser;
+        const [err, user] = await utils_1.to(this.userRepository.findOne({
+            where: { id: +id },
+            relations: ['accessRight'],
+        }));
+        if (err)
+            throw new common_1.InternalServerErrorException(err.message);
+        if (+id === userStat || userStat.role >= user_entity_1.RolePermitted.mentor) {
             user.firstName = firstName;
             user.lastName = lastName;
             user.userName = userName;
-            user.email = email;
             user.gender = gender;
+        }
+        if (+id === userStat || userStat.role >= user_entity_1.RolePermitted.moderator) {
+            user.email = email;
             user.mobile = mobile;
-            user.role = +role;
-            user.identityStatus = +identityStatus;
+            user.institution = institution;
+            user.faculty = faculty;
+            user.address = address;
             if (password) {
                 const salt = await bcrypt.genSalt(10);
                 user.password = await bcrypt.hash(password, salt);
             }
         }
-        if (+id === userStat.id && user.role < user_entity_1.RolePermitted.admin) {
-            user.firstName = firstName;
-            user.lastName = lastName;
-            user.userName = userName;
-            user.email = email;
-            user.gender = gender;
-            user.mobile = mobile;
-            user.institution = institution;
-            user.faculty = faculty;
-            user.address = address;
+        if (userStat.role >= user_entity_1.RolePermitted.coordinator) {
+            user.role =
+                +role > user_entity_1.RolePermitted.coordinator ? user_entity_1.RolePermitted.moderator : +role;
+            user.identityStatus = +identityStatus;
+            if (accessableCourseIds && accessableCourseIds.length > 0) {
+                if (+role > user_entity_1.RolePermitted.student &&
+                    +role < user_entity_1.RolePermitted.coordinator) {
+                    if (user.accessRight) {
+                        user.accessRight.accessableCourseIds = accessableCourseIds;
+                        user.accessRight.canCreateExam =
+                            canCreateExam === '1' ? true : false;
+                        const [error, accessRightResponse] = await utils_1.to(user.accessRight.save());
+                        if (error)
+                            throw new common_1.InternalServerErrorException(error.message);
+                    }
+                    else {
+                        const accessRight = this.accessRightRepository.create({
+                            accessableCourseIds: accessableCourseIds,
+                            canCreateExam: canCreateExam === '1' ? true : false,
+                        });
+                        const [error, accessRightResponse] = await utils_1.to(accessRight.save());
+                        if (error)
+                            throw new common_1.InternalServerErrorException(error.message);
+                        user.accessRight = accessRight;
+                    }
+                }
+            }
         }
         try {
             await user.save();
@@ -123,27 +146,12 @@ let UsersService = class UsersService {
         }
         return { message: `User deleted successfully` };
     }
-    async findAllUsers(userRole) {
+    async findAllUsers(user) {
         return await this.userRepository.find({
-            select: [
-                'id',
-                'firstName',
-                'userName',
-                'lastName',
-                'role',
-                'email',
-                'avatar',
-                'createdAt',
-                'gender',
-                'loginProvider',
-                'identityStatus',
-                'mobile',
-                'faculty',
-                'institution',
-            ],
             where: {
-                role: typeorm_2.LessThan(userRole),
+                role: typeorm_2.LessThanOrEqual(user.role),
             },
+            relations: ['accessRight'],
         });
     }
     async findOneUser(email, nameOnly = false, isForAuth = false) {
@@ -235,11 +243,22 @@ let UsersService = class UsersService {
         }
         return result;
     }
+    async getAccessRight(id) {
+        const [err, user] = await utils_1.to(this.userRepository.findOne({
+            where: { id: +id },
+            relations: ['accessRight'],
+        }));
+        if (err)
+            throw new common_1.InternalServerErrorException(err.message);
+        return user.accessRight;
+    }
 };
 UsersService = __decorate([
     common_1.Injectable(),
     __param(0, typeorm_1.InjectRepository(user_repository_1.UserRepository)),
-    __metadata("design:paramtypes", [user_repository_1.UserRepository])
+    __param(1, typeorm_1.InjectRepository(accessRight_repository_1.AccessRightRepository)),
+    __metadata("design:paramtypes", [user_repository_1.UserRepository,
+        accessRight_repository_1.AccessRightRepository])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

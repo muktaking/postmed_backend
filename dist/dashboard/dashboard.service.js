@@ -77,18 +77,20 @@ let DashboardService = class DashboardService {
         }
         return userDashExamInfo.reverse();
     }
-    async getAdminDashInfo(userRole) {
+    async getAdminDashInfo(user) {
         let users = [];
         let exams = [];
         let feedbacks = [];
         let expectedEnrolled = [];
         let err = undefined;
-        [err, users] = await utils_1.to(this.usersService.findAllUsers(userRole));
+        [err, users] = await utils_1.to(this.usersService.findAllUsers(user));
         [err, exams] = await utils_1.to(this.examService.findAllRawExams());
-        if (userRole >= user_entity_1.RolePermitted.mentor) {
+        if (user.role >= user_entity_1.RolePermitted.mentor) {
             [err, feedbacks] = await utils_1.to(this.examService.getPendingFeedback());
         }
-        [err, expectedEnrolled] = await utils_1.to(this.courseService.expectedEnrolledStuInfo());
+        if (user.role > user_entity_1.RolePermitted.mentor) {
+            [err, expectedEnrolled] = await utils_1.to(this.courseService.expectedEnrolledStuInfo(user));
+        }
         return { users, exams, feedbacks, expectedEnrolled };
     }
 };

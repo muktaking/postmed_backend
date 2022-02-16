@@ -10,4 +10,6 @@ export declare class UserExamProfileService {
     findCourseBasedProfileByUserID(id: string): Promise<UserExamProfile>;
     manipulateProfile(user: any, examData: any): Promise<any>;
     findAllUserCourseProfilesByCourseId(courseId: any): Promise<any>;
+    findAllUserExamActivityStat(stuId?: number): Promise<any>;
+    findAllUserExamActivityStatByCourseId(stuId: any, courseId: any): Promise<any>;
 }

@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const examActivityStat_repository_1 = require("./examActivityStat.repository");
+const questionActivityStat_repository_1 = require("./questionActivityStat.repository");
+const stemActivityStat_repository_1 = require("./stemActivityStat.repository");
 const userExamCourseProfile_repository_1 = require("./userExamCourseProfile.repository");
 const userExamExamProfile_repository_1 = require("./userExamExamProfile.repository");
 const userExamProfile_controller_1 = require("./userExamProfile.controller");
@@ -22,6 +25,9 @@ UserExamProfileModule = __decorate([
                 userExamProfile_repository_1.UserExamProfileRepository,
                 userExamCourseProfile_repository_1.UserExamCourseProfileRepository,
                 userExamExamProfile_repository_1.UserExamExamProfileRepository,
+                examActivityStat_repository_1.ExamActivityStatRepository,
+                questionActivityStat_repository_1.QuestionActivityStatRepository,
+                stemActivityStat_repository_1.StemActivityStatRepository,
             ]),
         ],
         controllers: [userExamProfile_controller_1.UserExamProfileController],

@@ -21,7 +21,7 @@ const question_repository_1 = require("../questions/question.repository");
 const utils_1 = require("../utils/utils");
 const category_entity_1 = require("./category.entity");
 const category_repository_1 = require("./category.repository");
-const serverConfig = config.get("server");
+const serverConfig = config.get('server');
 const SERVER_URL = `${serverConfig.url}:${serverConfig.port}/`;
 let CategoriesService = class CategoriesService {
     constructor(categoryRepository, questionRepository) {
@@ -29,7 +29,7 @@ let CategoriesService = class CategoriesService {
         this.questionRepository = questionRepository;
     }
     async findAllCategories() {
-        const [err, categories] = await utils_1.to(this.categoryRepository.find({ order: { slug: "ASC" } }));
+        const [err, categories] = await utils_1.to(this.categoryRepository.find({ order: { slug: 'ASC' } }));
         if (err)
             throw new common_1.InternalServerErrorException();
         let catHierarchy = [];
@@ -56,12 +56,12 @@ let CategoriesService = class CategoriesService {
         let { name, description, parentId, order } = categoryDto;
         name = utils_1.firstltrCapRestLow(name);
         order = +order;
-        parentId = parentId === "Top" ? null : +parentId;
+        parentId = parentId === 'Top' ? null : +parentId;
         const imageUrl = image.filename;
         try {
             let parent = await this.categoryRepository.findOne({ id: +parentId });
-            let slug = parentId ? parent.slug : "Top";
-            slug = slug + "_" + name;
+            let slug = parentId ? parent.slug : 'Top';
+            slug = slug + '_' + name;
             let category = new category_entity_1.Category();
             category.name = name;
             category.slug = slug;
@@ -87,16 +87,8 @@ let CategoriesService = class CategoriesService {
         let { name, description, parentId, order, slug } = categoryDto;
         name = utils_1.firstltrCapRestLow(name);
         let newCategorySlug;
-        parentId = parentId !== "Top" ? +parentId : null;
-        try {
-        }
-        catch (error) { }
+        parentId = parentId !== 'Top' ? +parentId : null;
         const [err, oldCategory] = await utils_1.to(this.categoryRepository.findOne({ id: +id }));
-        if (err) {
-            if (image)
-                utils_1.deleteImageFile(image.filename);
-            throw new common_1.InternalServerErrorException();
-        }
         if (_.isEqual(oldCategory.parentId, parentId)) {
             const duplicateCategory = await this.categoryRepository.findOne({
                 where: {
@@ -112,22 +104,22 @@ let CategoriesService = class CategoriesService {
                     duplicateCategory.imageUrl = image.filename;
                 const [err, res] = await utils_1.to(duplicateCategory.save());
                 if (res)
-                    return { msg: "category updated successully" };
+                    return { msg: 'category updated successully' };
                 if (image)
                     utils_1.deleteImageFile(image.filename);
                 if (err)
-                    throw new common_1.ConflictException("Category by this name is already present");
+                    throw new common_1.ConflictException('Category by this name is already present');
             }
             else {
                 if (image)
                     utils_1.deleteImageFile(image.filename);
-                throw new common_1.ConflictException("Category by this name is already present");
+                throw new common_1.ConflictException('Category by this name is already present');
             }
         }
         let childCategories = await this.categoryRepository.find({
             where: [{ id: +id }, { parentId: +id }],
             order: {
-                slug: "ASC",
+                slug: 'ASC',
             },
         });
         let NewParentCategory;
@@ -145,10 +137,10 @@ let CategoriesService = class CategoriesService {
                         element.imageUrl = image.filename;
                     }
                     element.order = +order;
-                    element.parentId = parentId !== "Top" ? +parentId : null;
+                    element.parentId = parentId !== 'Top' ? +parentId : null;
                     newCategorySlug = element.slug = parentId
-                        ? NewParentCategory.slug + "_" + name
-                        : "Top_" + name;
+                        ? NewParentCategory.slug + '_' + name
+                        : 'Top_' + name;
                     return;
                 }
                 element.slug =
@@ -158,7 +150,7 @@ let CategoriesService = class CategoriesService {
                 childCategories.forEach(async (element) => {
                     await element.save();
                 });
-                return { msg: "Category updated successfully" };
+                return { msg: 'Category updated successfully' };
             }
             catch (error) {
                 console.log(error);
@@ -178,7 +170,7 @@ let CategoriesService = class CategoriesService {
             });
             childCategories.forEach(async (element) => {
                 element.parentId = categoryToDelete.parentId;
-                element.slug = element.slug.replace("_" + categoryToDelete.name + "_", "_");
+                element.slug = element.slug.replace('_' + categoryToDelete.name + '_', '_');
                 try {
                     await element.save();
                 }
@@ -194,17 +186,17 @@ let CategoriesService = class CategoriesService {
                 });
                 if (haveAnyQuestion) {
                     let [uncategorized] = await category_entity_1.Category.find({
-                        name: "Uncategorized",
+                        name: 'Uncategorized',
                         parentId: null,
                     });
                     if (!uncategorized) {
                         uncategorized = new category_entity_1.Category();
-                        uncategorized.name = "Uncategorized";
+                        uncategorized.name = 'Uncategorized';
                         uncategorized.parentId = null;
-                        uncategorized.slug = "Top / Uncategorized";
+                        uncategorized.slug = 'Top / Uncategorized';
                         uncategorized.order = 10000;
-                        uncategorized.description = "All uncategorized topics";
-                        uncategorized.imageUrl = "/bootstrap/uncat.png";
+                        uncategorized.description = 'All uncategorized topics';
+                        uncategorized.imageUrl = '/bootstrap/uncat.png';
                         await uncategorized.save();
                     }
                     await this.questionRepository
@@ -218,7 +210,7 @@ let CategoriesService = class CategoriesService {
                     })
                         .execute();
                 }
-                return { message: "Category deleted successfully" };
+                return { message: 'Category deleted successfully' };
             }
             catch (error) {
                 console.log(error);
@@ -227,7 +219,7 @@ let CategoriesService = class CategoriesService {
         }
     }
     async getFreeCategoryId() {
-        const [err, category] = await utils_1.to(this.categoryRepository.findOne({ name: "Free" }));
+        const [err, category] = await utils_1.to(this.categoryRepository.findOne({ name: 'Free' }));
         if (err)
             throw new common_1.InternalServerErrorException();
         return category ? category._id : null;

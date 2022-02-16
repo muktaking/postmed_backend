@@ -11,6 +11,9 @@ const typeorm_1 = require("@nestjs/typeorm");
 const courses_module_1 = require("../courses/courses.module");
 const exams_module_1 = require("../exams/exams.module");
 const question_repository_1 = require("../questions/question.repository");
+const examActivityStat_repository_1 = require("../userExamProfile/examActivityStat.repository");
+const questionActivityStat_repository_1 = require("../userExamProfile/questionActivityStat.repository");
+const stemActivityStat_repository_1 = require("../userExamProfile/stemActivityStat.repository");
 const userExamProfile_module_1 = require("../userExamProfile/userExamProfile.module");
 const users_module_1 = require("../users/users.module");
 const postexams_controller_1 = require("./postexams.controller");
@@ -20,7 +23,12 @@ let PostexamsModule = class PostexamsModule {
 PostexamsModule = __decorate([
     common_1.Module({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([question_repository_1.QuestionRepository]),
+            typeorm_1.TypeOrmModule.forFeature([
+                question_repository_1.QuestionRepository,
+                examActivityStat_repository_1.ExamActivityStatRepository,
+                questionActivityStat_repository_1.QuestionActivityStatRepository,
+                stemActivityStat_repository_1.StemActivityStatRepository,
+            ]),
             exams_module_1.ExamsModule,
             users_module_1.UsersModule,
             courses_module_1.CoursesModule,

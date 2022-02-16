@@ -1,5 +1,6 @@
 import { BaseEntity, Timestamp } from 'typeorm';
 import { ExamType } from '../exams/exam.entity';
+import { ExamActivityStat } from './examActivityStat.entity';
 import { UserExamCourseProfile } from './userExamCourseProfile.entity';
 export interface ExamStat {
     id: string;
@@ -22,4 +23,5 @@ export declare class UserExamExamProfile extends BaseEntity {
     firstAttemptTime: Timestamp;
     lastAttemptTime: Timestamp | string;
     course: UserExamCourseProfile;
+    examActivityStat: ExamActivityStat[];
 }

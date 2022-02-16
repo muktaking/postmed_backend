@@ -1,17 +1,23 @@
 import { CoursesService } from 'src/courses/courses.service';
 import { ExamsService } from 'src/exams/exams.service';
 import { QuestionRepository } from 'src/questions/question.repository';
+import { ExamActivityStatRepository } from 'src/userExamProfile/examActivityStat.repository';
+import { QuestionActivityStatRepository } from 'src/userExamProfile/questionActivityStat.repository';
+import { StemActivityStatRepository } from 'src/userExamProfile/stemActivityStat.repository';
 import { UserExamProfileService } from 'src/userExamProfile/userExamprofile.service';
 import { UsersService } from 'src/users/users.service';
-import { GetAnswersDto } from './dto/get-answers.dto';
+import { GetAnswersDto, GetFreeAnswersDto } from './dto/get-answers.dto';
 import { Particulars, StudentAnswer } from './postexam.model';
 export declare class PostexamsService {
     private readonly usersService;
     private questionRepository;
+    private examActivityStatRepository;
+    private questionActivityStatRepository;
+    private stemActivityStatRepository;
     private readonly examService;
     private readonly courseService;
     private readonly userExamProfileService;
-    constructor(usersService: UsersService, questionRepository: QuestionRepository, examService: ExamsService, courseService: CoursesService, userExamProfileService: UserExamProfileService);
+    constructor(usersService: UsersService, questionRepository: QuestionRepository, examActivityStatRepository: ExamActivityStatRepository, questionActivityStatRepository: QuestionActivityStatRepository, stemActivityStatRepository: StemActivityStatRepository, examService: ExamsService, courseService: CoursesService, userExamProfileService: UserExamProfileService);
     private singleQuestionMark;
     private questionStemLength;
     private singleStemMark;
@@ -20,6 +26,11 @@ export declare class PostexamsService {
     private totalMark;
     private totalScore;
     private totalPenaltyMark;
+    private totalWrongScore;
+    private totalWrongStems;
+    private totalRightStems;
+    private totalRightSbaQuestions;
+    private totalWrongSbaQuestions;
     postExamTaskingByCoursesProfile(getAnswersDto: GetAnswersDto, answersByStudent: Array<StudentAnswer>, user: any): Promise<{
         examId: string;
         resultArray: Particulars[];
@@ -29,7 +40,7 @@ export declare class PostexamsService {
         totalScorePercentage: number;
         timeTakenToComplete: string;
     }>;
-    postExamTaskingForFree(getAnswersDto: GetAnswersDto, answersByStudent: Array<StudentAnswer>): Promise<{
+    postExamTaskingForFree(getFreeAnswersDto: GetFreeAnswersDto, answersByStudent: Array<StudentAnswer>): Promise<{
         examId: string;
         resultArray: Particulars[];
         totalMark: number;
@@ -44,5 +55,7 @@ export declare class PostexamsService {
         rank: any[];
     }>;
     private matrixManipulator;
+    private matrixManipulatorForFree;
     private sbaManipulator;
+    private sbaManipulatorForFree;
 }
